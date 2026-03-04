@@ -78,7 +78,7 @@ public class MeteorSpawner : MonoBehaviour
 
     private void SpawnMeteorAtPosition(Vector3 skyPos)
     {
-        Quaternion lockedRotation = Quaternion.Euler(0, 0, -90f);
+        Quaternion lockedRotation = Quaternion.Euler(0, 0, 0);
         GameObject newMeteor = Instantiate(meteorPrefab, skyPos, lockedRotation);
 
         MeteorLogic logic = newMeteor.GetComponent<MeteorLogic>();
