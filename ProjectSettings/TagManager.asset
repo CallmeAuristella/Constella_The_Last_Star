@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags:
+  - Ground
+  - Obstacle
+  - BouncyGround
+  - Shield
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Ground
+  - ForeGround
+  - Player
+  - Obstacle
+  - destructionLayers
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Gameplay
+    uniqueID: 694714369
+    locked: 0
+  - name: UI
+    uniqueID: 2811899531
+    locked: 0
+  - name: SFX
+    uniqueID: 1926853997
+    locked: 0
+  - name: Foreground
+    uniqueID: 269759739
+    locked: 0
+  - name: Background
+    uniqueID: 2341039163
+    locked: 0
+  m_RenderingLayers:
+  - Default

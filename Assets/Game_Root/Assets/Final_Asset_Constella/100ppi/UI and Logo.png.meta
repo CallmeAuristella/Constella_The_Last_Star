@@ -1,0 +1,689 @@
+fileFormatVersion: 2
+guid: 2d8510718b008a94086a06e40d1982bf
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5679043628613082443
+    second: UI and Logo_0
+  - first:
+      213: -6025597916357074634
+    second: UI and Logo_1
+  - first:
+      213: 4108946364490612037
+    second: UI and Logo_2
+  - first:
+      213: -2750930122482157541
+    second: UI and Logo_3
+  - first:
+      213: 3406174423617311043
+    second: UI and Logo_4
+  - first:
+      213: 9129716142924237007
+    second: UI and Logo_5
+  - first:
+      213: 2254326570756500522
+    second: UI and Logo_6
+  - first:
+      213: -1927646603060677723
+    second: UI and Logo_7
+  - first:
+      213: 1255020017957050691
+    second: UI and Logo_8
+  - first:
+      213: -2070602580330117214
+    second: UI and Logo_9
+  - first:
+      213: 3965640586518110325
+    second: UI and Logo_10
+  - first:
+      213: -7559136397117021418
+    second: UI and Logo_11
+  - first:
+      213: -509954260520705139
+    second: UI and Logo_12
+  - first:
+      213: -1250081108804262589
+    second: UI and Logo_13
+  - first:
+      213: -1169286319359534573
+    second: UI and Logo_14
+  - first:
+      213: -5009535344241161882
+    second: UI and Logo_15
+  - first:
+      213: 8792189456574911804
+    second: UI and Logo_16
+  - first:
+      213: -3417700599245424465
+    second: UI and Logo_17
+  - first:
+      213: 573507276350937523
+    second: UI and Logo_18
+  - first:
+      213: 1737992131341348100
+    second: UI and Logo_19
+  - first:
+      213: -120058907998441981
+    second: UI and Logo_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI and Logo_0
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 5848
+        width: 1017
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4d9d63671400de40800000000000000
+      internalID: 5679043628613082443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_1
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 5856
+        width: 1241
+        height: 359
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 631e33cbe96c06ca0800000000000000
+      internalID: -6025597916357074634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_2
+      rect:
+        serializedVersion: 2
+        x: 3034
+        y: 4970
+        width: 3524
+        height: 997
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54d7898c2f8e50930800000000000000
+      internalID: 4108946364490612037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_3
+      rect:
+        serializedVersion: 2
+        x: 6188
+        y: 5681
+        width: 541
+        height: 541
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b18778fe0abb2d9d0800000000000000
+      internalID: -2750930122482157541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_4
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 5431
+        width: 1004
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3411bb27799254f20800000000000000
+      internalID: 3406174423617311043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_5
+      rect:
+        serializedVersion: 2
+        x: 1538
+        y: 5431
+        width: 1226
+        height: 359
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc8062fe57443be70800000000000000
+      internalID: 9129716142924237007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_6
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 4950
+        width: 1017
+        height: 360
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2c6aa9721af84f10800000000000000
+      internalID: 2254326570756500522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_7
+      rect:
+        serializedVersion: 2
+        x: 1530
+        y: 4966
+        width: 1237
+        height: 358
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a3741ca0af9f35e0800000000000000
+      internalID: -1927646603060677723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_8
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 4445
+        width: 1270
+        height: 353
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34995549e0aba6110800000000000000
+      internalID: 1255020017957050691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_9
+      rect:
+        serializedVersion: 2
+        x: 1704
+        y: 4455
+        width: 1021
+        height: 360
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a78a687cedb343e0800000000000000
+      internalID: -2070602580330117214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_10
+      rect:
+        serializedVersion: 2
+        x: 2956
+        y: 4425
+        width: 1021
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 570a8424a19c80730800000000000000
+      internalID: 3965640586518110325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_11
+      rect:
+        serializedVersion: 2
+        x: 4180
+        y: 4409
+        width: 1021
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6132d113f7d881790800000000000000
+      internalID: -7559136397117021418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_12
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 4002
+        width: 1259
+        height: 353
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8367f94d474ce8f0800000000000000
+      internalID: -509954260520705139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_13
+      rect:
+        serializedVersion: 2
+        x: 1729
+        y: 3999
+        width: 1003
+        height: 360
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 345ab41dad1d6aee0800000000000000
+      internalID: -1250081108804262589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_14
+      rect:
+        serializedVersion: 2
+        x: 2981
+        y: 3969
+        width: 1003
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31ad9d5a94cd5cfe0800000000000000
+      internalID: -1169286319359534573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_15
+      rect:
+        serializedVersion: 2
+        x: 4205
+        y: 3953
+        width: 1003
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 669cdb4652e8a7ab0800000000000000
+      internalID: -5009535344241161882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_16
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 3574
+        width: 1271
+        height: 353
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c35151d4ab1240a70800000000000000
+      internalID: 8792189456574911804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_17
+      rect:
+        serializedVersion: 2
+        x: 1729
+        y: 3543
+        width: 1021
+        height: 360
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa83659a963e190d0800000000000000
+      internalID: -3417700599245424465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_18
+      rect:
+        serializedVersion: 2
+        x: 2981
+        y: 3513
+        width: 1021
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b9dffa44d185f700800000000000000
+      internalID: 573507276350937523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_19
+      rect:
+        serializedVersion: 2
+        x: 4205
+        y: 3497
+        width: 1021
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40d660b92a69e1810800000000000000
+      internalID: 1737992131341348100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI and Logo_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 3655
+        height: 2948
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30ea1ac2f07755ef0800000000000000
+      internalID: -120058907998441981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      UI and Logo_0: 5679043628613082443
+      UI and Logo_1: -6025597916357074634
+      UI and Logo_10: 3965640586518110325
+      UI and Logo_11: -7559136397117021418
+      UI and Logo_12: -509954260520705139
+      UI and Logo_13: -1250081108804262589
+      UI and Logo_14: -1169286319359534573
+      UI and Logo_15: -5009535344241161882
+      UI and Logo_16: 8792189456574911804
+      UI and Logo_17: -3417700599245424465
+      UI and Logo_18: 573507276350937523
+      UI and Logo_19: 1737992131341348100
+      UI and Logo_2: 4108946364490612037
+      UI and Logo_20: -120058907998441981
+      UI and Logo_3: -2750930122482157541
+      UI and Logo_4: 3406174423617311043
+      UI and Logo_5: 9129716142924237007
+      UI and Logo_6: 2254326570756500522
+      UI and Logo_7: -1927646603060677723
+      UI and Logo_8: 1255020017957050691
+      UI and Logo_9: -2070602580330117214
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
