@@ -56,11 +56,13 @@ public class StageSummaryController : MonoBehaviour
             if (star != null) star.color = inactiveStarColor;
         }
 
-        // 2. Tarik dan tampilkan data dari GameManager
+        // 2. Tarik dan tampilkan data CURRENT STAGE dari GameManager
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.FinishGame();
+            // Matikan timer level saat summary muncul
+            GameManager.Instance.isRunActive = false;
 
+            // Tampilkan data Level ini (Bukan Grand Total)
             if (timeText) timeText.text = GameManager.Instance.GetFormattedTime();
             if (scoreText) scoreText.text = GameManager.Instance.currentScore.ToString();
 
@@ -95,14 +97,13 @@ public class StageSummaryController : MonoBehaviour
         }
 
         // FASE 2: Animasi Rasi Bintang Menyala
-        yield return new WaitForSecondsRealtime(0.5f); // Jeda dramatis sebelum bintang pertama nyala
+        yield return new WaitForSecondsRealtime(0.5f);
 
         foreach (Image star in constellationStars)
         {
             if (star != null)
             {
                 star.color = activeStarColor;
-                // Opsi: Tambahkan AudioSource.PlayOneShot() di sini jika ingin efek suara "Ting!"
             }
             yield return new WaitForSecondsRealtime(delayBetweenStars);
         }
@@ -113,7 +114,16 @@ public class StageSummaryController : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
+            // SIMPAN data stage ini ke Grand Total sebelum pindah
             GameManager.Instance.SaveCurrentStageStats();
+            // RESET data stage agar level baru mulai dari 0
+            GameManager.Instance.ResetLevelStats();
+
+            // Jika ini stage terakhir, panggil FinishGame untuk save records
+            if (nextSceneName == "GameOverScene")
+            {
+                GameManager.Instance.FinishGame();
+            }
         }
 
         Time.timeScale = 1f;
@@ -122,6 +132,12 @@ public class StageSummaryController : MonoBehaviour
 
     private void OnRetryClicked()
     {
+        if (GameManager.Instance != null)
+        {
+            // RESET data stage karena pemain mengulang (Jangan di Save ke Global!)
+            GameManager.Instance.ResetLevelStats();
+        }
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }

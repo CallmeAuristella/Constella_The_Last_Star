@@ -8,6 +8,9 @@ TagManager:
   - Obstacle
   - BouncyGround
   - Shield
+  - FxTemporaire
+  - Platform
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX

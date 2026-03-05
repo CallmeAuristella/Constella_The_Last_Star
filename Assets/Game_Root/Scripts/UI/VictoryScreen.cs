@@ -15,42 +15,42 @@ public class VictoryScreen : MonoBehaviour
     [SerializeField] private TextMeshProUGUI highScoreLabel;
     [SerializeField] private GameObject newRecordVisual;
 
-    // Kunci untuk simpan data di HP/PC (Biar gak typo)
     private const string HIGH_SCORE_KEY = "HighScore";
 
     [Header("Visual Reward (Optional)")]
-    [Tooltip("Boleh dikosongkan jika tidak ada gambar hadiah")]
     [SerializeField] private Image constellationRewardImage;
     [SerializeField] private Sprite stageCompletedSprite;
 
     private void Start()
     {
-        // Safety Check: Pastikan GameManager ada
+        // Safety Check: Jika GameManager tidak ada (misal run scene ini langsung)
         if (GameManager.Instance == null)
         {
-            Debug.LogWarning("GameManager tidak ditemukan! Victory Screen mungkin kosong.");
+            Debug.LogWarning("GameManager tidak ditemukan!");
             return;
         }
 
-        // 1. Ambil Data
+        // 1. Ambil Data Akumulasi (Grand Total)
         int score = GameManager.Instance.grandTotalScore;
         float time = GameManager.Instance.grandTotalTime;
         int minor = GameManager.Instance.grandTotalMinorNodes;
         int major = GameManager.Instance.grandTotalMajorNodes;
 
-        // 2. Jalankan Fungsi-fungsi
+        // 2. Tampilkan ke UI
         DisplayStats(score, time, minor, major);
         ProcessHighScore(score);
         DisplayRewardVisual();
+
+        // Pastikan kursor muncul jika game sebelumnya dalam mode lock
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void DisplayStats(int score, float time, int minor, int major)
     {
-        // Update Score
         if (totalScoreText)
             totalScoreText.text = $"Total Score: {score}";
 
-        // Update Time (Format 00:00)
         if (totalTimeText)
         {
             int min = Mathf.FloorToInt(time / 60F);
@@ -58,7 +58,6 @@ public class VictoryScreen : MonoBehaviour
             totalTimeText.text = $"Total Time: {min:00}:{sec:00}";
         }
 
-        // Update Stars/Nodes
         if (totalMinorText)
             totalMinorText.text = $"Stardust Collected: {minor}";
 
@@ -73,33 +72,31 @@ public class VictoryScreen : MonoBehaviour
 
         if (isNewRecord)
         {
-            // Simpan Rekor Baru
             savedHighScore = currentScore;
             PlayerPrefs.SetInt(HIGH_SCORE_KEY, savedHighScore);
             PlayerPrefs.Save();
         }
 
-        // Update UI Label
         if (highScoreLabel)
             highScoreLabel.text = $"High Score: {savedHighScore}";
 
-        // Efek Visual "NEW RECORD"
         if (newRecordVisual != null)
         {
             newRecordVisual.SetActive(isNewRecord);
 
             if (isNewRecord)
             {
-                // Animasi Kedip (PingPong)
-                LeanTween.scale(newRecordVisual, Vector3.one * 1.1f, 0.5f)
-                    .setLoopPingPong();
+                // Animasi Kedip menggunakan LeanTween
+                newRecordVisual.transform.localScale = Vector3.one;
+                LeanTween.scale(newRecordVisual, Vector3.one * 1.15f, 0.5f)
+                    .setLoopPingPong()
+                    .setIgnoreTimeScale(true); // Biar tetep jalan meski timeScale 0
             }
         }
     }
 
     private void DisplayRewardVisual()
     {
-        // Cek apakah slot di inspector diisi? Kalau kosong, skip aja (Gak Error).
         if (constellationRewardImage == null || stageCompletedSprite == null)
             return;
 
@@ -107,27 +104,28 @@ public class VictoryScreen : MonoBehaviour
         constellationRewardImage.preserveAspect = true;
         constellationRewardImage.gameObject.SetActive(true);
 
-        // Reset Scale ke 0 dulu biar bisa muncul membesar
         constellationRewardImage.transform.localScale = Vector3.zero;
 
-        // Animasi Muncul (Pop Up)
         LeanTween.scale(constellationRewardImage.gameObject, Vector3.one, 0.8f)
             .setEaseOutBack()
-            .setDelay(0.3f);
+            .setDelay(0.3f)
+            .setIgnoreTimeScale(true);
     }
 
     // --- BUTTON FUNCTIONS ---
 
     public void LoadMainMenu()
     {
-        // Hancurkan GameManager (Reset total stats jadi 0)
+        // 1. Reset Time Scale dulu
+        Time.timeScale = 1f;
+
+        // 2. Hancurkan GameManager agar data total benar-benar reset (Clean Start)
         if (GameManager.Instance != null)
         {
             Destroy(GameManager.Instance.gameObject);
         }
 
-        // Pastikan waktu jalan normal lagi
-        Time.timeScale = 1f;
+        // 3. Pindah Scene
         SceneManager.LoadScene("MainMenu");
     }
 

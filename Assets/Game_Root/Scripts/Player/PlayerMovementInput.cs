@@ -55,14 +55,6 @@ public class PlayerMovementInput : MonoBehaviour
     public GameObject landDust;
     public Transform feetPosition;
 
-    // --- Orbit Variables ---
-    private Transform currentOrbitCenter;
-    private float currentOrbitSpeed;
-    private float currentOrbitRadius;
-    private bool clockwiseOrbit;
-    private bool isMajorOrbit = false;
-    private float totalOrbitAngle = 0f;
-
     // --- Internal Variables ---
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -72,9 +64,16 @@ public class PlayerMovementInput : MonoBehaviour
     private float groundedGraceCounter;
     private float coyoteTimeCounter;
 
-    // --- Radar Tanah Manual (Custom Velocity System) ---
+    // --- Orbit & Platform Variables ---
+    private Transform currentOrbitCenter;
+    private float currentOrbitSpeed;
+    private float currentOrbitRadius;
+    private bool clockwiseOrbit;
+    private bool isMajorOrbit = false;
+    private float totalOrbitAngle = 0f;
+
     private Transform currentGroundTransform;
-    private Rigidbody2D currentGroundRb; // [FITUR BARU] Sensor mesin putaran platform
+    private Rigidbody2D currentGroundRb;
     private Vector3 lastGroundPosition;
     private Vector2 calculatedPlatformVelocity;
     private float platformVelocityAtJump;
@@ -85,10 +84,7 @@ public class PlayerMovementInput : MonoBehaviour
     private bool isOnSlope;
     private float slopeDownAngle;
 
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
+    private void Awake() => rb = GetComponent<Rigidbody2D>();
 
     private void Start()
     {
@@ -121,11 +117,7 @@ public class PlayerMovementInput : MonoBehaviour
 
     private void Update()
     {
-        if (isOrbiting)
-        {
-            HandleOrbitMovement();
-            return;
-        }
+        if (isOrbiting) { HandleOrbitMovement(); return; }
 
         moveInput = moveAction.action.ReadValue<Vector2>();
         CheckGroundAndReset();
@@ -137,7 +129,6 @@ public class PlayerMovementInput : MonoBehaviour
     private void FixedUpdate()
     {
         if (isOrbiting) return;
-
         UpdatePlatformRadar();
         HandleMomentumMovement();
 
@@ -145,7 +136,28 @@ public class PlayerMovementInput : MonoBehaviour
             rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 50f);
     }
 
-    // --- MOVEMENT LOGIC ---
+    // --- COLLISION LOGIC (PARENTING) ---
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Deteksi platform bergerak agar player menempel dan tidak mantul
+        if (collision.gameObject.CompareTag("Platform") || collision.gameObject.GetComponent<Rigidbody2D>() != null)
+        {
+            transform.SetParent(collision.transform);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        // Lepas parent saat meninggalkan platform
+        if (transform.parent == collision.transform)
+        {
+            transform.SetParent(null);
+            transform.rotation = Quaternion.identity;
+        }
+    }
+
+    // --- MOVEMENT & RADAR LOGIC ---
 
     private void HandleMomentumMovement()
     {
@@ -154,56 +166,35 @@ public class PlayerMovementInput : MonoBehaviour
         if (isGrounded && isOnSlope && Mathf.Abs(inputX) > 0.01f)
         {
             float targetSlopeSpeed = moveSpeed;
-
             if (inputX * slopeNormalPerp.x < 0) targetSlopeSpeed *= uphillSpeedMultiplier;
             else targetSlopeSpeed *= downhillSpeedMultiplier;
 
-            float slopeVelocityX = -inputX * targetSlopeSpeed * slopeNormalPerp.x;
-            float slopeVelocityY = -inputX * targetSlopeSpeed * slopeNormalPerp.y;
-
-            rb.linearVelocity = new Vector2(slopeVelocityX, slopeVelocityY);
+            rb.linearVelocity = new Vector2(-inputX * targetSlopeSpeed * slopeNormalPerp.x, -inputX * targetSlopeSpeed * slopeNormalPerp.y);
         }
         else
         {
             float currentSpeed = rb.linearVelocity.x;
             float targetSpeed = inputX * moveSpeed;
-            float accelRate = 0f;
+            float accelRate = isGrounded ? ((Mathf.Abs(inputX) > 0.01f) ? groundAcceleration * 0.65f : groundDeceleration * 0.4f) :
+                                           ((Mathf.Abs(inputX) < 0.01f) ? 0f : (Mathf.Sign(inputX) != Mathf.Sign(currentSpeed)) ? airTurnSpeed * 0.55f : airAcceleration);
 
-            if (isGrounded)
-                accelRate = (Mathf.Abs(inputX) > 0.01f) ? groundAcceleration * 0.65f : groundDeceleration * 0.4f;
-            else
-                accelRate = (Mathf.Abs(inputX) < 0.01f) ? 0f : (Mathf.Sign(inputX) != Mathf.Sign(currentSpeed) && Mathf.Abs(currentSpeed) > 0.2f) ? airTurnSpeed * 0.55f : airAcceleration;
-
-            if (isGrounded && Mathf.Abs(inputX) < 0.01f) targetSpeed = 0;
-
-            float speedDif = targetSpeed - currentSpeed;
-            float movement = speedDif * accelRate * Time.fixedDeltaTime;
-
+            float movement = (targetSpeed - currentSpeed) * accelRate * Time.fixedDeltaTime;
             float finalVelocityY = rb.linearVelocity.y;
 
+            // Stabilisasi Velocity di atas platform bergerak
             if ((isGrounded || groundedGraceCounter > 0f) && Time.time > lastJumpTime + 0.2f)
             {
-                if (finalVelocityY > calculatedPlatformVelocity.y)
-                {
-                    finalVelocityY = calculatedPlatformVelocity.y;
-                }
-
-                if (calculatedPlatformVelocity.y <= 0.01f && finalVelocityY > -2f)
-                {
-                    finalVelocityY = -2f;
-                }
+                if (finalVelocityY > calculatedPlatformVelocity.y) finalVelocityY = calculatedPlatformVelocity.y;
+                if (calculatedPlatformVelocity.y <= 0.01f && finalVelocityY > -2f) finalVelocityY = -2f;
             }
 
             rb.linearVelocity = new Vector2(currentSpeed + movement, finalVelocityY);
         }
     }
 
-    // --- GROUND & PLATFORM DETECTION ---
-
     private void CheckGroundAndReset()
     {
         bool wasGrounded = isGrounded;
-
         Collider2D groundCollider = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         isGrounded = groundCollider != null;
 
@@ -215,7 +206,6 @@ public class PlayerMovementInput : MonoBehaviour
             if (currentGroundTransform != groundTransform)
             {
                 currentGroundTransform = groundTransform;
-                // [FITUR BARU] Tarik data Rigidbody2D dari lantai untuk dianalisis putarannya
                 currentGroundRb = groundCollider.attachedRigidbody;
                 lastGroundPosition = groundTransform.position;
             }
@@ -224,7 +214,6 @@ public class PlayerMovementInput : MonoBehaviour
         {
             currentGroundTransform = null;
             currentGroundRb = null;
-            calculatedPlatformVelocity = Vector2.zero;
             isOnBouncyGround = false;
         }
 
@@ -232,14 +221,10 @@ public class PlayerMovementInput : MonoBehaviour
         {
             currentAirJumpCount = 0;
             platformVelocityAtJump = 0f;
-
-            if (landDust != null && feetPosition != null)
-                Instantiate(landDust, feetPosition.position, Quaternion.identity);
+            if (landDust != null && feetPosition != null) Instantiate(landDust, feetPosition.position, Quaternion.identity);
         }
 
-        if (isGrounded && rb.linearVelocity.y <= 0.1f)
-            coyoteTimeCounter = coyoteTime;
-
+        if (isGrounded && rb.linearVelocity.y <= 0.1f) coyoteTimeCounter = coyoteTime;
         if (isGrounded) groundedGraceCounter = groundedGraceTime;
         else groundedGraceCounter -= Time.deltaTime;
     }
@@ -250,19 +235,14 @@ public class PlayerMovementInput : MonoBehaviour
         {
             if (currentGroundRb != null)
             {
-                // [SUPER RADAR] Baca kecepatan absolut di titik persis telapak kaki berpijak! 
-                // Ini akan mendeteksi dorongan dari putaran roda/platform muter dengan sangat akurat.
                 Vector2 contactPoint = feetPosition != null ? (Vector2)feetPosition.position : (Vector2)transform.position;
                 calculatedPlatformVelocity = currentGroundRb.GetPointVelocity(contactPoint);
-
-                lastGroundPosition = currentGroundTransform.position;
             }
             else
             {
-                // Fallback untuk platform statis/animasi tanpa mesin fisika (Rigidbody2D)
                 calculatedPlatformVelocity = (currentGroundTransform.position - lastGroundPosition) / Time.fixedDeltaTime;
-                lastGroundPosition = currentGroundTransform.position;
             }
+            lastGroundPosition = currentGroundTransform.position;
         }
         else
         {
@@ -273,19 +253,70 @@ public class PlayerMovementInput : MonoBehaviour
     private void SlopeCheck()
     {
         RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, Vector2.down, slopeCheckDistance, groundLayer);
-
         if (hit)
         {
             slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
             slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
-
             isOnSlope = (slopeDownAngle != 0 && slopeDownAngle <= maxSlopeAngle);
         }
-        else
+        else isOnSlope = false;
+    }
+
+    // --- JUMP LOGIC ---
+
+    private void DoJump(InputAction.CallbackContext context)
+    {
+        if (Time.time < lastJumpTime + jumpCooldown || isOrbiting) return;
+
+        if (isGrounded || coyoteTimeCounter > 0f)
         {
-            isOnSlope = false;
+            PerformJumpPhysics();
+            coyoteTimeCounter = 0f;
+        }
+        else if (currentAirJumpCount < maxAirJumps)
+        {
+            PerformJumpPhysics();
+            currentAirJumpCount++;
         }
     }
+
+    private void PerformJumpPhysics()
+    {
+        // Lepas parent sebelum lompat agar tidak ada tarikan physics dari platform
+        if (transform.parent != null)
+        {
+            transform.SetParent(null);
+            transform.rotation = Quaternion.identity;
+        }
+
+        float platformBoostY = 0f;
+        if (isGrounded || coyoteTimeCounter > 0f)
+        {
+            platformBoostY = calculatedPlatformVelocity.y;
+            platformVelocityAtJump = platformBoostY;
+        }
+
+        float finalJumpForce = isOnBouncyGround ? (jumpForce * bouncyJumpMultiplier) : jumpForce;
+
+        // Terapkan kecepatan platform + Jump Force (Anti Lompatan Pendek)
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, platformBoostY);
+        rb.AddForce(Vector2.up * finalJumpForce, ForceMode2D.Impulse);
+
+        lastJumpTime = Time.time;
+        if (jumpDust != null && feetPosition != null) Instantiate(jumpDust, feetPosition.position, Quaternion.identity);
+    }
+
+    private void HandleGravityModifiers()
+    {
+        if (isGrounded || groundedGraceCounter > 0f) return;
+        float relativeVelocityY = rb.linearVelocity.y - platformVelocityAtJump;
+        if (relativeVelocityY < 0)
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
+        else if (relativeVelocityY > 0 && !jumpAction.action.IsPressed())
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1f) * Time.deltaTime;
+    }
+
+    private void HandleCoyoteTime() { if (!isGrounded) coyoteTimeCounter -= Time.deltaTime; }
 
     // --- ORBIT SYSTEM ---
 
@@ -309,29 +340,21 @@ public class PlayerMovementInput : MonoBehaviour
     private void HandleOrbitMovement()
     {
         if (currentOrbitCenter == null) return;
-
-        if (isMajorOrbit)
+        if (isMajorOrbit && totalOrbitAngle >= 1080f)
         {
-            if (totalOrbitAngle >= 1080f)
-            {
-                StarNode node = currentOrbitCenter.GetComponent<StarNode>();
-                if (node != null) node.OnOrbitFinished();
-                DropFromOrbit();
-                return;
-            }
+            StarNode node = currentOrbitCenter.GetComponent<StarNode>();
+            if (node != null) node.OnOrbitFinished();
+            DropFromOrbit();
+            return;
         }
 
         float rotationStep = currentOrbitSpeed * Time.deltaTime;
         float direction = clockwiseOrbit ? -1f : 1f;
-
         transform.RotateAround(currentOrbitCenter.position, Vector3.forward, rotationStep * direction);
         transform.rotation = Quaternion.identity;
         totalOrbitAngle += rotationStep;
 
-        if (!isMajorOrbit && jumpAction.action.WasPerformedThisFrame())
-        {
-            PerformExitOrbit();
-        }
+        if (!isMajorOrbit && jumpAction.action.WasPerformedThisFrame()) PerformExitOrbit();
     }
 
     private void DropFromOrbit()
@@ -347,10 +370,8 @@ public class PlayerMovementInput : MonoBehaviour
     {
         Vector2 directionToCenter = (currentOrbitCenter.position - transform.position).normalized;
         Vector2 launchDir = Vector2.Perpendicular(directionToCenter) * (clockwiseOrbit ? -1f : 1f);
-
         StarNode nodeScript = currentOrbitCenter.GetComponent<StarNode>();
         if (nodeScript != null) nodeScript.IgniteNode();
-
         ExitOrbit(launchDir, jumpForce * orbitLaunchMultiplier);
     }
 
@@ -363,70 +384,37 @@ public class PlayerMovementInput : MonoBehaviour
         rb.AddForce(launchDirection * launchForce, ForceMode2D.Impulse);
     }
 
-    // --- GRAVITY & JUMP ---
+    // --- TELEPORT & WARP SYSTEM ---
 
-    private void HandleGravityModifiers()
+    public void ForceTeleport(Vector3 newPosition)
     {
-        if (isGrounded || groundedGraceCounter > 0f) return;
-
-        float relativeVelocityY = rb.linearVelocity.y - platformVelocityAtJump;
-
-        if (relativeVelocityY < 0)
-            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
-        else if (relativeVelocityY > 0 && !jumpAction.action.IsPressed())
-            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1f) * Time.deltaTime;
-    }
-
-    private void DoJump(InputAction.CallbackContext context)
-    {
-        if (Time.time < lastJumpTime + jumpCooldown) return;
-        if (isOrbiting) return;
-
-        if (isGrounded || coyoteTimeCounter > 0f)
-        {
-            PerformJumpPhysics();
-            coyoteTimeCounter = 0f;
-        }
-        else if (currentAirJumpCount < maxAirJumps)
-        {
-            PerformJumpPhysics();
-            currentAirJumpCount++;
-        }
-    }
-
-    private void PerformJumpPhysics()
-    {
-        if (transform.parent != null && gameObject.activeInHierarchy)
+        // PERBAIKAN ERROR CINEMACHINE: Lepas parent di baris pertama
+        if (transform.parent != null)
         {
             transform.SetParent(null);
             transform.rotation = Quaternion.identity;
         }
 
-        float platformBoostY = 0f;
-        if (isGrounded || coyoteTimeCounter > 0f)
+        isOrbiting = false;
+        currentOrbitCenter = null;
+        isMajorOrbit = false;
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        currentAirJumpCount = 0;
+
+        RigidbodyInterpolation2D oldInterpolation = rb.interpolation;
+        rb.interpolation = RigidbodyInterpolation2D.None;
+
+        Vector3 delta = newPosition - transform.position;
+        transform.position = newPosition;
+
+        if (Camera.main != null && Camera.main.TryGetComponent(out CinemachineBrain brain))
         {
-            platformBoostY = calculatedPlatformVelocity.y;
-            platformVelocityAtJump = calculatedPlatformVelocity.y;
+            if (brain.ActiveVirtualCamera is CinemachineCamera vcam)
+                vcam.OnTargetObjectWarped(transform, delta);
         }
-        else
-        {
-            platformVelocityAtJump = 0f;
-        }
-
-        float finalJumpForce = isOnBouncyGround ? (jumpForce * bouncyJumpMultiplier) : jumpForce;
-
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, platformBoostY);
-        rb.AddForce(Vector2.up * finalJumpForce, ForceMode2D.Impulse);
-
-        lastJumpTime = Time.time;
-
-        if (jumpDust != null && feetPosition != null)
-            Instantiate(jumpDust, feetPosition.position, Quaternion.identity);
-    }
-
-    private void HandleCoyoteTime()
-    {
-        if (!isGrounded) coyoteTimeCounter -= Time.deltaTime;
+        rb.interpolation = oldInterpolation;
     }
 
     private void OnDrawGizmos()
@@ -436,40 +424,5 @@ public class PlayerMovementInput : MonoBehaviour
             Gizmos.color = isGrounded ? Color.green : Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
-    }
-
-    public void ForceTeleport(Vector3 newPosition)
-    {
-        isOrbiting = false;
-        currentOrbitCenter = null;
-        isMajorOrbit = false;
-        rb.linearVelocity = Vector2.zero;
-        rb.angularVelocity = 0f;
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        currentAirJumpCount = 0;
-
-        if (transform.parent != null && gameObject.activeInHierarchy)
-        {
-            transform.SetParent(null);
-            transform.rotation = Quaternion.identity;
-        }
-
-        RigidbodyInterpolation2D oldInterpolation = rb.interpolation;
-        rb.interpolation = RigidbodyInterpolation2D.None;
-
-        Vector3 finalPos = new Vector3(newPosition.x, newPosition.y, transform.position.z);
-        Vector3 delta = finalPos - transform.position;
-        transform.position = finalPos;
-
-        if (Camera.main != null && Camera.main.TryGetComponent(out Unity.Cinemachine.CinemachineBrain brain))
-        {
-            if (brain.ActiveVirtualCamera != null)
-            {
-                var vcam = brain.ActiveVirtualCamera as Unity.Cinemachine.CinemachineCamera;
-                if (vcam != null) vcam.OnTargetObjectWarped(transform, delta);
-            }
-        }
-
-        rb.interpolation = oldInterpolation;
     }
 }

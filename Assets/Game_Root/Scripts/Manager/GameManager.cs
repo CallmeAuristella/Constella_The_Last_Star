@@ -13,18 +13,17 @@ public class GameManager : MonoBehaviour
     [Header("Respawn Settings")]
     public PlayerMovementInput player;
     public CanvasGroup transitionScreen;
-    public float respawnDelay = 0.2f; // Gue kecilin dikit biar gak kerasa nge-lag
-
+    public float respawnDelay = 0.2f;
     private bool isRespawning = false;
 
-    [Header("Current Stage Data")]
+    [Header("Current Stage Data (Level Ini)")]
     public float globalTimer = 0f;
     public int currentScore = 0;
     public int minorNodesCollected = 0;
     public int majorNodesCollected = 0;
     public bool isRunActive = false;
 
-    [Header("Global Stats (History)")]
+    [Header("Global Stats (Akumulasi Total)")]
     public int grandTotalScore = 0;
     public float grandTotalTime = 0f;
     public int grandTotalMinorNodes = 0;
@@ -48,6 +47,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        // Subscribe ke event sceneLoaded agar otomatis urus player tiap pindah level
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
         if (!isRunActive) StartRun();
@@ -58,9 +68,46 @@ public class GameManager : MonoBehaviour
             transitionScreen.blocksRaycasts = false;
         }
 
+        // Cari player jika belum ada
+        if (player == null) FindPlayerInScene();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 1. Cari player lagi (siapa tau player baru di-load dari scene sebelumnya)
+        FindPlayerInScene();
+
+        // 2. Cari SpawnPoint di scene baru
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
+
+        if (spawnPoint != null && player != null)
+        {
+            // Pindah kan player ke titik muncul level baru secara aman
+            player.ForceTeleport(spawnPoint.transform.position);
+        }
+
+        // 3. Hubungkan Kamera dengan Player baru
+        SetupCameraTarget();
+    }
+
+    private void FindPlayerInScene()
+    {
         if (player == null)
         {
             player = FindFirstObjectByType<PlayerMovementInput>();
+        }
+    }
+
+    private void SetupCameraTarget()
+    {
+        if (player == null) return;
+
+        // Cari script CameraFollow lo di main camera
+        CameraFollow cam = Camera.main?.GetComponent<CameraFollow>();
+        if (cam != null)
+        {
+            cam.target = player.transform;
+            cam.SnapToTarget(); // Langsung tempel kamera ke player tanpa lerp diawal scene
         }
     }
 
@@ -72,7 +119,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- FUNGSI SCORING & SISTEM ---
+    // --- FUNGSI DATA & SCORING ---
 
     public void StartRun() => isRunActive = true;
 
@@ -83,6 +130,7 @@ public class GameManager : MonoBehaviour
         minorNodesCollected = 0;
         majorNodesCollected = 0;
         isRunActive = true;
+        Debug.Log("GameManager: Data stage ini telah di-reset ke 0.");
     }
 
     public void SaveCurrentStageStats()
@@ -91,6 +139,10 @@ public class GameManager : MonoBehaviour
         grandTotalTime += globalTimer;
         grandTotalMinorNodes += minorNodesCollected;
         grandTotalMajorNodes += majorNodesCollected;
+
+        Debug.Log("GameManager: Data stage berhasil disimpan ke Grand Total.");
+
+        ResetLevelStats();
     }
 
     public void AddScore(int amount) => currentScore += amount;
@@ -112,7 +164,7 @@ public class GameManager : MonoBehaviour
     {
         isRunActive = false;
         SaveRecords();
-        PlayerPrefs.SetInt("Stage_1_Complete", 1);
+        PlayerPrefs.SetInt("Game_Complete", 1);
         PlayerPrefs.Save();
     }
 
@@ -124,14 +176,14 @@ public class GameManager : MonoBehaviour
 
     private void SaveRecords()
     {
-        if (currentScore > highScore)
+        if (grandTotalScore > highScore)
         {
-            highScore = currentScore;
+            highScore = grandTotalScore;
             PlayerPrefs.SetInt("HighScore", highScore);
         }
-        if (globalTimer < bestTime)
+        if (grandTotalTime < bestTime)
         {
-            bestTime = globalTimer;
+            bestTime = grandTotalTime;
             PlayerPrefs.SetFloat("BestTime", bestTime);
         }
         PlayerPrefs.Save();
@@ -155,19 +207,17 @@ public class GameManager : MonoBehaviour
     {
         isRespawning = true;
 
-        // 1. MATIKAN INPUT & FISIK (INSTANT)
         if (player != null)
         {
-            player.enabled = false; // Otak mati
+            player.enabled = false;
             Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;
-                rb.bodyType = RigidbodyType2D.Static; // Badan kaku
+                rb.bodyType = RigidbodyType2D.Static;
             }
         }
 
-        // 2. FADE OUT (HITAM)
         if (transitionScreen != null)
         {
             float timer = 0;
@@ -180,16 +230,16 @@ public class GameManager : MonoBehaviour
             transitionScreen.alpha = 1;
         }
 
-        // 3. TELEPORT & RESET LINGKUNGAN
         if (player != null)
-            player.transform.position = hasCheckpoint ? (Vector3)lastCheckpointPos : Vector3.zero;
+        {
+            Vector3 targetPos = hasCheckpoint ? (Vector3)lastCheckpointPos : Vector3.zero;
+            player.ForceTeleport(targetPos); // Gunakan ForceTeleport agar kamera ikut snap
+        }
 
         ResetEnvironment();
 
-        // Tunggu bentar pas layar item biar transisi gak kasar
         yield return new WaitForSecondsRealtime(respawnDelay);
 
-        // 4. FADE IN (MULAI TERANG)
         if (transitionScreen != null)
         {
             float timer = 0;
@@ -202,16 +252,15 @@ public class GameManager : MonoBehaviour
             transitionScreen.alpha = 0;
         }
 
-        // [SINKRONISASI BARU] 5. NYALAKAN INPUT SETELAH LAYAR TERANG
         if (player != null)
         {
             Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.bodyType = RigidbodyType2D.Dynamic; // Badan gerak lagi
+                rb.bodyType = RigidbodyType2D.Dynamic;
                 rb.linearVelocity = Vector2.zero;
             }
-            player.enabled = true; // Otak nyala lagi pas player udah bisa liat layar
+            player.enabled = true;
         }
 
         Time.timeScale = 1f;
@@ -250,16 +299,20 @@ public class GameManager : MonoBehaviour
             transitionScreen.alpha = 1;
         }
 
-        if (player != null) player.transform.position = targetPos;
+        if (player != null) player.ForceTeleport(targetPos);
         ResetEnvironment();
 
         yield return new WaitForSecondsRealtime(0.3f);
 
         if (player != null)
         {
-            player.enabled = true;
             Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.bodyType = RigidbodyType2D.Dynamic;
+            if (rb != null)
+            {
+                rb.bodyType = RigidbodyType2D.Dynamic;
+                rb.linearVelocity = Vector2.zero;
+            }
+            player.enabled = true;
         }
 
         if (transitionScreen != null)
@@ -279,19 +332,11 @@ public class GameManager : MonoBehaviour
     private void ResetEnvironment()
     {
         FallingPlatform[] allPlatforms = FindObjectsByType<FallingPlatform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        if (allPlatforms.Length == 0)
-        {
-            allPlatforms = Resources.FindObjectsOfTypeAll<FallingPlatform>();
-        }
-
         if (allPlatforms.Length == 0) return;
 
         foreach (FallingPlatform platform in allPlatforms)
         {
-            if (platform.gameObject.scene.name != null)
-            {
-                platform.ResetPlatform();
-            }
+            if (platform.gameObject.scene.name != null) platform.ResetPlatform();
         }
     }
 }

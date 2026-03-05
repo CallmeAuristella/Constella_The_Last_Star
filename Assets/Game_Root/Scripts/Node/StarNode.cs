@@ -5,7 +5,7 @@ using TMPro;
 using System.Collections;
 
 public enum NodeType { Minor, Major }
-public enum PortalType { None, NextScene, NextChapter }
+public enum PortalType { None, NextScene } // Hapus NextChapter
 
 [RequireComponent(typeof(Collider2D))]
 public class StarNode : MonoBehaviour
@@ -13,8 +13,6 @@ public class StarNode : MonoBehaviour
     [Header("Identity & System")]
     public string nodeID;
     public NodeType nodeType = NodeType.Minor;
-    [Tooltip("Kelompokkan node berdasarkan Chapter. Misal: Semua node di area Chapter 1 set ID = 1")]
-    public int chapterID = 1;
 
     public bool isActivated = false;
     private bool _hasBeenUsed = false;
@@ -26,14 +24,12 @@ public class StarNode : MonoBehaviour
     public TMP_Text starNameTextUI;
 
     [Header("Major Node Configuration")]
-    public bool autoReleaseOnComplete = true;
     public float orbitRadius = 1.5f;
     public float orbitSpeed = 150f;
 
     [Header("Portal Configuration")]
     public PortalType portalType = PortalType.None;
     public string nextSceneName;
-    public Transform chapterTargetPoint;
     public float finishSequenceDelay = 1.5f;
 
     [Header("References & Visuals")]
@@ -41,13 +37,10 @@ public class StarNode : MonoBehaviour
     public SpriteRenderer starSprite;
     public Color activeColor = Color.cyan;
     public Color inactiveColor = Color.gray;
-    public GameObject activationParticles;
 
-    [Header("Audio")]
-    public AudioSource audioSource;
-    public AudioClip igniteSound;
-    public AudioClip portalSound;
-    public AudioClip accessDeniedSound;
+    [Header("Visuals")]
+    [Tooltip("Partikel atau Sprite yang nyala saat aktif.")]
+    public GameObject activeAuraObject;
 
     [Header("Events")]
     public UnityEvent<StarNode> OnNodeIgnited;
@@ -58,10 +51,18 @@ public class StarNode : MonoBehaviour
     {
         _nodeCollider = GetComponent<Collider2D>();
         if (starSprite == null) starSprite = GetComponent<SpriteRenderer>();
-        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+
+        // Reset status saat awal agar tidak auto-ignite
+        isActivated = false;
+        _hasBeenUsed = false;
     }
 
     private void Start()
+    {
+        InitializeNode();
+    }
+
+    private void InitializeNode()
     {
         if (starNameTextUI != null)
         {
@@ -69,14 +70,7 @@ public class StarNode : MonoBehaviour
             starNameTextUI.gameObject.SetActive(showNameText);
         }
 
-        if (GameManager.Instance != null && GameManager.Instance.hasCheckpoint)
-        {
-            if (Vector2.Distance(transform.position, GameManager.Instance.lastCheckpointPos) < 0.1f)
-            {
-                isActivated = true;
-                _hasBeenUsed = true;
-            }
-        }
+        // LOGIC AUTO-IGNITE DIHAPUS BIAR TIDAK NYALA SENDIRI SAAT START
         UpdateVisuals();
     }
 
@@ -87,45 +81,55 @@ public class StarNode : MonoBehaviour
         var playerMovement = collision.GetComponent<PlayerMovementInput>();
         if (playerMovement == null) return;
 
-        // --- [ LOGIKA RESPAWN & CHECKPOINT ] ---
-        // HANYA Minor Node yang boleh merubah titik Checkpoint
         if (nodeType == NodeType.Minor)
         {
-            PlayerRespawn playerRespawn = collision.GetComponent<PlayerRespawn>();
-            if (playerRespawn != null)
-            {
-                playerRespawn.currentCheckpoint = transform.position;
-            }
-        }
-
-        // --- [ LOGIKA INTERAKSI ] ---
-        if (nodeType == NodeType.Major)
-        {
-            if (!playerMovement.isOrbiting)
-            {
-                playerMovement.EnterOrbit(transform, orbitRadius, orbitSpeed, true);
-            }
-        }
-        else
-        {
+            UpdateCheckpoint(collision);
             IgniteNode();
+        }
+        else if (nodeType == NodeType.Major && !playerMovement.isOrbiting)
+        {
+            playerMovement.EnterOrbit(transform, orbitRadius, orbitSpeed, true);
         }
     }
 
     public void IgniteNode()
     {
         if (isActivated) return;
-
-        // Update di GameManager juga hanya jika Minor
-        if (nodeType == NodeType.Minor && GameManager.Instance != null)
-        {
-            if (Vector2.Distance(GameManager.Instance.lastCheckpointPos, transform.position) > 0.1f)
-            {
-                GameManager.Instance.SetCheckpoint(transform.position);
-            }
-        }
-
         ActivateSystem();
+    }
+
+    private void ActivateSystem()
+    {
+        isActivated = true;
+        _hasBeenUsed = true;
+
+        UpdateVisuals();
+
+        if (ConstellationManager.Instance != null) ConstellationManager.Instance.OnStarCollected(nodeID);
+        if (GameManager.Instance != null) GameManager.Instance.LogNodeCollection(nodeType);
+
+        OnNodeIgnited?.Invoke(this);
+    }
+
+    public void OnOrbitFinished()
+    {
+        ActivateSystem();
+        if (_nodeCollider != null) _nodeCollider.enabled = false;
+        CheckAndTriggerPortal();
+    }
+
+    private void UpdateVisuals()
+    {
+        bool visualActive = isActivated || _hasBeenUsed;
+        Color targetColor = visualActive ? activeColor : inactiveColor;
+
+        if (starSprite != null) starSprite.color = targetColor;
+        if (starNameTextUI != null) starNameTextUI.color = targetColor;
+
+        if (activeAuraObject != null)
+        {
+            activeAuraObject.SetActive(visualActive);
+        }
     }
 
     public void ResetNode()
@@ -134,49 +138,32 @@ public class StarNode : MonoBehaviour
         _hasBeenUsed = false;
         if (_nodeCollider != null) _nodeCollider.enabled = true;
         UpdateVisuals();
-
-        if (ConstellationManager.Instance != null)
-            ConstellationManager.Instance.OnStarReset(nodeID);
+        if (ConstellationManager.Instance != null) ConstellationManager.Instance.OnStarReset(nodeID);
     }
 
-    public void OnOrbitFinished()
+    private void UpdateCheckpoint(Collider2D player)
     {
-        _hasBeenUsed = true;
-        isActivated = true;
-
-        if (_nodeCollider != null) _nodeCollider.enabled = false;
-
-        if (ConstellationManager.Instance != null) ConstellationManager.Instance.OnStarCollected(nodeID);
-        if (GameManager.Instance != null) GameManager.Instance.LogNodeCollection(NodeType.Major);
-
-        UpdateVisuals();
-        CheckAndTriggerPortal();
+        PlayerRespawn respawn = player.GetComponent<PlayerRespawn>();
+        if (respawn != null) respawn.currentCheckpoint = transform.position;
+        if (GameManager.Instance != null) GameManager.Instance.SetCheckpoint(transform.position);
     }
 
     private void CheckAndTriggerPortal()
     {
-        if (portalType == PortalType.None) return;
-
-        if (CheckConstellationCompleteness())
+        // Hanya cek transisi scene
+        if (portalType == PortalType.NextScene && IsConstellationComplete())
         {
-            PlaySound(portalSound);
-            if (portalType == PortalType.NextScene)
-                StartCoroutine(DelayedStageSummary());
-            else if (portalType == PortalType.NextChapter)
-                HandleTeleport();
-        }
-        else
-        {
-            PlaySound(accessDeniedSound);
+            StartCoroutine(DelayedStageSummary());
         }
     }
 
-    private bool CheckConstellationCompleteness()
+    private bool IsConstellationComplete()
     {
         StarNode[] allNodes = FindObjectsByType<StarNode>(FindObjectsSortMode.None);
         foreach (StarNode node in allNodes)
         {
-            if (node.nodeType == NodeType.Major && node.chapterID == this.chapterID && !node.HasBeenUsed)
+            // Jika ada Node Major yang belum digunakan, portal jangan terbuka
+            if (node.nodeType == NodeType.Major && !node.HasBeenUsed)
                 return false;
         }
         return true;
@@ -185,13 +172,11 @@ public class StarNode : MonoBehaviour
     private IEnumerator DelayedStageSummary()
     {
         yield return new WaitForSeconds(finishSequenceDelay);
-        if (summaryUI == null)
-            summaryUI = FindFirstObjectByType<StageSummaryController>(FindObjectsInactive.Include);
+        if (summaryUI == null) summaryUI = FindFirstObjectByType<StageSummaryController>(FindObjectsInactive.Include);
 
         if (summaryUI != null)
         {
-            if (!string.IsNullOrEmpty(nextSceneName))
-                summaryUI.nextSceneName = this.nextSceneName;
+            if (!string.IsNullOrEmpty(nextSceneName)) summaryUI.nextSceneName = this.nextSceneName;
             summaryUI.StartSummarySequence();
         }
         else if (!string.IsNullOrEmpty(nextSceneName))
@@ -200,71 +185,12 @@ public class StarNode : MonoBehaviour
         }
     }
 
-    private void HandleTeleport()
-    {
-        if (chapterTargetPoint == null) return;
-
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj == null) return;
-
-        PlayerMovementInput playerScript = playerObj.GetComponentInChildren<PlayerMovementInput>();
-        if (playerScript != null)
-        {
-            if (GameManager.Instance != null)
-                GameManager.Instance.TeleportPlayer(chapterTargetPoint.position);
-            else
-                playerObj.transform.position = chapterTargetPoint.position;
-
-            playerScript.ExitOrbit(Vector2.zero, 0f);
-        }
-    }
-
-    private void ActivateSystem()
-    {
-        isActivated = true;
-        _hasBeenUsed = true;
-        UpdateVisuals();
-        PlaySound(igniteSound);
-
-        if (activationParticles != null)
-            Instantiate(activationParticles, transform.position, Quaternion.identity);
-
-        if (ConstellationManager.Instance != null) ConstellationManager.Instance.OnStarCollected(nodeID);
-
-        // Logika collection tetap dipisah antara Major dan Minor
-        if (GameManager.Instance != null) GameManager.Instance.LogNodeCollection(nodeType);
-
-        OnNodeIgnited?.Invoke(this);
-    }
-
-    private void UpdateVisuals()
-    {
-        if (starSprite != null)
-            starSprite.color = (isActivated || _hasBeenUsed) ? activeColor : inactiveColor;
-
-        if (starNameTextUI != null)
-            starNameTextUI.color = (isActivated || _hasBeenUsed) ? activeColor : inactiveColor;
-    }
-
-    private void PlaySound(AudioClip clip)
-    {
-        if (audioSource != null && clip != null)
-            audioSource.PlayOneShot(clip);
-    }
-
     private void OnDrawGizmos()
     {
         if (nodeType == NodeType.Major)
         {
             Gizmos.color = (portalType != PortalType.None) ? Color.red : Color.yellow;
             Gizmos.DrawWireSphere(transform.position, orbitRadius);
-
-            if (portalType == PortalType.NextChapter && chapterTargetPoint != null)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(transform.position, chapterTargetPoint.position);
-                Gizmos.DrawSphere(chapterTargetPoint.position, 0.2f);
-            }
         }
     }
 }

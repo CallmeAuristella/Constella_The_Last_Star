@@ -1,66 +1,78 @@
 using UnityEngine;
-using Unity.Cinemachine; // Pastikan Unity 6 (Cinemachine 3.0+)
+using System.Collections;
+using Unity.Cinemachine;
 
 public class LevelInitializer : MonoBehaviour
 {
     [Header("Level Settings")]
-    [Tooltip("Drag object SpawnPoint dari Hierarchy ke sini")]
-    public Transform playerStartPoint;
+    [Tooltip("Jika dicentang, player akan pindah ke checkpoint terakhir. Jika tidak, tetap di posisi awal scene.")]
+    public bool useGlobalCheckpoint = true;
 
-    private void Start()
+    private void Awake()
     {
-        InitializePlayerAndCamera();
-        InitializeGameManager();
+        // Set TimeScale ke 1 seawal mungkin biar gak nyangkut pas ganti scene
+        Time.timeScale = 1f;
     }
 
-    private void InitializePlayerAndCamera()
+    private IEnumerator Start()
+    {
+        // KUNCI UTAMA: Kasih jeda 1 frame (null) biar semua object di scene baru 'bangun' dulu
+        yield return null;
+
+        InitializeLevel();
+    }
+
+    private void InitializeLevel()
     {
         // 1. Cari Player berdasarkan Tag
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
-        if (player != null && playerStartPoint != null)
+        if (playerObj != null)
         {
-            // Pindahkan posisi Player ke titik Start
-            player.transform.position = playerStartPoint.position;
+            PlayerMovementInput playerScript = playerObj.GetComponent<PlayerMovementInput>();
 
-            // Reset Fisika (Biar gak ada sisa gaya dorong/mental)
-            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.linearVelocity = Vector2.zero; // Unity 6 pakai linearVelocity
+            // 2. Daftarkan Player ke GameManager SEBELUM gerakin posisi
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.player = playerScript;
 
-            // Setup Cinemachine (Auto Follow)
-            var vCam = FindFirstObjectByType<CinemachineCamera>();
-            if (vCam != null)
-            {
-                vCam.Follow = player.transform;
+                // Jika player lari dari posisi awal, paksa balik ke checkpoint atau posisi start manual
+                if (useGlobalCheckpoint && GameManager.Instance.hasCheckpoint)
+                {
+                    playerScript.ForceTeleport(GameManager.Instance.lastCheckpointPos);
+                }
+
+                GameManager.Instance.StartRun();
             }
-            else
-            {
-                Debug.LogWarning("[LevelInit] CinemachineCamera tidak ditemukan di scene ini.");
-            }
+
+            // 3. Setup Cinemachine (LOCK TARGET)
+            SetupCamera(playerObj.transform);
         }
         else
         {
-            Debug.LogError("[LevelInit] Error: Player tidak ditemukan atau SpawnPoint belum diisi!");
+            Debug.LogError("[LevelInit] ERROR: Player manual gak ketemu di scene ini! Pastikan Prefab Player ada di Hierarchy dan Tag-nya 'Player'.");
         }
     }
 
-    private void InitializeGameManager()
+    private void SetupCamera(Transform target)
     {
-        // Pastikan GameManager ada (dari DontDestroyOnLoad)
-        if (GameManager.Instance == null) return;
+        // Cari Virtual Camera di scene ini
+        var vCam = FindFirstObjectByType<CinemachineCamera>();
 
-        // 1. Simpan Checkpoint (Buat respawn kalau mati)
-        if (playerStartPoint != null)
+        if (vCam != null)
         {
-            GameManager.Instance.SetCheckpoint(playerStartPoint.position);
+            // Set Target
+            vCam.Follow = target;
+
+            // PAKSA CINEMACHINE SNAP: Biar gak ada gerakan 'ngejar' dari koordinat 0,0,0
+            vCam.OnTargetObjectWarped(target, target.position - vCam.transform.position);
+            vCam.ForceCameraPosition(target.position, Quaternion.identity);
+
+            Debug.Log("[LevelInit] Kamera berhasil dikunci ke: " + target.name);
         }
-
-        // 2. Mulai Timer & Pastikan Game Jalan (Unpause)
-        // Ini fungsi krusial biar waktu lanjut jalan pas pindah scene
-        GameManager.Instance.StartRun();
-        Time.timeScale = 1f;
-
-        // Note: Setup TransitionScreen dihapus dari sini karena sudah
-        // dihandle otomatis oleh script 'SceneFader' di object TransitionScreen.
+        else
+        {
+            Debug.LogWarning("[LevelInit] Waduh, CinemachineCamera gak ada di scene ini!");
+        }
     }
 }

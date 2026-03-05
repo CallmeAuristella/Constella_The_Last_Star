@@ -25,32 +25,38 @@ public class CosmicObstacle : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isDestroyed) return;
-
-        // 1. DITABRAK SHIELD
-        if (collision.gameObject.CompareTag("Shield"))
+        if (collision.CompareTag("Player"))
         {
-            HandleDestruction();
-        }
-        // 2. DITABRAK PLAYER
-        else if (collision.gameObject.CompareTag("Player"))
-        {
-            // Panggil fungsi mati dari skrip teleport di Player
-            PlayerRespawn playerRespawn = collision.gameObject.GetComponent<PlayerRespawn>();
+            PlayerShield shield = collision.GetComponent<PlayerShield>();
 
-            if (playerRespawn != null)
+            if (shield != null && shield.isShieldActive) return;
+
+            // --- TAMBAHKAN LOGIKA FREEZE DI SINI ---
+            var rb = collision.GetComponent<Rigidbody2D>();
+            var input = collision.GetComponent<PlayerMovementInput>();
+
+            if (rb != null)
             {
-                playerRespawn.DieAndRespawn();
+                rb.linearVelocity = Vector2.zero; // Hentikan gerak seketika
+                rb.simulated = false; // Matikan fisika agar tidak meluncur terus
             }
-            else
+
+            if (input != null) input.enabled = false; // Matikan kontrol player
+
+            // Baru panggil fungsi respawn bawaan lo
+            PlayerRespawn respawnScript = collision.GetComponent<PlayerRespawn>();
+            if (respawnScript != null)
             {
-                Debug.LogError("[CosmicObstacle] Karakter lo belum dipasangi skrip PlayerRespawn!");
+                respawnScript.DieAndRespawn();
             }
         }
     }
 
     public void HandleDestruction()
     {
+        // Tambahin pengecekan ini biar variabelnya kepake
+        if (isDestroyed) return;
+
         isDestroyed = true;
 
         if (destroyVFX != null)

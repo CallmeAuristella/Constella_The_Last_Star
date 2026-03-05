@@ -52,10 +52,22 @@ public class PlayerRespawn : MonoBehaviour
         // 5. FADE OUT (Layar Terang)
         yield return StartCoroutine(Fade(0f, fadeDuration));
 
-        // 6. Bangkitkan Player
-        foreach (var s in allSprites) s.enabled = true;
+        // 6. BANGKITKAN PLAYER (BAGIAN KRUSIAL)
+        foreach (var s in allSprites)
+        {
+            if (s.gameObject.name.Contains("Shield")) continue;
+            s.enabled = true;
+        }
+
         foreach (var c in allColliders) c.enabled = true;
-        rb.simulated = true;
+
+        // --- PASTIKAN BARIS INI ADA DI PALING BAWAH ---
+        rb.simulated = true; // Nyalain Fisika lagi
+
+        var input = GetComponent<PlayerMovementInput>();
+        if (input != null) input.enabled = true; // Nyalain Kontrol lagi
+
+        Debug.Log("[Respawn] Player Unfreezed & Ready!");
     }
 
     // --- FUNGSI FADE DENGAN CANVASGROUP ---

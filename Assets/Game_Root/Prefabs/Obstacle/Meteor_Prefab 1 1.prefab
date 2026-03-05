@@ -148,7 +148,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -170,7 +170,7 @@ MonoBehaviour:
   targetYDestruction: 0
   destructionLayers:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 64
   explosionVFX: {fileID: 9164335435711620569, guid: 34205bbd7640e2e4e9a9341a4507b882, type: 3}
 --- !u!114 &4955847744987734635
 MonoBehaviour:

@@ -3,51 +3,68 @@ using System.Collections;
 
 public class PlayerShield : MonoBehaviour
 {
-    [Header("Shield Setup")]
-    [Tooltip("Masukkan Game Object ANAK yang punya Tag 'Shield' ke sini.")]
-    public GameObject shieldObject;
+    [Header("Visual Components")]
+    [Tooltip("Masukkan SpriteRenderer tameng di sini.")]
+    public SpriteRenderer shieldSprite;
 
-    // Memori untuk menyimpan tugas hitung mundur
+    [Header("Status")]
+    public bool isShieldActive = false;
+
     private Coroutine shieldCoroutine;
+
+    private void Awake()
+    {
+        // Jika lupa mengisi di Inspector, coba cari di anak objek
+        if (shieldSprite == null) shieldSprite = GetComponentInChildren<SpriteRenderer>();
+    }
 
     private void Start()
     {
-        // KUNCI KEAMANAN: Pastikan tameng mati total saat game baru mulai
-        if (shieldObject != null)
-        {
-            shieldObject.SetActive(false);
-        }
+        // Pastikan saat game mulai, shield mati total
+        isShieldActive = false;
+        if (shieldSprite != null) shieldSprite.enabled = false;
     }
 
-    // Fungsi ini DIBUKA UNTUK UMUM agar bisa dipanggil oleh Item Pick Up
     public void ActivateShield(float duration)
     {
-        if (shieldObject == null)
-        {
-            Debug.LogError("[PlayerShield] Objek shield belum dimasukkan ke Inspector!");
-            return;
-        }
-
-        // Kalau player ambil shield lagi pas shield masih nyala, batalkan hitungan lama
+        // Jika sedang aktif, stop coroutine yang lama agar durasi ter-reset (Refresh)
         if (shieldCoroutine != null)
         {
             StopCoroutine(shieldCoroutine);
         }
 
-        // Mulai hitung mundur durasi baru
         shieldCoroutine = StartCoroutine(ShieldRoutine(duration));
     }
 
     private IEnumerator ShieldRoutine(float duration)
     {
-        // FASE 1: NYALAKAN SHIELD (Visual & Fisika pelindung aktif)
-        shieldObject.SetActive(true);
+        // FASE AKTIF
+        isShieldActive = true;
+        if (shieldSprite != null) shieldSprite.enabled = true;
+        Debug.Log("[Shield] System & Sprite: ON");
 
-        // FASE 2: TUNGGU DURASI HABIS
         yield return new WaitForSeconds(duration);
 
-        // FASE 3: MATIKAN SHIELD TOTAL (Reset status ke normal)
-        shieldObject.SetActive(false);
+        // FASE MATI
+        DeactivateShieldInternal();
+    }
+
+    // Fungsi internal untuk memastikan reset status bersih
+    private void DeactivateShieldInternal()
+    {
+        isShieldActive = false;
+        if (shieldSprite != null) shieldSprite.enabled = false;
+
+        shieldCoroutine = null;
+        Debug.Log("[Shield] System & Sprite: OFF");
+    }
+
+    // Gunakan ini jika player mati atau level reset secara paksa
+    public void ForceDeactivate()
+    {
+        if (shieldCoroutine != null) StopCoroutine(shieldCoroutine);
+        isShieldActive = false;
+        if (shieldSprite != null) shieldSprite.enabled = false;
         shieldCoroutine = null;
     }
 }

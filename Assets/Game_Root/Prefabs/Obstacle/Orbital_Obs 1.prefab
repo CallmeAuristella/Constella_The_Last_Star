@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pivotPoint: {fileID: 1545736146423474374}
-  speed: 1
+  speed: 5
   clockwise: 1
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!114 &1051987054226925481
@@ -182,8 +182,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d7b4238a767c429bc4c8708f17046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDestructibleByShield: 1
-  destructionEffect: {fileID: 0}
+  canRespawn: 1
+  respawnTime: 5
+  destroyVFX: {fileID: 0}
 --- !u!1 &5626360717740343331
 GameObject:
   m_ObjectHideFlags: 0
