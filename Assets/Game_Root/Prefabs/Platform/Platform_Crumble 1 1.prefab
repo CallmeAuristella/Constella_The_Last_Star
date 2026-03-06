@@ -112,7 +112,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 90
   m_Sprite: {fileID: 7056483323881882200, guid: 7a7e05e55a45dd74b8b8591f166131e2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.23529412, g: 0.3137255, b: 0.44313726, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -132,7 +132,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c32aabb447784574f85abdcb7ca0bd95, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -180,8 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e0dbd2c1164cc14aa4976694ba9eccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBeforeFall: 0.5
-  delayBeforeDestroy: 2
+  delayBeforeDisappear: 1.2
+  respawnTime: 3
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
   shakeMagnitude: 0.05
 --- !u!50 &7197789182546510699
 Rigidbody2D:
