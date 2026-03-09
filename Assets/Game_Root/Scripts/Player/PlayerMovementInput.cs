@@ -84,7 +84,20 @@ public class PlayerMovementInput : MonoBehaviour
     private bool isOnSlope;
     private float slopeDownAngle;
 
-    private void Awake() => rb = GetComponent<Rigidbody2D>();
+    // --- Audio Variables ---
+    public AudioClip jumpSfx;
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+       rb = GetComponent<Rigidbody2D>();
+        // SETUP AUDIO OTOMATIS
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+    } 
 
     private void Start()
     {
@@ -93,6 +106,7 @@ public class PlayerMovementInput : MonoBehaviour
             transform.position = GameManager.Instance.lastCheckpointPos;
             rb.linearVelocity = Vector2.zero;
         }
+
     }
 
     private void OnEnable()
@@ -295,7 +309,12 @@ public class PlayerMovementInput : MonoBehaviour
             platformBoostY = calculatedPlatformVelocity.y;
             platformVelocityAtJump = platformBoostY;
         }
-
+        // Audio
+        if (jumpSfx != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(jumpSfx);
+        }
+        //
         float finalJumpForce = isOnBouncyGround ? (jumpForce * bouncyJumpMultiplier) : jumpForce;
 
         // Terapkan kecepatan platform + Jump Force (Anti Lompatan Pendek)
@@ -304,6 +323,8 @@ public class PlayerMovementInput : MonoBehaviour
 
         lastJumpTime = Time.time;
         if (jumpDust != null && feetPosition != null) Instantiate(jumpDust, feetPosition.position, Quaternion.identity);
+
+
     }
 
     private void HandleGravityModifiers()

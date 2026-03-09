@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 91
   m_Sprite: {fileID: -6085189145905879944, guid: f8b43b09f0ba2d347a25ae62ebbf4cc2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -172,6 +172,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   explosionVFX: {fileID: 9164335435711620569, guid: 34205bbd7640e2e4e9a9341a4507b882, type: 3}
+  explosionSfx: {fileID: 8300000, guid: da3de91c11773e543b676b1a4e8fe9f4, type: 3}
+  explosionVolume: 1
 --- !u!114 &4955847744987734635
 MonoBehaviour:
   m_ObjectHideFlags: 0

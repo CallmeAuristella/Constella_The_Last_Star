@@ -21,42 +21,44 @@ public class CosmicObstacle : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         startPosition = transform.position;
+
+        // TEGAS: Pastikan Collider diatur sebagai Trigger agar sesuai dengan fungsi OnTriggerEnter2D
+        if (col != null) col.isTrigger = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // 1. Cek apakah yang nabrak adalah Player
         if (collision.CompareTag("Player"))
         {
+            Debug.Log($"[Obstacle] {gameObject.name} kena Player!");
+
+            // 2. Cek Shield (Fungsi Vital lo)
             PlayerShield shield = collision.GetComponent<PlayerShield>();
-
-            if (shield != null && shield.isShieldActive) return;
-
-            // --- TAMBAHKAN LOGIKA FREEZE DI SINI ---
-            var rb = collision.GetComponent<Rigidbody2D>();
-            var input = collision.GetComponent<PlayerMovementInput>();
-
-            if (rb != null)
+            if (shield != null && shield.isShieldActive)
             {
-                rb.linearVelocity = Vector2.zero; // Hentikan gerak seketika
-                rb.simulated = false; // Matikan fisika agar tidak meluncur terus
+                Debug.Log("[Obstacle] Player pake Shield, cuekin.");
+                return;
             }
 
-            if (input != null) input.enabled = false; // Matikan kontrol player
-
-            // Baru panggil fungsi respawn bawaan lo
+            // 3. Panggil fungsi mati di PlayerRespawn
+            // Biarkan PlayerRespawn yang ngurusin Freeze, Audio, dan Fade biar GAK BENTROK.
             PlayerRespawn respawnScript = collision.GetComponent<PlayerRespawn>();
             if (respawnScript != null)
             {
                 respawnScript.DieAndRespawn();
             }
+            else
+            {
+                Debug.LogError("[Obstacle] Player gak punya skrip PlayerRespawn, tod!");
+            }
         }
     }
 
+    // Fungsi untuk menghancurkan obstacle ini (misal kena tembakan atau dihancurin player)
     public void HandleDestruction()
     {
-        // Tambahin pengecekan ini biar variabelnya kepake
         if (isDestroyed) return;
-
         isDestroyed = true;
 
         if (destroyVFX != null)
@@ -66,27 +68,28 @@ public class CosmicObstacle : MonoBehaviour
 
         if (canRespawn)
         {
-            StartCoroutine(RespawnRoutine());
+            StartCoroutine(ObstacleRespawnRoutine());
         }
         else
         {
+            // Jangan pake Destroy kalau mau dipake lagi, pake SetActive(false) aja
             gameObject.SetActive(false);
-            Destroy(gameObject);
         }
     }
 
-    private IEnumerator RespawnRoutine()
+    private IEnumerator ObstacleRespawnRoutine()
     {
         if (sr != null) sr.enabled = false;
-        if (col != null) col.enabled = false;
+        if (col != null) col.isTrigger = false; // Matikan trigger biar gak kena player pas invisible
 
         yield return new WaitForSeconds(respawnTime);
 
         transform.position = startPosition;
 
         if (sr != null) sr.enabled = true;
-        if (col != null) col.enabled = true;
+        if (col != null) col.isTrigger = true; // Nyalain lagi
 
         isDestroyed = false;
+        Debug.Log($"[Obstacle] {gameObject.name} muncul lagi.");
     }
 }

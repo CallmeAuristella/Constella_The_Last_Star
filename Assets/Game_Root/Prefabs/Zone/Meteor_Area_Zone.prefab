@@ -52,6 +52,9 @@ MonoBehaviour:
   maxDropDistance: 50
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   groundOffset: 0.05
   sizeVariation: {x: 0.09210377, y: 0.09210377}
+  warningSfx: {fileID: 8300000, guid: 7667a82524c07b04cab3060b9d140fc3, type: 3}
+  launchSfx: {fileID: 8300000, guid: 3eb14f27e49754d4f8b03f694842322d, type: 3}
+  sfxVolume: 1

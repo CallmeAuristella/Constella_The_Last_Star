@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc400e29a746247419887c97039654ba, type: 3}
   m_Name: Crux
   m_EditorClassIdentifier: 
-  id: 
+  id: 1
   displayName: Crux
   iconUnlocked: {fileID: -7193554343104557666, guid: 0c52034443bb2664eb78f8577fa24e55, type: 3}
   iconLocked: {fileID: -3222198228850491670, guid: 0c52034443bb2664eb78f8577fa24e55, type: 3}

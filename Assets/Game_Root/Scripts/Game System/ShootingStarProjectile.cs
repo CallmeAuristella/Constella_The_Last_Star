@@ -16,22 +16,22 @@ public class ShootingStarProjectile : MonoBehaviour
     [Header("Visual Effects")]
     public GameObject impactVFX;
 
+    // --- TAMBAHAN AUDIO SECTION ---
+    [Header("Audio Feedback")]
+    [Tooltip("SFX saat menabrak dinding atau mencapai jarak maksimal")]
+    public AudioClip impactSfx;
+    [Range(0, 1)] public float impactVolume = 0.7f;
+    [SerializeField] private float soundMaxDistance = 15f; // Jarak dengar maksimal
+
     private Vector3 lockedMoveDirection;
     private Vector3 _startPosition;
-    private bool _isDead = false; // Flag biar gak panggil Destroy berkali-kali
+    private bool _isDead = false;
 
     private void Start()
     {
-        // CATAT POSISI AWAL SEBELUM GERAK
         _startPosition = transform.position;
-
-        // Ambil arah tembakan dari Launcher (sebelum diputar visualnya)
         lockedMoveDirection = transform.right;
-
-        // Putar visualnya doang
         transform.Rotate(0, 0, visualRotationOffset);
-
-        // Failsafe waktu tetap ada
         Destroy(gameObject, lifeTime);
     }
 
@@ -39,14 +39,9 @@ public class ShootingStarProjectile : MonoBehaviour
     {
         if (_isDead) return;
 
-        // Gerak lurus sesuai arah tembakan awal
         transform.position += lockedMoveDirection * speed * Time.deltaTime;
 
-        // HITUNG JARAK ASLI DARI TITIK START
         float currentDistance = Vector3.Distance(_startPosition, transform.position);
-
-        // DEBUG: Nyalain ini kalau mau liat angkanya di Console pas ngetes
-        // Debug.Log($"Distance: {currentDistance} / {maxTravelDistance}");
 
         if (currentDistance >= maxTravelDistance)
         {
@@ -68,6 +63,34 @@ public class ShootingStarProjectile : MonoBehaviour
     {
         if (_isDead) return;
         _isDead = true;
+
+        // --- LOGIKA AUDIO IMPACT (SPASIAL & MIXER LINKED) ---
+        if (impactSfx != null)
+        {
+            // Buat objek audio sementara agar suara tidak terputus saat projectile hancur
+            GameObject sfxObj = new GameObject("TempSFX_StarImpact");
+            sfxObj.transform.position = transform.position;
+            AudioSource source = sfxObj.AddComponent<AudioSource>();
+
+            source.clip = impactSfx;
+            source.volume = impactVolume;
+
+            // Setting Spasial (3D)
+            source.spatialBlend = 1f;
+            source.minDistance = 2f;
+            source.maxDistance = soundMaxDistance;
+            source.rolloffMode = AudioRolloffMode.Linear;
+
+            // Hubungkan ke Audio Mixer Group SFX (Wajib!)
+            if (GlobalAudioManager.Instance != null && GlobalAudioManager.Instance.mainMixer != null)
+            {
+                var sfxGroups = GlobalAudioManager.Instance.mainMixer.FindMatchingGroups("SFX");
+                if (sfxGroups.Length > 0) source.outputAudioMixerGroup = sfxGroups[0];
+            }
+
+            source.Play();
+            Destroy(sfxObj, impactSfx.length);
+        }
 
         if (impactVFX != null)
         {

@@ -6,27 +6,40 @@ using System.Collections;
 
 public class StageSummaryController : MonoBehaviour
 {
+    [Header("Stage Config")]
+    public int currentStageIndex;
+
     [Header("UI Components")]
     public CanvasGroup uiCanvasGroup;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI nodeText;
 
-    [Header("Constellation Animation")]
-    [Tooltip("Masukkan gambar UI Image rasi bintang secara berurutan")]
-    public Image[] constellationStars;
+    // --- LOGIKA ARRAY STARMAP BALIK LAGI ---
+    [Header("Starmap HUD System")]
+    public Image[] starmapParts; // Masukkan potongan rasi bintang di sini
+    public Color starmapActiveColor = Color.white;
+    public Color starmapInactiveColor = new Color(1, 1, 1, 0.1f);
+    public float delayBetweenStarmapParts = 0.2f;
+
+    [Header("Star Rating System")]
+    public Image[] starRatingList;
+    public int totalNodesInLevel = 10;
+    private int starsEarned = 0;
+
+    [Header("Visual Settings")]
     public Color activeStarColor = Color.white;
     public Color inactiveStarColor = new Color(1, 1, 1, 0.2f);
-    [Tooltip("Jeda waktu antar bintang menyala (detik)")]
     public float delayBetweenStars = 0.5f;
 
-    [Header("Buttons (Sprite Based)")]
+    [Header("Audio & Navigation")]
+    public AudioSource summaryAudioSource;
+    public AudioClip congratulationClip;
+    public AudioClip starPopClip;
+    public AudioClip starmapPartClip; // Opsional: Bunyi 'beep' HUD
     public Button nextStageButton;
     public Button retryButton;
     public Button menuButton;
-
-    [Header("Navigation")]
-    [Tooltip("Isi dengan nama scene selanjutnya (Misal: 'GameOverScene' kalau ini stage terakhir)")]
     public string nextSceneName = "Stage_2";
     public float fadeSpeed = 2f;
 
@@ -38,7 +51,6 @@ public class StageSummaryController : MonoBehaviour
             uiCanvasGroup.interactable = false;
             uiCanvasGroup.blocksRaycasts = false;
         }
-
         gameObject.SetActive(false);
 
         if (nextStageButton) nextStageButton.onClick.AddListener(OnNextStageClicked);
@@ -48,39 +60,55 @@ public class StageSummaryController : MonoBehaviour
 
     public void StartSummarySequence()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // Save progress
+        PlayerPrefs.SetInt($"Stage_{currentStageIndex}_Complete", 1);
+        PlayerPrefs.SetInt("Game_Complete", 1);
+        PlayerPrefs.Save();
+
+        if (GlobalAudioManager.Instance != null)
+            GlobalAudioManager.Instance.StopAllGameplayAudio();
+
         gameObject.SetActive(true);
 
-        // 1. Matikan semua bintang di awal sebelum panel muncul
-        foreach (Image star in constellationStars)
-        {
+        // --- RESET SEMUA VISUAL KE INACTIVE ---
+        foreach (Image star in starRatingList)
             if (star != null) star.color = inactiveStarColor;
-        }
 
-        // 2. Tarik dan tampilkan data CURRENT STAGE dari GameManager
+        foreach (Image part in starmapParts)
+            if (part != null) part.color = starmapInactiveColor;
+
         if (GameManager.Instance != null)
         {
-            // Matikan timer level saat summary muncul
             GameManager.Instance.isRunActive = false;
-
-            // Tampilkan data Level ini (Bukan Grand Total)
             if (timeText) timeText.text = GameManager.Instance.GetFormattedTime();
             if (scoreText) scoreText.text = GameManager.Instance.currentScore.ToString();
-
-            if (nodeText)
-            {
-                int total = GameManager.Instance.minorNodesCollected + GameManager.Instance.majorNodesCollected;
-                nodeText.text = $"{total} Stars Collected";
-            }
+            int collected = GameManager.Instance.minorNodesCollected + GameManager.Instance.majorNodesCollected;
+            if (nodeText) nodeText.text = $"{collected} Stars Collected";
+            CalculateStarRating(collected);
         }
 
-        // 3. Bekukan waktu gameplay dan mulai urutan animasi
         Time.timeScale = 0f;
         StartCoroutine(SummaryRoutine());
     }
 
+    private void CalculateStarRating(int collected)
+    {
+        if (totalNodesInLevel <= 0) { starsEarned = 1; return; }
+        float percentage = (float)collected / totalNodesInLevel;
+        if (percentage >= 0.9f) starsEarned = 3;
+        else if (percentage >= 0.5f) starsEarned = 2;
+        else starsEarned = 1;
+    }
+
     private IEnumerator SummaryRoutine()
     {
-        // FASE 1: Fade In Panel
+        if (summaryAudioSource != null && congratulationClip != null)
+            summaryAudioSource.PlayOneShot(congratulationClip);
+
+        // Fade in Panel
         float timer = 0;
         while (timer < 1f)
         {
@@ -88,63 +116,68 @@ public class StageSummaryController : MonoBehaviour
             if (uiCanvasGroup) uiCanvasGroup.alpha = Mathf.Lerp(0, 1, timer);
             yield return null;
         }
+        if (uiCanvasGroup) { uiCanvasGroup.alpha = 1; uiCanvasGroup.interactable = true; uiCanvasGroup.blocksRaycasts = true; }
 
-        if (uiCanvasGroup)
+        yield return new WaitForSecondsRealtime(0.3f);
+
+        // --- SEKUENS NYALA STARMAP (HUD STYLE) ---
+        for (int i = 0; i < starmapParts.Length; i++)
         {
-            uiCanvasGroup.alpha = 1;
-            uiCanvasGroup.interactable = true;
-            uiCanvasGroup.blocksRaycasts = true;
+            if (starmapParts[i] != null)
+            {
+                starmapParts[i].color = starmapActiveColor;
+                if (summaryAudioSource != null && starmapPartClip != null)
+                    summaryAudioSource.PlayOneShot(starmapPartClip);
+                yield return new WaitForSecondsRealtime(delayBetweenStarmapParts);
+            }
         }
 
-        // FASE 2: Animasi Rasi Bintang Menyala
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return new WaitForSecondsRealtime(0.2f);
 
-        foreach (Image star in constellationStars)
+        // --- SEKUENS NYALA BINTANG RATING ---
+        for (int i = 0; i < starRatingList.Length; i++)
         {
-            if (star != null)
+            if (i < starsEarned)
             {
-                star.color = activeStarColor;
+                if (starRatingList[i] != null)
+                {
+                    starRatingList[i].color = activeStarColor;
+                    if (summaryAudioSource != null && starPopClip != null)
+                        summaryAudioSource.PlayOneShot(starPopClip);
+                }
+                yield return new WaitForSecondsRealtime(delayBetweenStars);
             }
-            yield return new WaitForSecondsRealtime(delayBetweenStars);
         }
     }
 
-    // --- LOGIC TOMBOL ---
+    // --- NAVIGATION LOGIC ---
     private void OnNextStageClicked()
     {
         if (GameManager.Instance != null)
         {
-            // SIMPAN data stage ini ke Grand Total sebelum pindah
             GameManager.Instance.SaveCurrentStageStats();
-            // RESET data stage agar level baru mulai dari 0
-            GameManager.Instance.ResetLevelStats();
-
-            // Jika ini stage terakhir, panggil FinishGame untuk save records
-            if (nextSceneName == "GameOverScene")
-            {
+            if (nextSceneName == "VictoryScreen" || nextSceneName == "GameOverScene")
                 GameManager.Instance.FinishGame();
-            }
         }
-
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(nextSceneName);
+        PrepareForSceneLoad(nextSceneName);
     }
 
     private void OnRetryClicked()
     {
-        if (GameManager.Instance != null)
-        {
-            // RESET data stage karena pemain mengulang (Jangan di Save ke Global!)
-            GameManager.Instance.ResetLevelStats();
-        }
-
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (GameManager.Instance != null) GameManager.Instance.ResetLevelStats();
+        PrepareForSceneLoad(SceneManager.GetActiveScene().name);
     }
 
-    private void OnMenuClicked()
+    public void OnMenuClicked()
     {
         Time.timeScale = 1f;
+        if (GameManager.Instance != null) GameManager.Instance.ResetLevelStats();
         SceneManager.LoadScene("MainMenu");
+    }
+
+    private void PrepareForSceneLoad(string sceneName)
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
 }

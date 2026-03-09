@@ -24,6 +24,14 @@ public class MeteorSpawner : MonoBehaviour
     [Header("Variation Settings")]
     public Vector2 sizeVariation = new Vector2(0.8f, 1.2f);
 
+    // --- TAMBAHAN AUDIO SECTION ---
+    [Header("Audio SFX (Spatial)")]
+    [Tooltip("Suara saat tanda bahaya muncul di tanah")]
+    public AudioClip warningSfx;
+    [Tooltip("Suara saat meteor muncul di langit")]
+    public AudioClip launchSfx;
+    [Range(0, 1)] public float sfxVolume = 1f;
+
     private float timer;
 
     private void Start()
@@ -53,9 +61,17 @@ public class MeteorSpawner : MonoBehaviour
 
         if (hit.collider != null)
         {
+            Vector3 groundPos = hit.point + (hit.normal * groundOffset);
+
+            // 1. PLAY WARNING SFX (Di posisi tanah)
+            if (warningSfx != null)
+            {
+                // PlayClipAtPoint membuat audio 3D otomatis di koordinat tertentu
+                AudioSource.PlayClipAtPoint(warningSfx, groundPos, sfxVolume);
+            }
+
             if (dangerVisualPrefab != null)
             {
-                Vector3 groundPos = hit.point + (hit.normal * groundOffset);
                 Quaternion warningRot = Quaternion.FromToRotation(Vector3.up, hit.normal);
 
                 GameObject warningObj = Instantiate(dangerVisualPrefab, groundPos, warningRot);
@@ -78,28 +94,30 @@ public class MeteorSpawner : MonoBehaviour
 
     private void SpawnMeteorAtPosition(Vector3 skyPos)
     {
+        // 2. PLAY LAUNCH SFX (Di posisi langit saat muncul)
+        if (launchSfx != null)
+        {
+            AudioSource.PlayClipAtPoint(launchSfx, skyPos, sfxVolume);
+        }
+
         Quaternion lockedRotation = Quaternion.Euler(0, 0, 0);
         GameObject newMeteor = Instantiate(meteorPrefab, skyPos, lockedRotation);
 
         MeteorLogic logic = newMeteor.GetComponent<MeteorLogic>();
         if (logic != null)
         {
-            // Tentukan target meledak berdasarkan Raycast ke bawah
             RaycastHit2D hit = Physics2D.Raycast(skyPos, Vector2.down, maxDropDistance, groundLayer);
 
             if (hit.collider != null)
             {
-                // Kasih toleransi sedikit (-0.5f) biar meledak pas nyentuh tanah
                 logic.SetTargetY(hit.point.y - 0.5f);
             }
             else
             {
-                // Kalau gak kena tanah, meledak di batas maksimal jangkauan spawner
                 logic.SetTargetY(transform.position.y - maxDropDistance);
             }
         }
 
-        // Variasi Ukuran & Rotasi Visual tetap sama
         float randomSize = Random.Range(sizeVariation.x, sizeVariation.y);
         newMeteor.transform.localScale = Vector3.one * randomSize;
     }

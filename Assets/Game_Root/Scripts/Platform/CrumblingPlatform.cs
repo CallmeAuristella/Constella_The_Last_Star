@@ -5,56 +5,51 @@ using System.Collections;
 public class CrumblePlatform : MonoBehaviour
 {
     [Header("Crumble Settings")]
-    [Tooltip("Waktu platform bertahan sejak diinjak sebelum menghilang")]
-    public float delayBeforeDisappear = 1.2f; // Sudah diperlama defaultnya
-
-    [Tooltip("Waktu yang dibutuhkan platform untuk muncul kembali setelah hilang")]
-    public float respawnTime = 3f; // [FITUR BARU] Timer Respawn
+    public float delayBeforeDisappear = 1.2f;
+    public float respawnTime = 3f;
 
     [Header("Visual Effects")]
     public Color warningColor = Color.red;
     public float shakeMagnitude = 0.05f;
 
     private bool isTriggered = false;
-    private Vector3 initialPosition;
-
-    // Referensi komponen untuk dimatikan/dinyalakan
+    private Vector3 _originalPos;
     private SpriteRenderer sr;
     private Collider2D col;
     private Color originalColor;
+    private Rigidbody2D rb;
 
     private void Awake()
     {
-        initialPosition = transform.position;
-
-        // AUTO-SETUP
+        _originalPos = transform.position;
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
 
-        if (sr != null)
-        {
-            originalColor = sr.color;
-        }
+        // Pastikan ada Rigidbody tapi JANGAN kasih gravity
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null) rb = gameObject.AddComponent<Rigidbody2D>();
+
+        SetupPhysics();
+
+        if (sr != null) originalColor = sr.color;
+    }
+
+    private void SetupPhysics()
+    {
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.simulated = true;
+        rb.useFullKinematicContacts = true; // Biar player gak licin
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Kalau sedang proses hancur atau hilang, abaikan
-        if (isTriggered) return;
+        if (isTriggered || !collision.gameObject.CompareTag("Player")) return;
 
-        if (collision.gameObject.CompareTag("Player"))
+        // Cek apakah player injak dari atas
+        if (collision.contacts[0].normal.y < -0.5f)
         {
-            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            ContactPoint2D contact = collision.contacts[0];
-
-            // --- [LOGIKA ANTI KEJEDUG] ---
-            bool isHittingFromTop = contact.point.y > transform.position.y;
-            bool isPlayerFalling = playerRb != null && playerRb.linearVelocity.y <= 0.1f;
-
-            if (isHittingFromTop && isPlayerFalling)
-            {
-                StartCoroutine(VanishAndRespawnSequence());
-            }
+            StartCoroutine(VanishAndRespawnSequence());
         }
     }
 
@@ -62,38 +57,44 @@ public class CrumblePlatform : MonoBehaviour
     {
         isTriggered = true;
 
-        // FASE 1: PERINGATAN (Berubah warna & Getar)
+        // FASE 1: PERINGATAN (Getar)
         if (sr != null) sr.color = warningColor;
 
         float elapsed = 0f;
         while (elapsed < delayBeforeDisappear)
         {
-            if (shakeMagnitude > 0)
-            {
-                transform.position = initialPosition + (Vector3)Random.insideUnitCircle * shakeMagnitude;
-            }
+            // Shake visual saja, jangan ganggu fisika utama biar gak aneh
+            float offsetX = Random.Range(-1f, 1f) * shakeMagnitude;
+            float offsetY = Random.Range(-1f, 1f) * shakeMagnitude;
+            transform.position = _originalPos + new Vector3(offsetX, offsetY, 0);
+
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = initialPosition; // Kembalikan posisi setelah getar selesai
+        transform.position = _originalPos; // Kembalikan posisi
 
-        // FASE 2: MENGHILANG (Matikan Fisika dan Visual, JANGAN DI-DESTROY)
-        if (sr != null) sr.enabled = false;
-        if (col != null) col.enabled = false;
+        // FASE 2: MENGHILANG
+        SetPlatformState(false);
 
-        // FASE 3: TUNGGU RESPAWN
+        // FASE 3: TUNGGU
         yield return new WaitForSeconds(respawnTime);
 
-        // FASE 4: MUNCUL KEMBALI (Nyalakan semua fungsi seperti semula)
+        // FASE 4: MUNCUL
+        SetPlatformState(true);
+        isTriggered = false;
+    }
+
+    private void SetPlatformState(bool active)
+    {
         if (sr != null)
         {
+            sr.enabled = active;
             sr.color = originalColor;
-            sr.enabled = true;
         }
-        if (col != null) col.enabled = true;
+        if (col != null) col.enabled = active;
 
-        // Reset status agar platform bisa diinjak dan hancur lagi
-        isTriggered = false;
+        // Penting: Matikan simulasi biar gak ada collider hantu
+        rb.simulated = active;
     }
 }

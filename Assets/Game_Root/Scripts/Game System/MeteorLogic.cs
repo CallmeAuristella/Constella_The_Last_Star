@@ -5,7 +5,6 @@ public class MeteorLogic : MonoBehaviour
 {
     [Header("Simulation Settings")]
     public float lifeTime = 5f;
-    // Kita ganti MaxDistance jadi Target Y Position biar presisi
     public float targetYDestruction;
     private bool useTargetY = false;
 
@@ -14,6 +13,12 @@ public class MeteorLogic : MonoBehaviour
 
     [Header("Visual Feedback")]
     public GameObject explosionVFX;
+
+    // --- TAMBAHAN AUDIO SECTION ---
+    [Header("Audio Feedback")]
+    [Tooltip("SFX Ledakan saat menyentuh tanah atau player")]
+    public AudioClip explosionSfx;
+    [Range(0, 1)] public float explosionVolume = 1f;
 
     private bool hasExploded = false;
     private Rigidbody2D rb;
@@ -37,7 +42,6 @@ public class MeteorLogic : MonoBehaviour
     {
         if (hasExploded) return;
 
-        // CEK POSISI: Kalau posisi meteor sudah melewati (kurang dari) Target Y
         if (useTargetY && transform.position.y <= targetYDestruction)
         {
             Explode();
@@ -76,6 +80,32 @@ public class MeteorLogic : MonoBehaviour
     {
         if (hasExploded) return;
         hasExploded = true;
+
+        // --- LOGIKA AUDIO LEDAKAN (SPASIAL) ---
+        if (explosionSfx != null)
+        {
+            // Kita gunakan GlobalAudioManager untuk memutar SFX agar terikat ke Mixer SFX
+            // Jika lo belum buat fungsi PlaySfxAtPoint di Manager, kita pakai cara ini:
+            GameObject sfxObj = new GameObject("TempSFX_Explosion");
+            sfxObj.transform.position = transform.position;
+            AudioSource source = sfxObj.AddComponent<AudioSource>();
+
+            source.clip = explosionSfx;
+            source.volume = explosionVolume;
+            source.spatialBlend = 1f; // FULL 3D
+            source.minDistance = 5f;
+            source.maxDistance = 20f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+
+            // COLOK KE MIXER (Tegas!)
+            if (GlobalAudioManager.Instance != null && GlobalAudioManager.Instance.mainMixer != null)
+            {
+                source.outputAudioMixerGroup = GlobalAudioManager.Instance.mainMixer.FindMatchingGroups("SFX")[0];
+            }
+
+            source.Play();
+            Destroy(sfxObj, explosionSfx.length);
+        }
 
         if (explosionVFX != null)
         {

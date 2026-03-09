@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 91
   m_Sprite: {fileID: -2343063322172639191, guid: f8b43b09f0ba2d347a25ae62ebbf4cc2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -146,8 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d7b4238a767c429bc4c8708f17046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDestructibleByShield: 1
-  destructionEffect: {fileID: 0}
+  canRespawn: 1
+  respawnTime: 3
+  destroyVFX: {fileID: 0}
 --- !u!60 &4720229826665804813
 PolygonCollider2D:
   m_ObjectHideFlags: 0

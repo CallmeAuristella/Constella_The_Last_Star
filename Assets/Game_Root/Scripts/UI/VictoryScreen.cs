@@ -2,14 +2,19 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class VictoryScreen : MonoBehaviour
 {
+    [Header("Stage Info (PENTING)")]
+    [SerializeField] private int currentStageIndex; // Isi di Inspector (misal: 1)
+
     [Header("UI Text References")]
     [SerializeField] private TextMeshProUGUI totalScoreText;
     [SerializeField] private TextMeshProUGUI totalTimeText;
     [SerializeField] private TextMeshProUGUI totalMinorText;
     [SerializeField] private TextMeshProUGUI totalMajorText;
+    public TextMeshProUGUI totalDeathText;
 
     [Header("High Score System")]
     [SerializeField] private TextMeshProUGUI highScoreLabel;
@@ -21,35 +26,57 @@ public class VictoryScreen : MonoBehaviour
     [SerializeField] private Image constellationRewardImage;
     [SerializeField] private Sprite stageCompletedSprite;
 
+    [Header("Victory/Game Over Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip victorySFX;
+    [SerializeField] private AudioClip victoryBGM;
+
     private void Start()
     {
-        // Safety Check: Jika GameManager tidak ada (misal run scene ini langsung)
+        RestoreGlobalAudio();
+
         if (GameManager.Instance == null)
         {
             Debug.LogWarning("GameManager tidak ditemukan!");
             return;
         }
 
-        // 1. Ambil Data Akumulasi (Grand Total)
+        // --- SINKRONISASI GALLERY ---
+        // Simpan status stage ini selesai agar Gallery terbuka
+        PlayerPrefs.SetInt($"Stage_{currentStageIndex}_Complete", 1);
+        PlayerPrefs.Save();
+
+        // --- DATA ACQUISITION ---
         int score = GameManager.Instance.grandTotalScore;
         float time = GameManager.Instance.grandTotalTime;
         int minor = GameManager.Instance.grandTotalMinorNodes;
         int major = GameManager.Instance.grandTotalMajorNodes;
 
-        // 2. Tampilkan ke UI
+        // --- UI DISPLAY ---
         DisplayStats(score, time, minor, major);
+        DisplayFinalDeaths();
         ProcessHighScore(score);
         DisplayRewardVisual();
 
-        // Pastikan kursor muncul jika game sebelumnya dalam mode lock
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        StartCoroutine(AudioSequenceRoutine());
+        SetCursorState(true);
+    }
+
+    private void RestoreGlobalAudio()
+    {
+        if (GlobalAudioManager.Instance != null)
+            GlobalAudioManager.Instance.ResetMixerForMenu(); // Paksa buka semua jalur audio
+    }
+
+    private void SetCursorState(bool visible)
+    {
+        Cursor.visible = visible;
+        Cursor.lockState = visible ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     private void DisplayStats(int score, float time, int minor, int major)
     {
-        if (totalScoreText)
-            totalScoreText.text = $"Total Score: {score}";
+        if (totalScoreText) totalScoreText.text = $"Total Score: {score}";
 
         if (totalTimeText)
         {
@@ -58,11 +85,17 @@ public class VictoryScreen : MonoBehaviour
             totalTimeText.text = $"Total Time: {min:00}:{sec:00}";
         }
 
-        if (totalMinorText)
-            totalMinorText.text = $"Stardust Collected: {minor}";
+        if (totalMinorText) totalMinorText.text = $"Stardust Collected: {minor}";
+        if (totalMajorText) totalMajorText.text = $"Core Linked: {major}";
+    }
 
-        if (totalMajorText)
-            totalMajorText.text = $"Core Linked: {major}";
+    private void DisplayFinalDeaths()
+    {
+        if (totalDeathText != null)
+        {
+            int total = PlayerPrefs.GetInt("TotalDeaths", 0);
+            totalDeathText.text = "Total Deaths: " + total.ToString();
+        }
     }
 
     private void ProcessHighScore(int currentScore)
@@ -77,61 +110,59 @@ public class VictoryScreen : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        if (highScoreLabel)
-            highScoreLabel.text = $"High Score: {savedHighScore}";
+        if (highScoreLabel) highScoreLabel.text = $"High Score: {savedHighScore}";
 
         if (newRecordVisual != null)
         {
             newRecordVisual.SetActive(isNewRecord);
-
-            if (isNewRecord)
-            {
-                // Animasi Kedip menggunakan LeanTween
-                newRecordVisual.transform.localScale = Vector3.one;
-                LeanTween.scale(newRecordVisual, Vector3.one * 1.15f, 0.5f)
-                    .setLoopPingPong()
-                    .setIgnoreTimeScale(true); // Biar tetep jalan meski timeScale 0
-            }
+            // Hanya Animate jika pakai LeanTween
+            // AnimateNewRecord(); 
         }
     }
 
     private void DisplayRewardVisual()
     {
-        if (constellationRewardImage == null || stageCompletedSprite == null)
-            return;
-
+        if (constellationRewardImage == null || stageCompletedSprite == null) return;
         constellationRewardImage.sprite = stageCompletedSprite;
         constellationRewardImage.preserveAspect = true;
         constellationRewardImage.gameObject.SetActive(true);
-
-        constellationRewardImage.transform.localScale = Vector3.zero;
-
-        LeanTween.scale(constellationRewardImage.gameObject, Vector3.one, 0.8f)
-            .setEaseOutBack()
-            .setDelay(0.3f)
-            .setIgnoreTimeScale(true);
     }
 
-    // --- BUTTON FUNCTIONS ---
+    private IEnumerator AudioSequenceRoutine()
+    {
+        if (audioSource == null) yield break;
+
+        if (victorySFX != null)
+        {
+            audioSource.PlayOneShot(victorySFX);
+            yield return new WaitForSeconds(victorySFX.length);
+        }
+
+        if (victoryBGM != null)
+        {
+            audioSource.clip = victoryBGM;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+    }
+
+    // --- NAVIGATION CALLBACKS (CLEANED) ---
 
     public void LoadMainMenu()
     {
-        // 1. Reset Time Scale dulu
         Time.timeScale = 1f;
 
-        // 2. Hancurkan GameManager agar data total benar-benar reset (Clean Start)
-        if (GameManager.Instance != null)
-        {
-            Destroy(GameManager.Instance.gameObject);
-        }
+        if (GlobalAudioManager.Instance != null)
+            GlobalAudioManager.Instance.ResetMixerForMenu();
 
-        // 3. Pindah Scene
+        // JANGAN Destroy(GameManager.Instance.gameObject) di sini!
+        // Supaya GameManager tetep ada buat tombol Reset di Main Menu.
+
         SceneManager.LoadScene("MainMenu");
     }
 
     public void QuitGame()
     {
-        Debug.Log("Keluar Game...");
         Application.Quit();
     }
 }

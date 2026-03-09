@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 91
   m_Sprite: {fileID: -8661635095837416847, guid: f8b43b09f0ba2d347a25ae62ebbf4cc2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -120,11 +120,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   lifeTime: 3
+  maxTravelDistance: 20
   visualRotationOffset: 90
   blockingLayers:
     serializedVersion: 2
     m_Bits: 192
   impactVFX: {fileID: 9164335435711620569, guid: 34205bbd7640e2e4e9a9341a4507b882, type: 3}
+  impactSfx: {fileID: 8300000, guid: da3de91c11773e543b676b1a4e8fe9f4, type: 3}
+  impactVolume: 0.7
+  soundMaxDistance: 15
 --- !u!58 &3410356716303741599
 CircleCollider2D:
   m_ObjectHideFlags: 0

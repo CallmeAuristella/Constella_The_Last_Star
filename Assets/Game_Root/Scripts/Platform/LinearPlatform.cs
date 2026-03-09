@@ -21,8 +21,15 @@ public class LinearPlatform : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        // --- ANTI-SNAGGING SETTINGS ---
         rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.interpolation = RigidbodyInterpolation2D.None; // Kunci biar gak telat 1 frame
+
+        // HARUS Interpolate! Agar posisi player dan platform sinkron di setiap frame render.
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        // Gunakan Continuous agar player tidak 'tembus' saat platform bergerak cepat.
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
     private void Start()
@@ -34,7 +41,6 @@ public class LinearPlatform : MonoBehaviour
             return;
         }
 
-        // Set awal di posisi lokal Point A
         currentLocalPos = pointA.localPosition;
         transform.localPosition = currentLocalPos;
         localTarget = pointB.localPosition;
@@ -42,33 +48,45 @@ public class LinearPlatform : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (transform.parent == null) return;
+        // Jika tidak ada parent, gunakan world space biasa
+        if (transform.parent == null)
+        {
+            MoveInWorldSpace();
+            return;
+        }
 
-        // 1. GERAK SECARA LOKAL (Tidak peduli parent jatuh/terbang)
+        // 1. GERAK SECARA LOKAL
         currentLocalPos = Vector3.MoveTowards(currentLocalPos, localTarget, speed * Time.fixedDeltaTime);
 
-        // 2. SINKRONISASI KE WORLD POSITION (Agar nempel di parent)
-        // Kita paksa posisi dunianya = Posisi Parent + (Offset Lokal)
+        // 2. SINKRONISASI KE WORLD POSITION MENGGUNAKAN MOVEPOSITION
+        // MovePosition adalah kunci agar physics engine tahu objek ini 'membawa' sesuatu (Player)
         Vector3 nextWorldPos = transform.parent.TransformPoint(currentLocalPos);
-        rb.position = nextWorldPos;
+        rb.MovePosition(nextWorldPos);
 
-        // 3. CEK JARAK LOKAL UNTUK SWITCH TARGET
+        // 3. SWITCH TARGET
         if (Vector3.Distance(currentLocalPos, localTarget) < reachThreshold)
         {
             SwitchLocalTarget();
         }
     }
 
+    private void MoveInWorldSpace()
+    {
+        // Fallback jika platform tidak punya parent
+        Vector3 currentWorldPos = Vector3.MoveTowards(transform.position, transform.parent == null ? localTarget : transform.parent.TransformPoint(localTarget), speed * Time.fixedDeltaTime);
+        rb.MovePosition(currentWorldPos);
+    }
+
     private void SwitchLocalTarget()
     {
-        // Tukar target antara posisi lokal A dan B
         localTarget = (localTarget == pointB.localPosition) ? pointA.localPosition : pointB.localPosition;
     }
 
-    // --- LOGIKA STICKY PLAYER ---
+    // --- LOGIKA STICKY PLAYER (ANTI-SLIP) ---
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        // Pastikan hanya menempel jika player menginjak dari ATAS
+        if (collision.gameObject.CompareTag("Player") && collision.contacts[0].normal.y < -0.5f)
         {
             collision.transform.SetParent(transform);
         }
@@ -79,6 +97,8 @@ public class LinearPlatform : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             collision.transform.SetParent(null);
+            // Penting: Pastikan scale player tidak hancur saat lepas parent
+            collision.transform.localScale = Vector3.one;
         }
     }
 

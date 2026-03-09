@@ -11,6 +11,7 @@ TagManager:
   - FxTemporaire
   - Platform
   - SpawnPoint
+  - TransitionScreen
   layers:
   - Default
   - TransparentFX

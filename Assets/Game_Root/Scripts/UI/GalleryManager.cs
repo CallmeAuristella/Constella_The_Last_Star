@@ -14,14 +14,15 @@ public class GalleryManager : MonoBehaviour
 
     [Header("Setup Detail Popup")]
     public GameObject detailPopup;
-    public Image infographicDisplay; // Tempat naruh gambar gede
-    public TextMeshProUGUI titleText; // Judul doang
+    public Image infographicDisplay;
+    public TextMeshProUGUI titleText;
 
     private void Start()
     {
         RefreshGallery();
     }
 
+    // Fungsi Vital: Jangan diubah namanya agar sinkron dengan GameManager
     public void RefreshGallery()
     {
         // Bersihkan tombol lama
@@ -31,13 +32,12 @@ public class GalleryManager : MonoBehaviour
         {
             GameObject btnObj = Instantiate(itemPrefab, gridContainer);
 
-            // Setup Visual Tombol
-            // Pastikan nama child di Prefab lo bener ("Image" dan "Text (TMP)")
             Image icon = btnObj.transform.Find("Icon").GetComponent<Image>();
             TextMeshProUGUI label = btnObj.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
             Button btn = btnObj.GetComponent<Button>();
 
-            // Cek Unlock
+            // --- SINKRONISASI KEY ---
+            // Menggunakan format yang sama dengan logika save game lo
             bool isUnlocked = PlayerPrefs.GetInt($"Stage_{data.requiredStageIndex}_Complete", 0) == 1;
 
             if (isUnlocked)
@@ -45,6 +45,7 @@ public class GalleryManager : MonoBehaviour
                 icon.sprite = data.iconUnlocked;
                 label.text = data.displayName;
                 icon.color = Color.white;
+                btn.interactable = true; // Pastikan bisa diklik
                 btn.onClick.AddListener(() => OpenDetail(data));
             }
             else
@@ -55,16 +56,14 @@ public class GalleryManager : MonoBehaviour
                 icon.color = Color.gray;
             }
         }
+        Debug.Log("[Gallery] Gallery Refreshed and Sync with PlayerPrefs.");
     }
 
     void OpenDetail(ConstellationData data)
     {
         detailPopup.SetActive(true);
-        // Cuma ganti Gambar dan Judul
         infographicDisplay.sprite = data.infographicImage;
         titleText.text = data.displayName;
-
-        // PENTING: Preserve Aspect biar gambar infografis lo gak gepeng
         infographicDisplay.preserveAspect = true;
     }
 
