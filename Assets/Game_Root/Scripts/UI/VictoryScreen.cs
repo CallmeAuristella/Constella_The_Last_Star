@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -6,139 +6,111 @@ using System.Collections;
 
 public class VictoryScreen : MonoBehaviour
 {
-    [Header("Stage Info (PENTING)")]
-    [SerializeField] private int currentStageIndex; // Isi di Inspector (misal: 1)
+    [SerializeField] private int currentStageIndex;
 
-    [Header("UI Text References")]
+    [Header("UI")]
     [SerializeField] private TextMeshProUGUI totalScoreText;
     [SerializeField] private TextMeshProUGUI totalTimeText;
     [SerializeField] private TextMeshProUGUI totalMinorText;
     [SerializeField] private TextMeshProUGUI totalMajorText;
     public TextMeshProUGUI totalDeathText;
 
-    [Header("High Score System")]
+    [Header("High Score")]
     [SerializeField] private TextMeshProUGUI highScoreLabel;
     [SerializeField] private GameObject newRecordVisual;
 
-    private const string HIGH_SCORE_KEY = "HighScore";
-
-    [Header("Visual Reward (Optional)")]
+    [Header("Visual")]
     [SerializeField] private Image constellationRewardImage;
     [SerializeField] private Sprite stageCompletedSprite;
 
-    [Header("Victory/Game Over Audio")]
+    [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip victorySFX;
     [SerializeField] private AudioClip victoryBGM;
 
+    private const string HIGH_SCORE_KEY = "HighScore";
+
     private void Start()
     {
-        RestoreGlobalAudio();
+        GlobalAudioManager.Instance?.ResetForMenu(); // ✅ FIX
 
-        if (GameManager.Instance == null)
-        {
-            Debug.LogWarning("GameManager tidak ditemukan!");
-            return;
-        }
+        if (GameManager.Instance == null) return;
 
-        // --- SINKRONISASI GALLERY ---
-        // Simpan status stage ini selesai agar Gallery terbuka
         PlayerPrefs.SetInt($"Stage_{currentStageIndex}_Complete", 1);
         PlayerPrefs.Save();
 
-        // --- DATA ACQUISITION ---
         int score = GameManager.Instance.grandTotalScore;
         float time = GameManager.Instance.grandTotalTime;
-        int minor = GameManager.Instance.grandTotalMinorNodes;
-        int major = GameManager.Instance.grandTotalMajorNodes;
 
-        // --- UI DISPLAY ---
-        DisplayStats(score, time, minor, major);
-        DisplayFinalDeaths();
-        ProcessHighScore(score);
-        DisplayRewardVisual();
+        DisplayStats(score, time);
+        DisplayDeaths();
+        HandleHighScore(score);
+        ShowReward();
 
-        StartCoroutine(AudioSequenceRoutine());
-        SetCursorState(true);
+        StartCoroutine(AudioRoutine());
+        SetCursor(true);
     }
 
-    private void RestoreGlobalAudio()
-    {
-        if (GlobalAudioManager.Instance != null)
-            GlobalAudioManager.Instance.ResetMixerForMenu(); // Paksa buka semua jalur audio
-    }
-
-    private void SetCursorState(bool visible)
+    private void SetCursor(bool visible)
     {
         Cursor.visible = visible;
         Cursor.lockState = visible ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    private void DisplayStats(int score, float time, int minor, int major)
+    private void DisplayStats(int score, float time)
     {
-        if (totalScoreText) totalScoreText.text = $"Total Score: {score}";
+        if (totalScoreText) totalScoreText.text = $"Score: {score}";
 
         if (totalTimeText)
         {
-            int min = Mathf.FloorToInt(time / 60F);
-            int sec = Mathf.FloorToInt(time % 60F);
-            totalTimeText.text = $"Total Time: {min:00}:{sec:00}";
-        }
-
-        if (totalMinorText) totalMinorText.text = $"Stardust Collected: {minor}";
-        if (totalMajorText) totalMajorText.text = $"Core Linked: {major}";
-    }
-
-    private void DisplayFinalDeaths()
-    {
-        if (totalDeathText != null)
-        {
-            int total = PlayerPrefs.GetInt("TotalDeaths", 0);
-            totalDeathText.text = "Total Deaths: " + total.ToString();
+            int m = Mathf.FloorToInt(time / 60);
+            int s = Mathf.FloorToInt(time % 60);
+            totalTimeText.text = $"{m:00}:{s:00}";
         }
     }
 
-    private void ProcessHighScore(int currentScore)
+    private void DisplayDeaths()
     {
-        int savedHighScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
-        bool isNewRecord = currentScore > savedHighScore;
+        if (totalDeathText)
+            totalDeathText.text = "Deaths: " + PlayerPrefs.GetInt("TotalDeaths", 0);
+    }
 
-        if (isNewRecord)
+    private void HandleHighScore(int score)
+    {
+        int high = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+
+        if (score > high)
         {
-            savedHighScore = currentScore;
-            PlayerPrefs.SetInt(HIGH_SCORE_KEY, savedHighScore);
+            high = score;
+            PlayerPrefs.SetInt(HIGH_SCORE_KEY, high);
             PlayerPrefs.Save();
+
+            if (newRecordVisual) newRecordVisual.SetActive(true);
         }
 
-        if (highScoreLabel) highScoreLabel.text = $"High Score: {savedHighScore}";
-
-        if (newRecordVisual != null)
-        {
-            newRecordVisual.SetActive(isNewRecord);
-            // Hanya Animate jika pakai LeanTween
-            // AnimateNewRecord(); 
-        }
+        if (highScoreLabel)
+            highScoreLabel.text = $"High Score: {high}";
     }
 
-    private void DisplayRewardVisual()
+    private void ShowReward()
     {
-        if (constellationRewardImage == null || stageCompletedSprite == null) return;
+        if (!constellationRewardImage || !stageCompletedSprite) return;
+
         constellationRewardImage.sprite = stageCompletedSprite;
-        constellationRewardImage.preserveAspect = true;
         constellationRewardImage.gameObject.SetActive(true);
     }
 
-    private IEnumerator AudioSequenceRoutine()
+    private IEnumerator AudioRoutine()
     {
-        if (audioSource == null) yield break;
+        if (!audioSource) yield break;
 
-        if (victorySFX != null)
+        if (victorySFX)
         {
             audioSource.PlayOneShot(victorySFX);
             yield return new WaitForSeconds(victorySFX.length);
         }
 
-        if (victoryBGM != null)
+        if (victoryBGM)
         {
             audioSource.clip = victoryBGM;
             audioSource.loop = true;
@@ -146,17 +118,11 @@ public class VictoryScreen : MonoBehaviour
         }
     }
 
-    // --- NAVIGATION CALLBACKS (CLEANED) ---
-
     public void LoadMainMenu()
     {
         Time.timeScale = 1f;
 
-        if (GlobalAudioManager.Instance != null)
-            GlobalAudioManager.Instance.ResetMixerForMenu();
-
-        // JANGAN Destroy(GameManager.Instance.gameObject) di sini!
-        // Supaya GameManager tetep ada buat tombol Reset di Main Menu.
+        GlobalAudioManager.Instance?.ResetForMenu(); // ✅ FIX
 
         SceneManager.LoadScene("MainMenu");
     }

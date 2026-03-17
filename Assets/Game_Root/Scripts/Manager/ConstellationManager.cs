@@ -1,47 +1,87 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 public class ConstellationManager : MonoBehaviour
 {
-    public static ConstellationManager Instance { get; private set; }
+    public static ConstellationManager Instance;
 
-    [Header("UI Database")]
+    [Header("Runtime Data")]
+    public List<string> collectedNodes = new List<string>();
+
+    [Header("UI References (HUD + Summary)")]
     public List<ConstellationNodeUI> uiNodes = new List<ConstellationNodeUI>();
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-
-        uiNodes.RemoveAll(node => node == null);
-    }
-
-    // --- FUNGSI UTAMA YANG DICARI ERROR TADI ---
-    public void SetStarStatus(string nodeID, bool isActivated)
-    {
-        var node = uiNodes.FirstOrDefault(x => x != null && x.nodeID == nodeID);
-        if (node != null)
+        // 🔥 SINGLETON PER SCENE
+        if (Instance == null)
         {
-            if (isActivated) node.SetActive();
-            else node.ResetUI();
+            Instance = this;
         }
         else
         {
-            Debug.LogWarning($"[HUD] ID '{nodeID}' tidak ditemukan di Master List!");
+            Destroy(gameObject);
+            return;
+        }
+
+        collectedNodes = new List<string>();
+    }
+
+    // ======================================================
+    // ⭐ CORE SYSTEM
+    // ======================================================
+
+    public void OnStarCollected(string id)
+    {
+        if (!collectedNodes.Contains(id))
+        {
+            collectedNodes.Add(id);
+            Debug.Log("[Constellation] Collected: " + id);
+
+            UpdateUI(id);
         }
     }
 
-    // Fungsi tambahan untuk sinkronisasi StarNode lama
-    public void OnStarCollected(string idCollected) => SetStarStatus(idCollected, true);
-    public void OnStarReset(string idReset) => SetStarStatus(idReset, false);
-
-    // Fungsi reset massal berdasarkan list ID
-    public void ResetNodesByIDs(List<string> ids)
+    public bool IsCollected(string id)
     {
-        foreach (string id in ids)
+        return collectedNodes.Contains(id);
+    }
+
+    public void ResetAll()
+    {
+        collectedNodes.Clear();
+
+        foreach (var node in uiNodes)
         {
-            SetStarStatus(id, false);
+            if (node != null)
+                node.ResetUI();
+        }
+    }
+
+    // ======================================================
+    // ⭐ UI SYSTEM
+    // ======================================================
+
+    private void UpdateUI(string id)
+    {
+        var node = uiNodes.Find(n => n != null && n.nodeID == id);
+
+        if (node != null)
+        {
+            node.SetActiveInstant(); // ✅ FIX
+        }
+    }
+
+    public void SyncAllUI()
+    {
+        foreach (var node in uiNodes)
+        {
+            if (node == null) continue;
+
+            if (collectedNodes.Contains(node.nodeID))
+                node.SetActiveInstant(); // ✅ FIX
+            else
+                node.ResetUI();
         }
     }
 }

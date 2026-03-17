@@ -1,20 +1,20 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class GlobalAudioManager : MonoBehaviour
 {
     public static GlobalAudioManager Instance;
+
     public AudioMixer mainMixer;
 
-    // Referensi AudioSource (Bisa otomatis cari atau di-register)
     [HideInInspector] public AudioSource currentBGM;
 
     private void Awake()
     {
         if (mainMixer == null)
         {
-            Debug.LogError("TOD! Main Mixer belum dipasang di GlobalAudioManager!");
+            Debug.LogError("[GlobalAudio] MainMixer belum dipasang!");
             return;
         }
 
@@ -33,42 +33,68 @@ public class GlobalAudioManager : MonoBehaviour
     private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
     private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Konsistenkan Key PlayerPrefs dengan LoadVolumeSettings
         LoadVolumeSettings();
-        Debug.Log($"[Audio Sync] Scene {scene.name} Loaded. Mixer Synced.");
+        Debug.Log($"[Audio] Scene Loaded: {scene.name}");
     }
 
-    // --- FIX ERROR: FUNGSI PLAYMUSIC (VITAL) ---
+    // ======================================================
+    // 🎧 BGM SYSTEM
+    // ======================================================
+
     public void PlayMusic(AudioClip clip)
     {
-        // Jika currentBGM belum terdaftar, coba cari di scene
+        if (clip == null) return;
+
         if (currentBGM == null)
         {
-            GameObject bgmObj = GameObject.Find("BGM_Source"); // Sesuaikan nama objek di scene
-            if (bgmObj != null) currentBGM = bgmObj.GetComponent<AudioSource>();
+            TryFindBGMSource();
         }
+
+        if (currentBGM == null)
+        {
+            Debug.LogWarning("[GlobalAudio] BGM Source belum ditemukan!");
+            return;
+        }
+
+        if (currentBGM.clip == clip && currentBGM.isPlaying)
+            return;
+
+        currentBGM.clip = clip;
+        currentBGM.loop = true;
+        currentBGM.Play();
+
+        Debug.Log("[GlobalAudio] Playing: " + clip.name);
+    }
+
+    private void TryFindBGMSource()
+    {
+        var bgm = FindFirstObjectByType<BGMManager>();
+        if (bgm != null)
+        {
+            RegisterBGM(bgm.GetComponent<AudioSource>());
+        }
+    }
+
+    public void RegisterBGM(AudioSource source)
+    {
+        currentBGM = source;
 
         if (currentBGM != null)
         {
-            if (currentBGM.clip == clip && currentBGM.isPlaying) return;
-            currentBGM.clip = clip;
-            currentBGM.Play();
-        }
-        else
-        {
-            Debug.LogWarning("[GlobalAudio] Tidak ada AudioSource (currentBGM) untuk memutar musik!");
+            currentBGM.loop = true;
+            currentBGM.UnPause();
+            Debug.Log("[GlobalAudio] BGM Registered: " + source.name);
         }
     }
 
-    // --- FUNGSI SETTINGS (KONTROL MIXER) ---
+    // ======================================================
+    // 🔊 MIXER CONTROL
+    // ======================================================
 
     public void LoadVolumeSettings()
     {
-        if (mainMixer == null) return;
-
-        // Gunakan KEY YANG KONSISTEN (SavedBGM & SavedSFX)
         float bVol = PlayerPrefs.GetFloat("SavedBGM", 0.75f);
         float sVol = PlayerPrefs.GetFloat("SavedSFX", 0.75f);
 
@@ -76,37 +102,29 @@ public class GlobalAudioManager : MonoBehaviour
         ApplyVolume("SFXVol", sVol);
     }
 
-    public void ApplyVolume(string parameterName, float linearVolume)
+    public void ApplyVolume(string param, float value)
     {
-        if (mainMixer == null) return;
-        float dB = linearVolume > 0.0001f ? Mathf.Log10(linearVolume) * 20 : -80f;
-        mainMixer.SetFloat(parameterName, dB);
+        float dB = value > 0.0001f ? Mathf.Log10(value) * 20 : -80f;
+        mainMixer.SetFloat(param, dB);
 
-        // Simpan agar saat pindah scene tidak reset
-        if (parameterName == "MusicVol") PlayerPrefs.SetFloat("SavedBGM", linearVolume);
-        if (parameterName == "SFXVol") PlayerPrefs.SetFloat("SavedSFX", linearVolume);
+        if (param == "MusicVol") PlayerPrefs.SetFloat("SavedBGM", value);
+        if (param == "SFXVol") PlayerPrefs.SetFloat("SavedSFX", value);
+
         PlayerPrefs.Save();
     }
 
-    // --- FUNGSI MANAJEMEN BGM SCENE ---
+    public void SetMusicVolume(float value) => ApplyVolume("MusicVol", value);
+    public void SetSFXVolume(float value) => ApplyVolume("SFXVol", value);
 
-    public void RegisterBGM(AudioSource source)
-    {
-        currentBGM = source;
-        if (currentBGM != null)
-        {
-            currentBGM.UnPause();
-            Debug.Log($"[GlobalAudio] BGM Scene '{source.gameObject.name}' terdaftar.");
-        }
-    }
-
-    // --- FUNGSI KONTROL STATE (PAUSE/RESUME) ---
+    // ======================================================
+    // ⏸ STATE CONTROL
+    // ======================================================
 
     public void StopAllGameplayAudio()
     {
-        if (currentBGM != null && currentBGM.isPlaying) currentBGM.Pause();
+        if (currentBGM != null && currentBGM.isPlaying)
+            currentBGM.Pause();
 
-        // Mute SFX via Mixer
         mainMixer.SetFloat("SFXVol", -80f);
         AudioListener.pause = true;
     }
@@ -114,22 +132,22 @@ public class GlobalAudioManager : MonoBehaviour
     public void ResumeGameplayAudio()
     {
         AudioListener.pause = false;
-        AudioListener.volume = 1f;
         LoadVolumeSettings();
 
         if (currentBGM != null)
         {
             currentBGM.UnPause();
-            if (!currentBGM.isPlaying) currentBGM.Play();
+            if (!currentBGM.isPlaying)
+                currentBGM.Play();
         }
     }
 
-    public void ResetMixerForMenu()
+    public void ResetForMenu()
     {
         AudioListener.pause = false;
-        AudioListener.volume = 1f;
         LoadVolumeSettings();
         currentBGM = null;
-        Debug.Log("[GlobalAudio] Audio System Reset for Main Menu.");
+
+        Debug.Log("[GlobalAudio] Reset for Menu");
     }
 }

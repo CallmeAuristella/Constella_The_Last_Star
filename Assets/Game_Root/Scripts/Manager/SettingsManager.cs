@@ -1,62 +1,109 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using System.Collections;
 
 public class SettingsManager : MonoBehaviour
 {
-    [Header("Mixer Reference")]
-    public AudioMixer mainMixer;
+    [Header("Mixer")]
+    [SerializeField] private AudioMixer mainMixer;
 
-    [Header("Slider References")]
-    public Slider bgmSlider;
-    public Slider sfxSlider;
+    [Header("Sliders")]
+    [SerializeField] private Slider bgmSlider;
+    [SerializeField] private Slider sfxSlider;
 
-    [Header("Navigation")]
-    [SerializeField] private GameObject previousPanel;
+    [Header("Smoothing")]
+    [SerializeField] private float smoothingSpeed = 6f;
 
-    private const string BGM_PARAMS = "MusicVol";
-    private const string SFX_PARAMS = "SFXVol";
+    const string MUSIC_PARAM = "MusicVol";
+    const string SFX_PARAM = "SFXVol";
 
-    private void OnEnable()
+    const string SAVE_BGM = "SavedBGM";
+    const string SAVE_SFX = "SavedSFX";
+
+    const float MIN_VOLUME = 0.0001f;
+
+    Coroutine bgmRoutine;
+    Coroutine sfxRoutine;
+
+    private void Start()
     {
-        SyncSlidersWithMixer();
+        LoadSavedVolumes();
+        HookSliderEvents();
     }
 
-    private void SyncSlidersWithMixer()
+    void HookSliderEvents()
     {
-        if (mainMixer == null) return;
-
-        float bgmValue, sfxValue;
-
-        // Ambil dB dari Mixer
-        mainMixer.GetFloat(BGM_PARAMS, out bgmValue);
-        mainMixer.GetFloat(SFX_PARAMS, out sfxValue);
-
-        // Konversi dB balik ke Linear (0.0001 - 1) untuk visual Slider
         if (bgmSlider != null)
-            bgmSlider.SetValueWithoutNotify(Mathf.Pow(10, bgmValue / 20));
+            bgmSlider.onValueChanged.AddListener(SetBGMVolume);
 
         if (sfxSlider != null)
-            sfxSlider.SetValueWithoutNotify(Mathf.Pow(10, sfxValue / 20));
+            sfxSlider.onValueChanged.AddListener(SetSFXVolume);
     }
 
-    public void SetBGMVolume(float volume)
+    void LoadSavedVolumes()
     {
-        mainMixer.SetFloat(BGM_PARAMS, Mathf.Log10(volume) * 20);
-        // SAVE: Simpan nilai slider (0-1) ke memori
-        PlayerPrefs.SetFloat("SavedBGM", volume);
+        float savedBGM = PlayerPrefs.GetFloat(SAVE_BGM, 0.75f);
+        float savedSFX = PlayerPrefs.GetFloat(SAVE_SFX, 0.75f);
+
+        ApplyVolumeImmediate(MUSIC_PARAM, savedBGM);
+        ApplyVolumeImmediate(SFX_PARAM, savedSFX);
+
+        bgmSlider.SetValueWithoutNotify(savedBGM);
+        sfxSlider.SetValueWithoutNotify(savedSFX);
     }
 
-    public void SetSFXVolume(float volume)
+    public void SetBGMVolume(float value)
     {
-        mainMixer.SetFloat(SFX_PARAMS, Mathf.Log10(volume) * 20);
-        // SAVE: Simpan nilai slider (0-1) ke memori
-        PlayerPrefs.SetFloat("SavedSFX", volume);
+        value = Mathf.Clamp(value, MIN_VOLUME, 1f);
+
+        if (bgmRoutine != null)
+            StopCoroutine(bgmRoutine);
+
+        bgmRoutine = StartCoroutine(SmoothVolume(MUSIC_PARAM, value));
+
+        PlayerPrefs.SetFloat(SAVE_BGM, value);
+        PlayerPrefs.Save();
     }
 
-    public void CloseSettings()
+    public void SetSFXVolume(float value)
     {
-        gameObject.SetActive(false);
-        if (previousPanel != null) previousPanel.SetActive(true);
+        value = Mathf.Clamp(value, MIN_VOLUME, 1f);
+
+        if (sfxRoutine != null)
+            StopCoroutine(sfxRoutine);
+
+        sfxRoutine = StartCoroutine(SmoothVolume(SFX_PARAM, value));
+
+        PlayerPrefs.SetFloat(SAVE_SFX, value);
+        PlayerPrefs.Save();
+    }
+
+    IEnumerator SmoothVolume(string parameter, float targetLinear)
+    {
+        float currentDB;
+        mainMixer.GetFloat(parameter, out currentDB);
+
+        float targetDB = Mathf.Log10(targetLinear) * 20f;
+
+        float time = 0f;
+
+        while (time < 1f)
+        {
+            time += Time.deltaTime * smoothingSpeed;
+
+            float newDB = Mathf.Lerp(currentDB, targetDB, time);
+            mainMixer.SetFloat(parameter, newDB);
+
+            yield return null;
+        }
+
+        mainMixer.SetFloat(parameter, targetDB);
+    }
+
+    void ApplyVolumeImmediate(string parameter, float linear)
+    {
+        float dB = Mathf.Log10(linear) * 20f;
+        mainMixer.SetFloat(parameter, dB);
     }
 }

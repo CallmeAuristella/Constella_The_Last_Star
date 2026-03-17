@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System.Collections.Generic;
 
 public class GalleryManager : MonoBehaviour
@@ -8,67 +6,72 @@ public class GalleryManager : MonoBehaviour
     [Header("Data")]
     public List<ConstellationData> database;
 
-    [Header("Setup Grid")]
+    [Header("Grid Setup")]
     public Transform gridContainer;
     public GameObject itemPrefab;
 
-    [Header("Setup Detail Popup")]
-    public GameObject detailPopup;
-    public Image infographicDisplay;
-    public TextMeshProUGUI titleText;
+    [Header("Detail Popup Controller")]
+    [SerializeField] private DetailPopupController detailPopup;
+
+
 
     private void Start()
     {
         RefreshGallery();
     }
 
-    // Fungsi Vital: Jangan diubah namanya agar sinkron dengan GameManager
     public void RefreshGallery()
     {
-        // Bersihkan tombol lama
-        foreach (Transform child in gridContainer) Destroy(child.gameObject);
+        // Bersihkan item lama
+        foreach (Transform child in gridContainer)
+        {
+            Destroy(child.gameObject);
+        }
 
+        // Generate item baru dari database
         foreach (var data in database)
         {
-            GameObject btnObj = Instantiate(itemPrefab, gridContainer);
+            GameObject item = Instantiate(itemPrefab, gridContainer);
 
-            Image icon = btnObj.transform.Find("Icon").GetComponent<Image>();
-            TextMeshProUGUI label = btnObj.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
-            Button btn = btnObj.GetComponent<Button>();
+            ArchiveItemUI ui = item.GetComponent<ArchiveItemUI>();
 
-            // --- SINKRONISASI KEY ---
-            // Menggunakan format yang sama dengan logika save game lo
-            bool isUnlocked = PlayerPrefs.GetInt($"Stage_{data.requiredStageIndex}_Complete", 0) == 1;
+            bool unlocked =
+                PlayerPrefs.GetInt($"Stage_{data.requiredStageIndex}_Complete", 0) == 1;
 
-            if (isUnlocked)
-            {
-                icon.sprite = data.iconUnlocked;
-                label.text = data.displayName;
-                icon.color = Color.white;
-                btn.interactable = true; // Pastikan bisa diklik
-                btn.onClick.AddListener(() => OpenDetail(data));
-            }
-            else
-            {
-                icon.sprite = data.iconLocked;
-                label.text = "???";
-                btn.interactable = false;
-                icon.color = Color.gray;
-            }
+            ui.Setup(data, unlocked, () => OpenDetail(data));
         }
-        Debug.Log("[Gallery] Gallery Refreshed and Sync with PlayerPrefs.");
+
+        Debug.Log("[Gallery] Gallery Refreshed.");
     }
 
     void OpenDetail(ConstellationData data)
     {
-        detailPopup.SetActive(true);
-        infographicDisplay.sprite = data.infographicImage;
-        titleText.text = data.displayName;
-        infographicDisplay.preserveAspect = true;
+        if (detailPopup != null)
+        {
+            detailPopup.Show(data);
+        }
     }
-
-    public void CloseDetail()
+    [ContextMenu("DEBUG Unlock All Constellations")]
+    public void DebugUnlockAll()
     {
-        detailPopup.SetActive(false);
+        foreach (var data in database)
+        {
+            PlayerPrefs.SetInt($"Stage_{data.requiredStageIndex}_Complete", 1);
+        }
+
+        PlayerPrefs.Save();
+        RefreshGallery();
+
+        Debug.Log("All constellations unlocked (DEBUG).");
+    }
+    [ContextMenu("DEBUG Lock All Constellations")]
+    public void DebugLockAll()
+    {
+        foreach (var data in database)
+        {
+            PlayerPrefs.DeleteKey($"Stage_{data.requiredStageIndex}_Complete");
+        }
+
+        RefreshGallery();
     }
 }

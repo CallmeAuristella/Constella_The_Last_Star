@@ -3,48 +3,48 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("Panel References")]
-    public GameObject mainPanel;
-    public GameObject archivePanel;
-    public GameObject settingsPanel; // TAMBAHAN: Slot untuk panel settings lo
+    [Header("Panel Animators")]
+    [SerializeField] private UIPanelAnimator panelMainMenu;
+    [SerializeField] private UIPanelAnimator panelArchive;
+    [SerializeField] private UIPanelAnimator panelSettings;
 
-    void Start()
+    private void Start()
     {
         ShowMain();
     }
 
+    void HideAllPanels()
+    {
+        if (panelMainMenu != null) panelMainMenu.Hide();
+        if (panelArchive != null) panelArchive.Hide();
+        if (panelSettings != null) panelSettings.Hide();
+    }
+
     public void ShowMain()
     {
-        mainPanel.SetActive(true);
-        if (archivePanel) archivePanel.SetActive(false);
-        if (settingsPanel) settingsPanel.SetActive(false); // Pastikan settings tutup
+        HideAllPanels();
+        if (panelMainMenu != null) panelMainMenu.Show();
     }
 
     public void ShowArchive()
     {
-        mainPanel.SetActive(false);
-        archivePanel.SetActive(true);
-        if (settingsPanel) settingsPanel.SetActive(false);
+        HideAllPanels();
+        if (panelArchive != null) panelArchive.Show();
     }
 
-    // TAMBAHAN: Fungsi untuk buka settings
     public void ShowSettings()
     {
-        mainPanel.SetActive(false);
-        if (archivePanel) archivePanel.SetActive(false);
-        settingsPanel.SetActive(true); // Buka settings
+        HideAllPanels();
+        if (panelSettings != null) panelSettings.Show();
     }
 
     public void PlayGame()
     {
-        // Ambil AudioSource dari Global Manager dan matikan sebelum pindah scene
-        AudioSource menuAudio = GlobalAudioManager.Instance.GetComponent<AudioSource>();
-        if (menuAudio != null)
+        if (GlobalAudioManager.Instance != null)
         {
-            // Pilihan 1: Matikan langsung
-            menuAudio.Stop();
-
-            // Pilihan 2: Biarkan BGM_Manager di Level 1 yang meng-override (lebih halus)
+            AudioSource menuAudio = GlobalAudioManager.Instance.GetComponent<AudioSource>();
+            if (menuAudio != null)
+                menuAudio.Stop();
         }
 
         SceneManager.LoadScene("Stage_1");
@@ -53,6 +53,6 @@ public class MainMenuManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-        Debug.Log("Quit!");
+        Debug.Log("Quit Game");
     }
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
 
@@ -8,8 +8,7 @@ public class OrionPuzzleManager : MonoBehaviour
     [Tooltip("Urutan Wajib: 1. Alnitak, 2. Alnilam, 3. Mintaka")]
     public List<StarNode> starSequence;
 
-    [Header("Specialist HUD Reference")]
-    // Pastikan nama variabel ini 'orionHud', jangan 'hudManager' biar gak bentrok
+    [Header("HUD Reference")]
     public OrionHUDManager orionHud;
 
     [Header("Puzzle Events")]
@@ -23,30 +22,27 @@ public class OrionPuzzleManager : MonoBehaviour
     {
         if (_isSolved || starSequence == null || starSequence.Count == 0) return;
 
-        // 1. CEK URUTAN
+        // ✅ CEK URUTAN BENAR
         if (activatedStar == starSequence[_currentIndex])
         {
             Debug.Log($"[Puzzle] Step {_currentIndex + 1} OK");
 
-            // Panggil fungsi UpdateOrionStep di OrionHUDManager
-            if (orionHud != null)
-            {
-                orionHud.UpdateOrionStep(_currentIndex, true);
-            }
-
             _currentIndex++;
 
+            // ✅ PUZZLE SELESAI
             if (_currentIndex >= starSequence.Count)
             {
                 _isSolved = true;
+                Debug.Log("[Puzzle] Orion solved!");
                 OnPuzzleSolved?.Invoke();
             }
         }
         else
         {
-            // 2. SALAH URUTAN (Hanya reset jika bintang bagian dari puzzle)
+            // ❌ SALAH URUTAN
             if (starSequence.Contains(activatedStar))
             {
+                Debug.Log("[Puzzle] Wrong order → reset");
                 ResetPuzzle();
             }
         }
@@ -56,17 +52,20 @@ public class OrionPuzzleManager : MonoBehaviour
     {
         _currentIndex = 0;
         _isSolved = false;
+
         OnPuzzleFailed?.Invoke();
 
+        // 🔁 Reset semua node gameplay
         foreach (StarNode star in starSequence)
         {
-            if (star != null) star.ResetNode();
+            if (star != null)
+                star.ResetNode();
         }
 
-        // Pastikan memanggil ResetOrionHUD() yang ada di OrionHUDManager
+        // 🔁 Reset HUD visual saja (tidak sentuh data global)
         if (orionHud != null)
         {
-            orionHud.ResetOrionHUD();
+            orionHud.ResetOrionHUDVisual(); // ✅ FIX DI SINI
         }
     }
 }

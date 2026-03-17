@@ -1,18 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // WAJIB ADA UNTUK SLIDER
+using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    [Header("UI Panels")]
     public GameObject pausePanel;
     public GameObject settingsPanel;
 
-    [Header("Audio Sliders (Tarik ke sini!)")]
     public Slider musicSlider;
     public Slider sfxSlider;
 
-    [Header("Status")]
     public bool isPaused = false;
 
     private void Update()
@@ -20,24 +17,18 @@ public class PauseMenuManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused && settingsPanel.activeSelf)
-            {
                 CloseSettings();
-            }
             else if (isPaused)
-            {
                 Resume();
-            }
             else
-            {
                 Pause();
-            }
         }
     }
 
     public void Resume()
     {
         pausePanel.SetActive(false);
-        if (settingsPanel != null) settingsPanel.SetActive(false);
+        if (settingsPanel) settingsPanel.SetActive(false);
 
         Time.timeScale = 1f;
         isPaused = false;
@@ -45,16 +36,13 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        if (GlobalAudioManager.Instance != null)
-        {
-            GlobalAudioManager.Instance.ResumeGameplayAudio();
-        }
+        GlobalAudioManager.Instance?.ResumeGameplayAudio();
     }
 
     public void Pause()
     {
         pausePanel.SetActive(true);
-        if (settingsPanel != null) settingsPanel.SetActive(false);
+        if (settingsPanel) settingsPanel.SetActive(false);
 
         Time.timeScale = 0f;
         isPaused = true;
@@ -62,36 +50,23 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (GlobalAudioManager.Instance != null)
-        {
-            GlobalAudioManager.Instance.StopAllGameplayAudio();
-        }
+        GlobalAudioManager.Instance?.StopAllGameplayAudio();
     }
 
     public void OpenSettings()
     {
-        if (settingsPanel != null && pausePanel != null)
-        {
-            pausePanel.SetActive(false);
-            settingsPanel.SetActive(true);
+        pausePanel.SetActive(false);
+        settingsPanel.SetActive(true);
 
-            // --- FIX SLIDER BALIK KE 0 ---
-            SyncSlidersWithData();
-            Debug.Log("Settings opened & Sliders synced.");
-        }
-        else
-        {
-            Debug.LogError("TOD! Slot Panel masih KOSONG di Inspector!");
-        }
+        SyncSliders();
     }
 
-    // FUNGSI BARU UNTUK SINKRONISASI VISUAL SLIDER
-    private void SyncSlidersWithData()
+    private void SyncSliders()
     {
-        if (musicSlider != null)
+        if (musicSlider)
             musicSlider.value = PlayerPrefs.GetFloat("SavedBGM", 0.75f);
 
-        if (sfxSlider != null)
+        if (sfxSlider)
             sfxSlider.value = PlayerPrefs.GetFloat("SavedSFX", 0.75f);
     }
 
@@ -104,9 +79,10 @@ public class PauseMenuManager : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
+
         if (GlobalAudioManager.Instance != null)
         {
-            GlobalAudioManager.Instance.ResetMixerForMenu();
+            GlobalAudioManager.Instance.ResetForMenu(); // ✅ FIX
         }
 
         if (GameManager.Instance != null)
@@ -115,6 +91,5 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         SceneManager.LoadScene("MainMenu");
-        Debug.Log("[Navigation] Returning to Menu.");
     }
 }

@@ -9,18 +9,23 @@ public class BGMManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
 
-        // Daftarkan diri ke Global Manager biar bisa dikontrol
         if (GlobalAudioManager.Instance != null)
         {
             GlobalAudioManager.Instance.RegisterBGM(audioSource);
         }
+        else
+        {
+            Debug.LogWarning("[BGMManager] GlobalAudioManager belum siap!");
+        }
     }
 
-    // Fungsi tambahan kalau lo mau ganti lagu via kode di masa depan
     public void ChangeTrack(AudioClip newClip)
     {
+        if (newClip == null) return;
+
         audioSource.Stop();
         audioSource.clip = newClip;
+        audioSource.loop = true;
         audioSource.Play();
     }
 }

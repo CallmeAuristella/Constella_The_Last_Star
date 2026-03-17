@@ -5,7 +5,7 @@ using TMPro;
 using System.Collections;
 
 public enum NodeType { Minor, Major }
-public enum PortalType { None, NextScene } // Hapus NextChapter
+public enum PortalType { None, NextScene }
 
 [RequireComponent(typeof(Collider2D))]
 public class StarNode : MonoBehaviour
@@ -39,7 +39,6 @@ public class StarNode : MonoBehaviour
     public Color inactiveColor = Color.gray;
 
     [Header("Visuals")]
-    [Tooltip("Partikel atau Sprite yang nyala saat aktif.")]
     public GameObject activeAuraObject;
 
     [Header("Events")]
@@ -52,9 +51,11 @@ public class StarNode : MonoBehaviour
         _nodeCollider = GetComponent<Collider2D>();
         if (starSprite == null) starSprite = GetComponent<SpriteRenderer>();
 
-        // Reset status saat awal agar tidak auto-ignite
+        // 🔥 FORCE RESET STATE (ANTI BUG)
         isActivated = false;
         _hasBeenUsed = false;
+
+        ForceVisualOff(); // 🔥 INI KUNCI FIX LU
     }
 
     private void Start()
@@ -70,8 +71,7 @@ public class StarNode : MonoBehaviour
             starNameTextUI.gameObject.SetActive(showNameText);
         }
 
-        // LOGIC AUTO-IGNITE DIHAPUS BIAR TIDAK NYALA SENDIRI SAAT START
-        UpdateVisuals();
+        UpdateVisuals(); // sinkron state
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -105,8 +105,8 @@ public class StarNode : MonoBehaviour
 
         UpdateVisuals();
 
-        if (ConstellationManager.Instance != null) ConstellationManager.Instance.OnStarCollected(nodeID);
-        if (GameManager.Instance != null) GameManager.Instance.LogNodeCollection(nodeType);
+        ConstellationManager.Instance?.OnStarCollected(nodeID);
+        GameManager.Instance?.LogNodeCollection(nodeType);
 
         OnNodeIgnited?.Invoke(this);
     }
@@ -114,43 +114,65 @@ public class StarNode : MonoBehaviour
     public void OnOrbitFinished()
     {
         ActivateSystem();
-        if (_nodeCollider != null) _nodeCollider.enabled = false;
+
+        if (_nodeCollider != null)
+            _nodeCollider.enabled = false;
+
         CheckAndTriggerPortal();
     }
 
     private void UpdateVisuals()
     {
         bool visualActive = isActivated || _hasBeenUsed;
+
         Color targetColor = visualActive ? activeColor : inactiveColor;
 
-        if (starSprite != null) starSprite.color = targetColor;
-        if (starNameTextUI != null) starNameTextUI.color = targetColor;
+        if (starSprite != null)
+            starSprite.color = targetColor;
+
+        if (starNameTextUI != null)
+            starNameTextUI.color = targetColor;
 
         if (activeAuraObject != null)
-        {
             activeAuraObject.SetActive(visualActive);
-        }
+    }
+
+    // 🔥 FIX UTAMA
+    private void ForceVisualOff()
+    {
+        if (activeAuraObject != null)
+            activeAuraObject.SetActive(false);
+
+        if (starSprite != null)
+            starSprite.color = inactiveColor;
+
+        if (starNameTextUI != null)
+            starNameTextUI.color = inactiveColor;
     }
 
     public void ResetNode()
     {
         isActivated = false;
         _hasBeenUsed = false;
-        if (_nodeCollider != null) _nodeCollider.enabled = true;
+
+        if (_nodeCollider != null)
+            _nodeCollider.enabled = true;
+
+        ForceVisualOff(); // 🔥 penting
         UpdateVisuals();
-        if (ConstellationManager.Instance != null) ConstellationManager.Instance.OnStarReset(nodeID);
     }
 
     private void UpdateCheckpoint(Collider2D player)
     {
         PlayerRespawn respawn = player.GetComponent<PlayerRespawn>();
-        if (respawn != null) respawn.currentCheckpoint = transform.position;
-        if (GameManager.Instance != null) GameManager.Instance.SetCheckpoint(transform.position);
+        if (respawn != null)
+            respawn.currentCheckpoint = transform.position;
+
+        GameManager.Instance?.SetCheckpoint(transform.position);
     }
 
     private void CheckAndTriggerPortal()
     {
-        // Hanya cek transisi scene
         if (portalType == PortalType.NextScene && IsConstellationComplete())
         {
             StartCoroutine(DelayedStageSummary());
@@ -160,23 +182,28 @@ public class StarNode : MonoBehaviour
     private bool IsConstellationComplete()
     {
         StarNode[] allNodes = FindObjectsByType<StarNode>(FindObjectsSortMode.None);
+
         foreach (StarNode node in allNodes)
         {
-            // Jika ada Node Major yang belum digunakan, portal jangan terbuka
             if (node.nodeType == NodeType.Major && !node.HasBeenUsed)
                 return false;
         }
+
         return true;
     }
 
     private IEnumerator DelayedStageSummary()
     {
         yield return new WaitForSeconds(finishSequenceDelay);
-        if (summaryUI == null) summaryUI = FindFirstObjectByType<StageSummaryController>(FindObjectsInactive.Include);
+
+        if (summaryUI == null)
+            summaryUI = FindFirstObjectByType<StageSummaryController>(FindObjectsInactive.Include);
 
         if (summaryUI != null)
         {
-            if (!string.IsNullOrEmpty(nextSceneName)) summaryUI.nextSceneName = this.nextSceneName;
+            if (!string.IsNullOrEmpty(nextSceneName))
+                summaryUI.nextSceneName = this.nextSceneName;
+
             summaryUI.StartSummarySequence();
         }
         else if (!string.IsNullOrEmpty(nextSceneName))

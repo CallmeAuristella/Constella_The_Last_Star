@@ -86,7 +86,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeID: Minor
   nodeType: 0
-  chapterID: 1
   isActivated: 0
   starName: Unknown Star
   showNameText: 1
@@ -95,13 +94,11 @@ MonoBehaviour:
   orbitSpeed: 150
   portalType: 0
   nextSceneName: 
-  chapterTargetPoint: {fileID: 0}
   finishSequenceDelay: 1.5
   summaryUI: {fileID: 0}
   starSprite: {fileID: 8971981341835992211}
   activeColor: {r: 0.96862745, g: 0.84313726, b: 0.21960784, a: 1}
   inactiveColor: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 1}
-  activationParticles: {fileID: 0}
   activeAuraObject: {fileID: 7125202409175170293}
   OnNodeIgnited:
     m_PersistentCalls:
@@ -166,7 +163,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2639027307118938115, guid: 1890af9e1ae4218448ad2bf924ce9d02, type: 2}
+  - {fileID: 7367620660708798346, guid: 3b9d0bb8b0a5e574f8d122ae82aacefd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -210,8 +207,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Sample text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1890af9e1ae4218448ad2bf924ce9d02, type: 2}
-  m_sharedMaterial: {fileID: -2639027307118938115, guid: 1890af9e1ae4218448ad2bf924ce9d02, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3b9d0bb8b0a5e574f8d122ae82aacefd, type: 2}
+  m_sharedMaterial: {fileID: 7367620660708798346, guid: 3b9d0bb8b0a5e574f8d122ae82aacefd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

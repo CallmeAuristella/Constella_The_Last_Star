@@ -1,28 +1,40 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class OrionHUDManager : MonoBehaviour
 {
-    [Header("Orion IDs Configuration")]
-    [Tooltip("Isi dengan ID yang sama persis dengan yang ada di StarNode & ConstellationManager")]
+    [Header("Orion IDs")]
     public List<string> orionStarIDs = new List<string> { "Alnitak", "Alnilam", "Mintaka" };
 
-    // Dipanggil oleh OrionPuzzleManager saat urutan benar
-    public void UpdateOrionStep(int index, bool state)
+    [Header("UI References")]
+    public List<Image> hudStars;
+
+    public Color activeColor = Color.white;
+    public Color inactiveColor = new Color(1f, 1f, 1f, 0.2f);
+
+    void Update()
     {
-        if (index >= 0 && index < orionStarIDs.Count)
+        if (ConstellationManager.Instance == null) return;
+
+        for (int i = 0; i < orionStarIDs.Count; i++)
         {
-            string targetID = orionStarIDs[index];
-            ConstellationManager.Instance.SetStarStatus(targetID, state);
+            bool active = ConstellationManager.Instance.IsCollected(orionStarIDs[i]);
+
+            if (i < hudStars.Count && hudStars[i] != null)
+            {
+                hudStars[i].color = active ? activeColor : inactiveColor;
+            }
         }
     }
 
-    // Dipanggil saat salah urutan (Reset)
-    public void ResetOrionHUD()
+    // 🔥 OPTIONAL: reset visual aja (BUKAN data global)
+    public void ResetOrionHUDVisual()
     {
-        if (ConstellationManager.Instance != null)
+        foreach (var star in hudStars)
         {
-            ConstellationManager.Instance.ResetNodesByIDs(orionStarIDs);
+            if (star != null)
+                star.color = inactiveColor;
         }
     }
 }

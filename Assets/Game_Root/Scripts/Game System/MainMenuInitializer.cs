@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MainMenuInitializer : MonoBehaviour
 {
@@ -6,15 +6,13 @@ public class MainMenuInitializer : MonoBehaviour
 
     private void Awake()
     {
-        // 1. PAKSA ENGINE AUDIO AKTIF
         AudioListener.pause = false;
         AudioListener.volume = 1f;
         Time.timeScale = 1f;
 
-        // 2. OPEN MIXER VIA GLOBAL MANAGER
         if (GlobalAudioManager.Instance != null)
         {
-            GlobalAudioManager.Instance.ResetMixerForMenu();
+            GlobalAudioManager.Instance.ResetForMenu(); // ✅ FIX
         }
 
         localBGM = GetComponent<AudioSource>();
@@ -22,11 +20,19 @@ public class MainMenuInitializer : MonoBehaviour
 
     private void Start()
     {
-        // 3. KICKSTART MUSIK LOKAL
-        if (localBGM != null && !localBGM.isPlaying)
+        if (localBGM == null) return;
+
+        if (GlobalAudioManager.Instance != null)
         {
-            localBGM.Play();
-            Debug.Log("[Initialiser] BGM Main Menu Started.");
+            GlobalAudioManager.Instance.RegisterBGM(localBGM);
         }
+
+        if (!localBGM.isPlaying)
+        {
+            localBGM.loop = true;
+            localBGM.Play();
+        }
+
+        Debug.Log("[MainMenu] BGM Started");
     }
 }

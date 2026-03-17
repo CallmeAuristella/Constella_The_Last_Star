@@ -49,20 +49,32 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Sky
+    uniqueID: 1043636455
+    locked: 0
+  - name: FarBackground
+    uniqueID: 2838274935
+    locked: 0
+  - name: MidBackground
+    uniqueID: 3096374385
+    locked: 0
+  - name: NearBackground
+    uniqueID: 4019576907
+    locked: 0
+  - name: Background
+    uniqueID: 2341039163
+    locked: 0
   - name: Gameplay
     uniqueID: 694714369
-    locked: 0
-  - name: UI
-    uniqueID: 2811899531
-    locked: 0
-  - name: SFX
-    uniqueID: 1926853997
     locked: 0
   - name: Foreground
     uniqueID: 269759739
     locked: 0
-  - name: Background
-    uniqueID: 2341039163
+  - name: SFX
+    uniqueID: 1926853997
+    locked: 0
+  - name: UI
+    uniqueID: 2811899531
     locked: 0
   m_RenderingLayers:
   - Default

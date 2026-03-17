@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -33,6 +34,9 @@ public class GameManager : MonoBehaviour
     public int highScore;
     public float bestTime;
     public int totalDeaths;
+
+    // TARUH DI DALAM CLASS GameManager
+    public List<string> activatedNodes = new List<string>();
 
     private void Awake()
     {
