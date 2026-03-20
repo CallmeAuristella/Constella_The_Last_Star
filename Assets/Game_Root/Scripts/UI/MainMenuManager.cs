@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
@@ -11,35 +11,52 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         ShowMain();
+
+        // 🔥 SAFETY: pastikan state normal saat masuk menu
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
     }
 
-    void HideAllPanels()
+    // =========================
+    // PANEL CONTROL
+    // =========================
+
+    private void HideAllPanels()
     {
-        if (panelMainMenu != null) panelMainMenu.Hide();
-        if (panelArchive != null) panelArchive.Hide();
-        if (panelSettings != null) panelSettings.Hide();
+        panelMainMenu?.Hide();
+        panelArchive?.Hide();
+        panelSettings?.Hide();
     }
 
     public void ShowMain()
     {
         HideAllPanels();
-        if (panelMainMenu != null) panelMainMenu.Show();
+        panelMainMenu?.Show();
     }
 
     public void ShowArchive()
     {
         HideAllPanels();
-        if (panelArchive != null) panelArchive.Show();
+        panelArchive?.Show();
     }
 
     public void ShowSettings()
     {
         HideAllPanels();
-        if (panelSettings != null) panelSettings.Show();
+        panelSettings?.Show();
     }
+
+    // =========================
+    // GAME FLOW
+    // =========================
 
     public void PlayGame()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetRunAccumulation(); 
+        }
+
         if (GlobalAudioManager.Instance != null)
         {
             AudioSource menuAudio = GlobalAudioManager.Instance.GetComponent<AudioSource>();
@@ -52,7 +69,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void QuitGame()
     {
+        Debug.Log("[MainMenu] Quit Game");
         Application.Quit();
-        Debug.Log("Quit Game");
     }
 }

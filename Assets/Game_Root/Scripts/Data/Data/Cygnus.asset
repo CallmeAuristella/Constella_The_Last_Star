@@ -16,5 +16,5 @@ MonoBehaviour:
   displayName: Cygnus
   iconUnlocked: {fileID: -6004319888521915243, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   iconLocked: {fileID: -8618408639835801924, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
-  requiredStageIndex: 2
+  requiredStageKey: Stage_2
   infographicPages: []

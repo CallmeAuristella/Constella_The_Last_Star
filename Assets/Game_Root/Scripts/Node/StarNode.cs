@@ -1,165 +1,133 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using TMPro;
-using System.Collections;
 
 public enum NodeType { Minor, Major }
-public enum PortalType { None, NextScene }
 
 [RequireComponent(typeof(Collider2D))]
 public class StarNode : MonoBehaviour
 {
-    [Header("Identity & System")]
+    [Header("Identity")]
     public string nodeID;
     public NodeType nodeType = NodeType.Minor;
 
+    [Header("State")]
     public bool isActivated = false;
-    private bool _hasBeenUsed = false;
-    public bool HasBeenUsed => _hasBeenUsed;
+    private bool hasBeenUsed = false;
 
-    [Header("UI & Hints")]
+    [Header("UI")]
     public string starName = "Unknown Star";
     public bool showNameText = true;
     public TMP_Text starNameTextUI;
 
-    [Header("Major Node Configuration")]
+    [Header("Major Node (Orbit)")]
     public float orbitRadius = 1.5f;
     public float orbitSpeed = 150f;
 
-    [Header("Portal Configuration")]
-    public PortalType portalType = PortalType.None;
-    public string nextSceneName;
-    public float finishSequenceDelay = 1.5f;
-
-    [Header("References & Visuals")]
-    public StageSummaryController summaryUI;
+    [Header("Visual")]
     public SpriteRenderer starSprite;
     public Color activeColor = Color.cyan;
     public Color inactiveColor = Color.gray;
-
-    [Header("Visuals")]
     public GameObject activeAuraObject;
 
     [Header("Events")]
-    public UnityEvent<StarNode> OnNodeIgnited;
+    public UnityEvent<StarNode> OnNodeActivated;
 
-    private Collider2D _nodeCollider;
+    private Collider2D nodeCollider;
+
+    // =========================
+    // INIT
+    // =========================
 
     private void Awake()
     {
-        _nodeCollider = GetComponent<Collider2D>();
-        if (starSprite == null) starSprite = GetComponent<SpriteRenderer>();
+        nodeCollider = GetComponent<Collider2D>();
 
-        // 🔥 FORCE RESET STATE (ANTI BUG)
-        isActivated = false;
-        _hasBeenUsed = false;
+        if (starSprite == null)
+            starSprite = GetComponent<SpriteRenderer>();
 
-        ForceVisualOff(); // 🔥 INI KUNCI FIX LU
+        ResetNode();
     }
 
     private void Start()
     {
-        InitializeNode();
+        InitializeUI();
+        UpdateVisuals();
     }
 
-    private void InitializeNode()
+    private void InitializeUI()
     {
         if (starNameTextUI != null)
         {
             starNameTextUI.text = starName;
             starNameTextUI.gameObject.SetActive(showNameText);
         }
-
-        UpdateVisuals(); // sinkron state
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (_hasBeenUsed || !collision.CompareTag("Player")) return;
+    // =========================
+    // INTERACTION
+    // =========================
 
-        var playerMovement = collision.GetComponent<PlayerMovementInput>();
-        if (playerMovement == null) return;
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (hasBeenUsed) return;
+        if (!other.CompareTag("Player")) return;
+
+        var player = other.GetComponent<PlayerMovementInput>();
+        if (player == null) return;
 
         if (nodeType == NodeType.Minor)
         {
-            UpdateCheckpoint(collision);
-            IgniteNode();
+            HandleMinorNode(other);
         }
-        else if (nodeType == NodeType.Major && !playerMovement.isOrbiting)
+        else if (nodeType == NodeType.Major)
         {
-            playerMovement.EnterOrbit(transform, orbitRadius, orbitSpeed, true);
+            if (!player.isOrbiting)
+            {
+                player.EnterOrbit(transform, orbitRadius, orbitSpeed, true);
+            }
         }
     }
 
-    public void IgniteNode()
+    private void HandleMinorNode(Collider2D player)
     {
-        if (isActivated) return;
-        ActivateSystem();
-    }
-
-    private void ActivateSystem()
-    {
-        isActivated = true;
-        _hasBeenUsed = true;
-
-        UpdateVisuals();
-
-        ConstellationManager.Instance?.OnStarCollected(nodeID);
-        GameManager.Instance?.LogNodeCollection(nodeType);
-
-        OnNodeIgnited?.Invoke(this);
+        UpdateCheckpoint(player);
+        ActivateNode();
     }
 
     public void OnOrbitFinished()
     {
-        ActivateSystem();
+        ActivateNode();
 
-        if (_nodeCollider != null)
-            _nodeCollider.enabled = false;
-
-        CheckAndTriggerPortal();
+        if (nodeCollider != null)
+            nodeCollider.enabled = false;
     }
 
-    private void UpdateVisuals()
+    // =========================
+    // CORE LOGIC
+    // =========================
+
+    private void ActivateNode()
     {
-        bool visualActive = isActivated || _hasBeenUsed;
+        if (isActivated) return;
 
-        Color targetColor = visualActive ? activeColor : inactiveColor;
+        isActivated = true;
+        hasBeenUsed = true;
 
-        if (starSprite != null)
-            starSprite.color = targetColor;
-
-        if (starNameTextUI != null)
-            starNameTextUI.color = targetColor;
-
-        if (activeAuraObject != null)
-            activeAuraObject.SetActive(visualActive);
-    }
-
-    // 🔥 FIX UTAMA
-    private void ForceVisualOff()
-    {
-        if (activeAuraObject != null)
-            activeAuraObject.SetActive(false);
-
-        if (starSprite != null)
-            starSprite.color = inactiveColor;
-
-        if (starNameTextUI != null)
-            starNameTextUI.color = inactiveColor;
-    }
-
-    public void ResetNode()
-    {
-        isActivated = false;
-        _hasBeenUsed = false;
-
-        if (_nodeCollider != null)
-            _nodeCollider.enabled = true;
-
-        ForceVisualOff(); // 🔥 penting
         UpdateVisuals();
+
+        // 🔥 ONLY DATA FLOW (NO GAME PROGRESSION)
+        ConstellationManager.Instance?.OnStarCollected(nodeID);
+        GameManager.Instance?.LogNodeCollection(nodeType);
+
+        OnNodeActivated?.Invoke(this);
+
+
+    }
+
+    public void Activate()
+    {
+        ActivateNode();
     }
 
     private void UpdateCheckpoint(Collider2D player)
@@ -171,52 +139,56 @@ public class StarNode : MonoBehaviour
         GameManager.Instance?.SetCheckpoint(transform.position);
     }
 
-    private void CheckAndTriggerPortal()
+    // =========================
+    // VISUAL
+    // =========================
+
+    private void UpdateVisuals()
     {
-        if (portalType == PortalType.NextScene && IsConstellationComplete())
-        {
-            StartCoroutine(DelayedStageSummary());
-        }
+        bool active = isActivated || hasBeenUsed;
+
+        if (starSprite != null)
+            starSprite.color = active ? activeColor : inactiveColor;
+
+        if (starNameTextUI != null)
+            starNameTextUI.color = active ? activeColor : inactiveColor;
+
+        if (activeAuraObject != null)
+            activeAuraObject.SetActive(active);
     }
 
-    private bool IsConstellationComplete()
+    private void ForceVisualOff()
     {
-        StarNode[] allNodes = FindObjectsByType<StarNode>(FindObjectsSortMode.None);
+        if (starSprite != null)
+            starSprite.color = inactiveColor;
 
-        foreach (StarNode node in allNodes)
-        {
-            if (node.nodeType == NodeType.Major && !node.HasBeenUsed)
-                return false;
-        }
+        if (starNameTextUI != null)
+            starNameTextUI.color = inactiveColor;
 
-        return true;
+        if (activeAuraObject != null)
+            activeAuraObject.SetActive(false);
     }
 
-    private IEnumerator DelayedStageSummary()
+    public void ResetNode()
     {
-        yield return new WaitForSeconds(finishSequenceDelay);
+        isActivated = false;
+        hasBeenUsed = false;
 
-        if (summaryUI == null)
-            summaryUI = FindFirstObjectByType<StageSummaryController>(FindObjectsInactive.Include);
+        if (nodeCollider != null)
+            nodeCollider.enabled = true;
 
-        if (summaryUI != null)
-        {
-            if (!string.IsNullOrEmpty(nextSceneName))
-                summaryUI.nextSceneName = this.nextSceneName;
-
-            summaryUI.StartSummarySequence();
-        }
-        else if (!string.IsNullOrEmpty(nextSceneName))
-        {
-            SceneManager.LoadScene(nextSceneName);
-        }
+        ForceVisualOff();
     }
+
+    // =========================
+    // DEBUG
+    // =========================
 
     private void OnDrawGizmos()
     {
         if (nodeType == NodeType.Major)
         {
-            Gizmos.color = (portalType != PortalType.None) ? Color.red : Color.yellow;
+            Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, orbitRadius);
         }
     }

@@ -78,17 +78,10 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        GameManager.Instance?.AbortRun();
+
         Time.timeScale = 1f;
-
-        if (GlobalAudioManager.Instance != null)
-        {
-            GlobalAudioManager.Instance.ResetForMenu(); // ✅ FIX
-        }
-
-        if (GameManager.Instance != null)
-        {
-            Destroy(GameManager.Instance.gameObject);
-        }
+        AudioListener.pause = false;
 
         SceneManager.LoadScene("MainMenu");
     }

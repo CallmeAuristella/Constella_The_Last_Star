@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -15,10 +15,6 @@ public class StageSummaryController : MonoBehaviour
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI nodeText;
-
-    [Header("Constellation Animation Order")]
-    public List<string> constellationOrder = new List<string>();
-    public float delayBetweenNodes = 0.2f;
 
     [Header("Star Rating System")]
     public Image[] starRatingList;
@@ -43,8 +39,6 @@ public class StageSummaryController : MonoBehaviour
     public string nextSceneName = "Stage_2";
     public float fadeSpeed = 2f;
 
-
-
     private void Start()
     {
         if (summaryAudioSource != null)
@@ -59,9 +53,9 @@ public class StageSummaryController : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        if (nextStageButton) nextStageButton.onClick.AddListener(OnNextStageClicked);
-        if (retryButton) retryButton.onClick.AddListener(OnRetryClicked);
-        if (menuButton) menuButton.onClick.AddListener(OnMenuClicked);
+        nextStageButton?.onClick.AddListener(OnNextStageClicked);
+        retryButton?.onClick.AddListener(OnRetryClicked);
+        menuButton?.onClick.AddListener(OnMenuClicked);
     }
 
     public void StartSummarySequence()
@@ -69,33 +63,27 @@ public class StageSummaryController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        PlayerPrefs.SetInt($"Stage_{currentStageIndex}_Complete", 1);
-        PlayerPrefs.SetInt("Game_Complete", 1);
-        PlayerPrefs.Save();
-
-        if (GlobalAudioManager.Instance != null)
-            GlobalAudioManager.Instance.StopAllGameplayAudio();
+        GlobalAudioManager.Instance?.StopAllGameplayAudio();
 
         gameObject.SetActive(true);
 
         ResetConstellationUI();
-
-        foreach (Image star in starRatingList)
-            if (star != null)
-                star.color = inactiveStarColor;
+        ResetStars();
 
         if (GameManager.Instance != null)
         {
             GameManager.Instance.isRunActive = false;
 
+            // 🔥 PAKAI SNAPSHOT (FIX UTAMA)
+            int score = GameManager.Instance.lastStageScore;
+            float time = GameManager.Instance.lastStageTime;
+            int collected = GameManager.Instance.lastStageNodes;
+
             if (timeText)
-                timeText.text = GameManager.Instance.GetFormattedTime();
+                timeText.text = FormatTime(time);
 
             if (scoreText)
-                scoreText.text = GameManager.Instance.currentScore.ToString();
-
-            int collected = GameManager.Instance.minorNodesCollected +
-                            GameManager.Instance.majorNodesCollected;
+                scoreText.text = $"Score: {score}";
 
             if (nodeText)
                 nodeText.text = $"{collected} Stars Collected";
@@ -108,14 +96,29 @@ public class StageSummaryController : MonoBehaviour
         StartCoroutine(SummaryRoutine());
     }
 
-    void ResetConstellationUI()
+    private void ResetStars()
+    {
+        foreach (var star in starRatingList)
+        {
+            if (star != null)
+                star.color = inactiveStarColor;
+        }
+    }
+
+    private string FormatTime(float time)
+    {
+        int m = Mathf.FloorToInt(time / 60);
+        int s = Mathf.FloorToInt(time % 60);
+        return $"{m:00}:{s:00}";
+    }
+
+    private void ResetConstellationUI()
     {
         if (ConstellationManager.Instance == null) return;
 
         foreach (var node in ConstellationManager.Instance.uiNodes)
         {
-            if (node != null)
-                node.ResetUI();
+            node?.ResetUI();
         }
     }
 
@@ -158,49 +161,25 @@ public class StageSummaryController : MonoBehaviour
             uiCanvasGroup.blocksRaycasts = true;
         }
 
-        // sedikit delay agar panel settle
         yield return new WaitForSecondsRealtime(0.25f);
 
-        // PLAY CONGRATULATION SFX
         if (summaryAudioSource && congratulationClip)
         {
             summaryAudioSource.PlayOneShot(congratulationClip);
             yield return new WaitForSecondsRealtime(congratulationClip.length);
         }
 
-        // KONSTELASI
         yield return StartCoroutine(PlayConstellationSequence());
-
         yield return new WaitForSecondsRealtime(0.2f);
-
-        // STAR RATING
         yield return StartCoroutine(PlayStarRatingSequence());
     }
 
-    public IEnumerator PlayConstellationSequence(List<ConstellationNodeUI> nodes)
-    {
-        var collected = ConstellationManager.Instance.collectedNodes;
-
-        foreach (string id in collected)
-        {
-            var node = nodes.Find(n => n.nodeID == id);
-
-            if (node != null)
-            {
-                node.ActivateNodeAnimated();
-                yield return new WaitForSecondsRealtime(0.2f);
-            }
-        }
-    }
-
-    IEnumerator PlayConstellationSequence()
+    private IEnumerator PlayConstellationSequence()
     {
         if (ConstellationManager.Instance == null)
             yield break;
 
         var collected = ConstellationManager.Instance.collectedNodes;
-
-        Debug.Log("Collected count: " + collected.Count);
 
         foreach (string id in collected)
         {
@@ -218,25 +197,22 @@ public class StageSummaryController : MonoBehaviour
                 }
                 else
                 {
-                    yield return new WaitForSecondsRealtime(delayBetweenNodes);
+                    yield return new WaitForSecondsRealtime(0.2f);
                 }
             }
         }
     }
 
-    IEnumerator PlayStarRatingSequence()
+    private IEnumerator PlayStarRatingSequence()
     {
         for (int i = 0; i < starRatingList.Length; i++)
         {
-            if (i < starsEarned)
+            if (i < starsEarned && starRatingList[i] != null)
             {
-                if (starRatingList[i] != null)
-                {
-                    starRatingList[i].color = activeStarColor;
+                starRatingList[i].color = activeStarColor;
 
-                    if (summaryAudioSource && starPopClip)
-                        summaryAudioSource.PlayOneShot(starPopClip);
-                }
+                if (summaryAudioSource && starPopClip)
+                    summaryAudioSource.PlayOneShot(starPopClip);
 
                 yield return new WaitForSecondsRealtime(delayBetweenStars);
             }
@@ -247,8 +223,6 @@ public class StageSummaryController : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.SaveCurrentStageStats();
-
             if (nextSceneName == "VictoryScreen" || nextSceneName == "GameOverScene")
                 GameManager.Instance.FinishGame();
         }
@@ -259,24 +233,26 @@ public class StageSummaryController : MonoBehaviour
     private void OnRetryClicked()
     {
         if (GameManager.Instance != null)
+        {
+            
+            GameManager.Instance.ResetRunAccumulation();
             GameManager.Instance.ResetLevelStats();
+            GameManager.Instance.StartNewStageRun();
+        }
 
         PrepareForSceneLoad(SceneManager.GetActiveScene().name);
     }
 
-    public void OnMenuClicked()
+    private void OnMenuClicked()
     {
-        Time.timeScale = 1f;
-
-        if (GameManager.Instance != null)
-            GameManager.Instance.ResetLevelStats();
-
-        SceneManager.LoadScene("MainMenu");
+        GameManager.Instance?.ResetLevelStats();
+        PrepareForSceneLoad("MainMenu");
     }
 
     private void PrepareForSceneLoad(string sceneName)
     {
         Time.timeScale = 1f;
+        AudioListener.pause = false;
         SceneManager.LoadScene(sceneName);
     }
 }

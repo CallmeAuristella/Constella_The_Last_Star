@@ -28,23 +28,19 @@ public class VictoryScreen : MonoBehaviour
     [SerializeField] private AudioClip victorySFX;
     [SerializeField] private AudioClip victoryBGM;
 
-    private const string HIGH_SCORE_KEY = "HighScore";
-
     private void Start()
     {
-        GlobalAudioManager.Instance?.ResetForMenu(); // ✅ FIX
+        GlobalAudioManager.Instance?.ResetForMenu();
 
         if (GameManager.Instance == null) return;
-
-        PlayerPrefs.SetInt($"Stage_{currentStageIndex}_Complete", 1);
-        PlayerPrefs.Save();
 
         int score = GameManager.Instance.grandTotalScore;
         float time = GameManager.Instance.grandTotalTime;
 
         DisplayStats(score, time);
         DisplayDeaths();
-        HandleHighScore(score);
+        DisplayHighScore(score);
+
         ShowReward();
 
         StartCoroutine(AudioRoutine());
@@ -67,25 +63,28 @@ public class VictoryScreen : MonoBehaviour
             int s = Mathf.FloorToInt(time % 60);
             totalTimeText.text = $"{m:00}:{s:00}";
         }
+
+        if (totalMinorText)
+            totalMinorText.text = GameManager.Instance.grandTotalMinorNodes.ToString();
+
+        if (totalMajorText)
+            totalMajorText.text = GameManager.Instance.grandTotalMajorNodes.ToString();
     }
 
     private void DisplayDeaths()
     {
         if (totalDeathText)
-            totalDeathText.text = "Deaths: " + PlayerPrefs.GetInt("TotalDeaths", 0);
+            totalDeathText.text = "Deaths: " + GameManager.Instance.totalDeaths;
     }
 
-    private void HandleHighScore(int score)
+    private void DisplayHighScore(int score)
     {
-        int high = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
+        int high = GameManager.Instance.highScore;
 
         if (score > high)
         {
-            high = score;
-            PlayerPrefs.SetInt(HIGH_SCORE_KEY, high);
-            PlayerPrefs.Save();
-
             if (newRecordVisual) newRecordVisual.SetActive(true);
+            high = score;
         }
 
         if (highScoreLabel)
@@ -121,9 +120,7 @@ public class VictoryScreen : MonoBehaviour
     public void LoadMainMenu()
     {
         Time.timeScale = 1f;
-
-        GlobalAudioManager.Instance?.ResetForMenu(); // ✅ FIX
-
+        GlobalAudioManager.Instance?.ResetForMenu();
         SceneManager.LoadScene("MainMenu");
     }
 

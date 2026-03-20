@@ -36,12 +36,18 @@ public class GalleryManager : MonoBehaviour
             ArchiveItemUI ui = item.GetComponent<ArchiveItemUI>();
 
             bool unlocked =
-                PlayerPrefs.GetInt($"Stage_{data.requiredStageIndex}_Complete", 0) == 1;
+                PlayerPrefs.GetInt($"{data.requiredStageKey}_Complete", 0) == 1;
 
+            Debug.Log($"{data.requiredStageKey} = " + PlayerPrefs.GetInt($"{data.requiredStageKey}_Complete", 0));
             ui.Setup(data, unlocked, () => OpenDetail(data));
+
+
+            
         }
 
         Debug.Log("[Gallery] Gallery Refreshed.");
+
+        
     }
 
     void OpenDetail(ConstellationData data)
@@ -56,7 +62,7 @@ public class GalleryManager : MonoBehaviour
     {
         foreach (var data in database)
         {
-            PlayerPrefs.SetInt($"Stage_{data.requiredStageIndex}_Complete", 1);
+            PlayerPrefs.SetInt($"{data.requiredStageKey}_Complete", 1);
         }
 
         PlayerPrefs.Save();
@@ -69,7 +75,7 @@ public class GalleryManager : MonoBehaviour
     {
         foreach (var data in database)
         {
-            PlayerPrefs.DeleteKey($"Stage_{data.requiredStageIndex}_Complete");
+            PlayerPrefs.DeleteKey($"{data.requiredStageKey }_Complete");
         }
 
         RefreshGallery();

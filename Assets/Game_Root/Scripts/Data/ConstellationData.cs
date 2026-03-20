@@ -12,7 +12,7 @@ public class ConstellationData : ScriptableObject
     public Sprite iconLocked;
 
     [Header("Unlock Requirement")]
-    public int requiredStageIndex;
+    public string requiredStageKey;
 
     [Header("Infographic Pages")]
     public Sprite[] infographicPages;

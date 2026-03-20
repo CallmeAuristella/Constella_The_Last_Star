@@ -660,7 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d237725f14e095748bc9b928eaf5ed2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentStageIndex: 4
+  currentStageIndex: 0
   totalScoreText: {fileID: 262411583}
   totalTimeText: {fileID: 1576108480}
   totalMinorText: {fileID: 1658804}

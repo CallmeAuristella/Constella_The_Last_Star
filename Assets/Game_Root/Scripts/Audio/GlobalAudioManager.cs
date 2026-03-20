@@ -142,6 +142,10 @@ public class GlobalAudioManager : MonoBehaviour
         }
     }
 
+    public void ResetForGameplay()
+    {
+        AudioListener.pause = false;
+    }
     public void ResetForMenu()
     {
         AudioListener.pause = false;

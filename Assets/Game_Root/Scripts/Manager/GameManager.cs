@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [Header("Core References (Auto-Filled)")]
+    [Header("Core References")]
     public PlayerMovementInput player;
     public CanvasGroup transitionScreen;
 
@@ -35,13 +35,27 @@ public class GameManager : MonoBehaviour
     public float bestTime;
     public int totalDeaths;
 
-    // TARUH DI DALAM CLASS GameManager
+    [Header("Snapshot Data")]
+    public int lastStageScore;
+    public float lastStageTime;
+    public int lastStageNodes;
+
+    private bool hasSavedThisStage = false;
+    public bool isFirstStage = false;
+
+    private HashSet<int> completedThisSession = new HashSet<int>();
     public List<string> activatedNodes = new List<string>();
+
+    // =========================
+    // LIFECYCLE
+    // =========================
 
     private void Awake()
     {
         SetupSingleton();
         LoadRecords();
+
+
     }
 
     private void SetupSingleton()
@@ -57,66 +71,75 @@ public class GameManager : MonoBehaviour
     private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
     private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
 
-    private void Start()
-    {
-        // Panggil pencarian saat startup pertama kali
-        FindReferencesInScene();
-        InitializeUI();
-    }
-
     private void Update()
     {
-        if (isRunActive) globalTimer += Time.deltaTime;
+        if (isRunActive)
+            globalTimer += Time.deltaTime;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 1. Reset Checkpoint agar tidak pakai posisi dari level sebelumnya
+        Debug.Log($"[GameManager] Scene Loaded: {scene.name}");
+        hasSavedThisStage = false;
+
         hasCheckpoint = false;
 
-        // 2. Cari ulang semua referensi
-        FindReferencesInScene();
+        // 🔥 RESET GLOBAL STATE YANG SERING BIKIN BUG
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
 
-        // 3. Jalankan Coroutine Spawn agar menunggu objek Scene stabil
+        FindReferencesInScene();
         StartCoroutine(DelayedSpawnSequence(scene.name));
 
         SetupCameraTarget();
         InitializeUI();
 
-        Debug.Log($"[GameManager] Scene '{scene.name}' loaded. Checkpoint Reset & Spawn Sequence Started.");
-    }
-    private IEnumerator DelayedSpawnSequence(string sceneName)
-    {
-        // Tunggu sampai akhir frame agar semua Awake/Start di scene baru selesai
-        yield return new WaitForEndOfFrame();
-
-        if (sceneName != "MainMenu")
+        if (IsGameplayScene(scene.name))
         {
-            HandleSpawnPoint();
+            // 🔥 INI FIX UTAMA (PINDAH KE SINI)
+            if (isFirstStage)
+            {
+                Debug.Log("[GameManager] NEW RUN → RESET TOTAL");
+
+                ResetRunAccumulation();
+                ResetLevelStats();
+            }
+
+            StartRun();
+            GlobalAudioManager.Instance?.ResetForGameplay();
         }
     }
-    // --- NEW: DYNAMIC REFERENCE SYSTEM ---
+
+    private bool IsGameplayScene(string sceneName)
+    {
+        return sceneName != "MainMenu" &&
+               sceneName != "VictoryScreen" &&
+               sceneName != "GameOverScene";
+    }
+
+    private IEnumerator DelayedSpawnSequence(string sceneName)
+    {
+        yield return new WaitForEndOfFrame();
+
+        if (IsGameplayScene(sceneName))
+            HandleSpawnPoint();
+    }
+
+    // =========================
+    // REFERENCE SYSTEM
+    // =========================
 
     private void FindReferencesInScene()
     {
-        // 1. Cari Player (Jika tidak ada di slot)
-        if (player == null)
-            player = FindFirstObjectByType<PlayerMovementInput>();
+        player = FindFirstObjectByType<PlayerMovementInput>();
 
-        // 2. Cari Transition Screen (Cari CanvasGroup dengan Tag khusus atau yang ada di scene)
         GameObject canvasObj = GameObject.FindGameObjectWithTag("TransitionScreen");
-        if (canvasObj != null)
-        {
-            transitionScreen = canvasObj.GetComponent<CanvasGroup>();
-        }
-        else
-        {
-            // Fallback: Cari CanvasGroup apapun jika tag tidak ditemukan
-            transitionScreen = FindFirstObjectByType<CanvasGroup>();
-        }
-    }
 
-    // --- SYSTEM INITIALIZATION ---
+        if (canvasObj != null)
+            transitionScreen = canvasObj.GetComponent<CanvasGroup>();
+        else
+            transitionScreen = FindFirstObjectByType<CanvasGroup>();
+    }
 
     private void InitializeUI()
     {
@@ -127,39 +150,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void FindPlayerInScene() // Tetap dipertahankan untuk kompatibilitas fungsi lain
-    {
-        if (player == null) player = FindFirstObjectByType<PlayerMovementInput>();
-    }
-
-    private void HandleSpawnPoint()
-    {
-        // Gunakan Find yang lebih spesifik jika tag bermasalah
-        GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
-
-        if (spawnPoint != null && player != null)
-        {
-            // Reset Velocity agar player tidak "terpental" saat pindah scene
-            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.linearVelocity = Vector2.zero;
-
-            // Teleport Paksa
-            player.ForceTeleport(spawnPoint.transform.position);
-
-            Debug.Log($"[Spawn System] Player successfully moved to SpawnPoint at {spawnPoint.transform.position}");
-        }
-        else
-        {
-            // Fallback: Jika SpawnPoint tidak ditemukan, taruh di 0,0 agar tidak hilang
-            if (player != null) player.ForceTeleport(Vector3.zero);
-            Debug.LogWarning("[Spawn System] SpawnPoint TIDAK DITEMUKAN! Player dipindah ke (0,0,0)");
-        }
-    }
-
     private void SetupCameraTarget()
     {
         if (player == null) return;
+
         CameraFollow cam = Camera.main?.GetComponent<CameraFollow>();
+
         if (cam != null)
         {
             cam.target = player.transform;
@@ -167,9 +163,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- SCORING & STATS SYSTEM ---
+    // =========================
+    // SPAWN SYSTEM
+    // =========================
 
-    public void StartRun() => isRunActive = true;
+    private void HandleSpawnPoint()
+    {
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint");
+
+        if (spawnPoint != null && player != null)
+        {
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null) rb.linearVelocity = Vector2.zero;
+
+            player.ForceTeleport(spawnPoint.transform.position);
+        }
+        else if (player != null)
+        {
+            player.ForceTeleport(Vector3.zero);
+        }
+    }
+
+    // =========================
+    // GAMEPLAY STATS
+    // =========================
+
+    public void StartRun()
+    {
+        globalTimer = 0f;
+        isRunActive = true;
+    }
+
     public void AddScore(int amount) => currentScore += amount;
 
     public void LogNodeCollection(NodeType type)
@@ -191,71 +215,146 @@ public class GameManager : MonoBehaviour
         globalTimer = 0f;
         minorNodesCollected = 0;
         majorNodesCollected = 0;
-        isRunActive = true;
+
+        isRunActive = false;
     }
 
     public void SaveCurrentStageStats()
     {
+        if (!isRunActive)
+        {
+            Debug.LogWarning("[SAVE] Ignored - run not active");
+            return;
+        }
+
+        if (hasSavedThisStage) return;
+        hasSavedThisStage = true;
+
+        // 🔥 SIMPAN SNAPSHOT (INI KUNCI)
+        lastStageScore = currentScore;
+        lastStageTime = globalTimer;
+        lastStageNodes = minorNodesCollected + majorNodesCollected;
+
+        // 🔥 AKUMULASI
         grandTotalScore += currentScore;
         grandTotalTime += globalTimer;
         grandTotalMinorNodes += minorNodesCollected;
         grandTotalMajorNodes += majorNodesCollected;
+
+        Debug.Log($"[SAVE] Stage Score: {lastStageScore}");
+
+        // 🔥 BARU RESET
         ResetLevelStats();
     }
 
     public string GetFormattedTime()
     {
-        int minutes = Mathf.FloorToInt(globalTimer / 60F);
-        int seconds = Mathf.FloorToInt(globalTimer % 60F);
-        return string.Format("{0:00}:{1:00}", minutes, seconds);
+        int minutes = Mathf.FloorToInt(globalTimer / 60f);
+        int seconds = Mathf.FloorToInt(globalTimer % 60f);
+        return $"{minutes:00}:{seconds:00}";
     }
 
-    // --- DATA PERSISTENCE & CLEANING ---
+    // =========================
+    // PROGRESSION
+    // =========================
 
-    public void ResetGameProgress()
+
+    public void CompleteStage(int stageIndex)
     {
-        // 1. HAPUS DATA DARI STORAGE
-        PlayerPrefs.DeleteKey("HighScore");
-        PlayerPrefs.DeleteKey("TotalDeaths");
-        PlayerPrefs.DeleteKey("BestTime");
-        PlayerPrefs.DeleteKey("Game_Complete");
-
-        // Sapu bersih status stage (asumsi sampai 20 stage)
-        for (int i = 0; i <= 20; i++)
+        if (completedThisSession.Contains(stageIndex))
         {
-            PlayerPrefs.DeleteKey($"Stage_{i}_Complete");
+            Debug.Log($"[Progression] Stage {stageIndex} already completed this session");
+            return;
         }
-        PlayerPrefs.Save();
 
-        // 2. RESET VARIABEL MEMORI
-        grandTotalScore = 0;
-        grandTotalTime = 0f;
-        totalDeaths = 0;
-        highScore = 0;
+        completedThisSession.Add(stageIndex);
+
+        string key = $"Stage_{stageIndex}_Complete";
+
+        if (PlayerPrefs.GetInt(key, 0) == 1)
+            return;
+
+        PlayerPrefs.SetInt(key, 1);
+        PlayerPrefs.Save();
+    }
+
+    public void StartNewStageRun()
+    {
+        ResetRunAccumulation();
+        ResetLevelStats();
+    }
+
+    public void AbortRun()
+    {
+        Debug.Log("[GameManager] Abort Run");
+
+        isRunActive = false;
+
+        // 🔥 RESET DATA LEVEL
         ResetLevelStats();
 
-        // 3. FORCE REFRESH GALLERY (BAGIAN VITAL)
-        // Cari GalleryManager bahkan jika dia sedang nonaktif di Hierarchy
-        GalleryManager gallery = Object.FindFirstObjectByType<GalleryManager>(FindObjectsInactive.Include);
-
-        if (gallery != null)
-        {
-            gallery.RefreshGallery();
-            Debug.Log("<color=green>[GameManager]</color> Gallery Berhasil Di-lock Kembali.");
-        }
-        else
-        {
-            Debug.LogWarning("<color=red>[GameManager]</color> GalleryManager TIDAK DITEMUKAN di scene ini!");
-        }
+        // 🔥 RESET SAVE FLAG (PENTING BANGET)
+        hasSavedThisStage = false;
     }
 
     public void FinishGame()
     {
         isRunActive = false;
         SaveRecords();
-        PlayerPrefs.SetInt("Game_Complete", 1);
-        PlayerPrefs.Save();
     }
+
+    // =========================
+    // RESET SYSTEM
+    // =========================
+
+    public void ResetGameProgress()
+    {
+        StartCoroutine(ResetRoutine());
+    }
+
+    private IEnumerator ResetRoutine()
+    {
+        Debug.Log("=== HARD RESET ===");
+
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+
+        // reset runtime data
+        grandTotalScore = 0;
+        grandTotalTime = 0;
+        grandTotalMinorNodes = 0;
+        grandTotalMajorNodes = 0;
+
+        ResetLevelStats();
+
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+
+        yield return null;
+
+        SceneManager.LoadScene("MainMenu");
+
+        Debug.Log("GM Instance: " + GameManager.Instance);
+        Debug.Log("Active: " + GameManager.Instance.gameObject.activeInHierarchy);
+    }
+    public void ResetRunAccumulation()
+    {
+        Debug.Log("[GameManager] Reset RUN accumulation");
+
+        grandTotalScore = 0;
+        grandTotalTime = 0f;
+        grandTotalMinorNodes = 0;
+        grandTotalMajorNodes = 0;
+
+        // 🔥 RESET SNAPSHOT JUGA
+        lastStageScore = 0;
+        lastStageTime = 0f;
+        lastStageNodes = 0;
+    }
+
+    // =========================
+    // RECORD SYSTEM
+    // =========================
 
     private void LoadRecords()
     {
@@ -266,12 +365,18 @@ public class GameManager : MonoBehaviour
 
     private void SaveRecords()
     {
-        if (grandTotalScore > highScore) PlayerPrefs.SetInt("HighScore", grandTotalScore);
-        if (grandTotalTime < bestTime) PlayerPrefs.SetFloat("BestTime", grandTotalTime);
+        if (grandTotalScore > highScore)
+            PlayerPrefs.SetInt("HighScore", grandTotalScore);
+
+        if (grandTotalTime < bestTime)
+            PlayerPrefs.SetFloat("BestTime", grandTotalTime);
+
         PlayerPrefs.Save();
     }
 
-    // --- RESPAWN & TELEPORT LOGIC ---
+    // =========================
+    // RESPAWN SYSTEM
+    // =========================
 
     public void SetCheckpoint(Vector2 position)
     {
@@ -282,6 +387,7 @@ public class GameManager : MonoBehaviour
     public void RespawnPlayer()
     {
         if (isRespawning) return;
+
         AddDeath();
         StartCoroutine(RespawnRoutine());
     }
@@ -289,17 +395,19 @@ public class GameManager : MonoBehaviour
     private IEnumerator RespawnRoutine()
     {
         isRespawning = true;
+
         TogglePlayerPhysics(false);
 
         yield return StartCoroutine(FadeScreen(1f, 0.25f));
 
         if (player != null)
         {
-            Vector3 targetPos = hasCheckpoint ? (Vector3)lastCheckpointPos : Vector3.zero;
-            player.ForceTeleport(targetPos);
+            Vector3 pos = hasCheckpoint ? (Vector3)lastCheckpointPos : Vector3.zero;
+            player.ForceTeleport(pos);
         }
 
         ResetEnvironment();
+
         yield return new WaitForSecondsRealtime(respawnDelay);
         yield return StartCoroutine(FadeScreen(0f, 0.4f));
 
@@ -310,7 +418,9 @@ public class GameManager : MonoBehaviour
     private void TogglePlayerPhysics(bool enable)
     {
         if (player == null) return;
+
         player.enabled = enable;
+
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
@@ -322,23 +432,27 @@ public class GameManager : MonoBehaviour
     private IEnumerator FadeScreen(float targetAlpha, float duration)
     {
         if (transitionScreen == null) yield break;
-        float startAlpha = transitionScreen.alpha;
-        float timer = 0;
-        while (timer < duration)
+
+        float start = transitionScreen.alpha;
+        float t = 0;
+
+        while (t < duration)
         {
-            timer += Time.unscaledDeltaTime;
-            transitionScreen.alpha = Mathf.Lerp(startAlpha, targetAlpha, timer / duration);
+            t += Time.unscaledDeltaTime;
+            transitionScreen.alpha = Mathf.Lerp(start, targetAlpha, t / duration);
             yield return null;
         }
+
         transitionScreen.alpha = targetAlpha;
     }
 
     private void ResetEnvironment()
     {
-        FallingPlatform[] allPlatforms = FindObjectsByType<FallingPlatform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (FallingPlatform platform in allPlatforms)
-        {
-            if (platform.gameObject.scene.name != null) platform.ResetPlatform();
-        }
+        var platforms = FindObjectsByType<FallingPlatform>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        foreach (var p in platforms)
+            p.ResetPlatform();
     }
 }

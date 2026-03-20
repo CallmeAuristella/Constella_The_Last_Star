@@ -392,7 +392,8 @@ public class PlayerMovementInput : MonoBehaviour
         Vector2 directionToCenter = (currentOrbitCenter.position - transform.position).normalized;
         Vector2 launchDir = Vector2.Perpendicular(directionToCenter) * (clockwiseOrbit ? -1f : 1f);
         StarNode nodeScript = currentOrbitCenter.GetComponent<StarNode>();
-        if (nodeScript != null) nodeScript.IgniteNode();
+        if (nodeScript != null)
+            nodeScript.Activate();
         ExitOrbit(launchDir, jumpForce * orbitLaunchMultiplier);
     }
 
