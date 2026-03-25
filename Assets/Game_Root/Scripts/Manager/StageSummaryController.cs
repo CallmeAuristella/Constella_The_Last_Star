@@ -15,6 +15,10 @@ public class StageSummaryController : MonoBehaviour
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI nodeText;
+    [SerializeField] private GameObject newBestLabel;
+    [SerializeField] private TMP_Text bestScoreText;
+
+    private bool isNewBest = false;
 
     [Header("Star Rating System")]
     public Image[] starRatingList;
@@ -39,8 +43,17 @@ public class StageSummaryController : MonoBehaviour
     public string nextSceneName = "Stage_2";
     public float fadeSpeed = 2f;
 
+    private bool isSummaryRunning = false;
+
     private void Start()
     {
+        // 🔥 AUTO DETECT STAGE INDEX (ANTI HUMAN ERROR)
+        if (SceneManager.GetActiveScene().name.StartsWith("Stage_"))
+        {
+            string indexStr = SceneManager.GetActiveScene().name.Replace("Stage_", "");
+            int.TryParse(indexStr, out currentStageIndex);
+        }
+
         if (summaryAudioSource != null)
             summaryAudioSource.ignoreListenerPause = true;
 
@@ -51,6 +64,10 @@ public class StageSummaryController : MonoBehaviour
             uiCanvasGroup.blocksRaycasts = false;
         }
 
+        // 🔥 RESET LABEL STATE
+        if (newBestLabel)
+            newBestLabel.SetActive(false);
+
         gameObject.SetActive(false);
 
         nextStageButton?.onClick.AddListener(OnNextStageClicked);
@@ -60,6 +77,9 @@ public class StageSummaryController : MonoBehaviour
 
     public void StartSummarySequence()
     {
+        if (isSummaryRunning) return;
+        isSummaryRunning = true;
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -74,11 +94,15 @@ public class StageSummaryController : MonoBehaviour
         {
             GameManager.Instance.isRunActive = false;
 
-            // 🔥 PAKAI SNAPSHOT (FIX UTAMA)
-            int score = GameManager.Instance.lastStageScore;
             float time = GameManager.Instance.lastStageTime;
+            int score = GameManager.Instance.lastStageScore;
             int collected = GameManager.Instance.lastStageNodes;
+            int bestScore = GameManager.Instance.GetBestScore(currentStageIndex);
 
+            // 🔥 NEW BEST DETECTION (POST-SAVE SAFE)
+            isNewBest = (score >= bestScore && score > 0);
+
+            // UI UPDATE
             if (timeText)
                 timeText.text = FormatTime(time);
 
@@ -88,7 +112,24 @@ public class StageSummaryController : MonoBehaviour
             if (nodeText)
                 nodeText.text = $"{collected} Stars Collected";
 
+            if (bestScoreText)
+                bestScoreText.text = $"Best: {bestScore}";
+
+            if (newBestLabel)
+                newBestLabel.SetActive(isNewBest);
+
             CalculateStarRating(collected);
+        }
+
+        // 🔥 SAFE DEBUG (NULL CHECK)
+        if (ConstellationManager.Instance != null)
+        {
+            Debug.Log("CollectedNodes Count: " + ConstellationManager.Instance.GetCollectedNodes().Count);
+        }
+
+        if (GameManager.Instance != null)
+        {
+            Debug.Log("GameManager Nodes: " + GameManager.Instance.lastStageNodes);
         }
 
         Time.timeScale = 0f;
@@ -116,7 +157,7 @@ public class StageSummaryController : MonoBehaviour
     {
         if (ConstellationManager.Instance == null) return;
 
-        foreach (var node in ConstellationManager.Instance.uiNodes)
+        foreach (var node in ConstellationManager.Instance.summaryNodes)
         {
             node?.ResetUI();
         }
@@ -174,21 +215,23 @@ public class StageSummaryController : MonoBehaviour
         yield return StartCoroutine(PlayStarRatingSequence());
     }
 
-    private IEnumerator PlayConstellationSequence()
+    IEnumerator PlayConstellationSequence()
     {
         if (ConstellationManager.Instance == null)
             yield break;
 
-        var collected = ConstellationManager.Instance.collectedNodes;
+        var collected = ConstellationManager.Instance.GetCollectedNodes();
 
-        foreach (string id in collected)
+        if (collected == null || collected.Count == 0)
+            yield break;
+
+        foreach (var nodeUI in ConstellationManager.Instance.summaryNodes)
         {
-            var node = ConstellationManager.Instance.uiNodes
-                .Find(x => x != null && x.nodeID == id);
+            if (nodeUI == null) continue;
 
-            if (node != null)
+            if (collected.Contains(nodeUI.nodeID))
             {
-                node.ActivateNodeAnimated();
+                nodeUI.ActivateNodeAnimated();
 
                 if (summaryAudioSource && nodeActivateClip)
                 {
@@ -234,7 +277,6 @@ public class StageSummaryController : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            
             GameManager.Instance.ResetRunAccumulation();
             GameManager.Instance.ResetLevelStats();
             GameManager.Instance.StartNewStageRun();

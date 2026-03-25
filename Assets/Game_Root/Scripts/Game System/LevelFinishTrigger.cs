@@ -30,6 +30,9 @@ public class LevelFinishTrigger : MonoBehaviour
         isFinishing = true;
 
         Debug.Log("[FINISH] Triggered");
+        GameManager.Instance.DebugRunState("BEFORE SAVE");
+        GameManager.Instance.SaveCurrentStageStats();
+        GameManager.Instance.DebugRunState("AFTER SAVE");
 
         // 🔥 Tunggu 1 frame biar semua node commit dulu
         yield return null;

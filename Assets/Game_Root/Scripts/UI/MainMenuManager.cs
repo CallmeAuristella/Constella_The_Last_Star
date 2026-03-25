@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -7,11 +8,13 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private UIPanelAnimator panelMainMenu;
     [SerializeField] private UIPanelAnimator panelArchive;
     [SerializeField] private UIPanelAnimator panelSettings;
+    [SerializeField] private Slider bgmSlider;
+    [SerializeField] private Slider sfxSlider;
 
     private void Start()
     {
         ShowMain();
-
+        SyncSliders();
         // 🔥 SAFETY: pastikan state normal saat masuk menu
         Time.timeScale = 1f;
         AudioListener.pause = false;
@@ -71,5 +74,16 @@ public class MainMenuManager : MonoBehaviour
     {
         Debug.Log("[MainMenu] Quit Game");
         Application.Quit();
+    }
+    // =======================
+    // SLIDER VOLUME
+    // =======================
+    private void SyncSliders()
+    {
+        if (bgmSlider)
+            bgmSlider.value = PlayerPrefs.GetFloat("SavedBGM", 0.75f);
+
+        if (sfxSlider)
+            sfxSlider.value = PlayerPrefs.GetFloat("SavedSFX", 0.75f);
     }
 }

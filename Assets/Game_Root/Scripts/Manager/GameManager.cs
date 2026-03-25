@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public int minorNodesCollected = 0;
     public int majorNodesCollected = 0;
     public bool isRunActive = false;
+    public bool isRunDiscarded = false; 
 
     [Header("Global Accumulation")]
     public int grandTotalScore = 0;
@@ -46,16 +47,33 @@ public class GameManager : MonoBehaviour
     private HashSet<int> completedThisSession = new HashSet<int>();
     public List<string> activatedNodes = new List<string>();
 
+    public int currentStageIndex = 0;
+
+    const string FIRST_RUN_KEY = "FIRST_RUN_DONE";
+
     // =========================
     // LIFECYCLE
     // =========================
 
     private void Awake()
     {
+        if (PlayerPrefs.GetInt(FIRST_RUN_KEY, 0) == 0)
+        {
+            Debug.Log("[SYSTEM] First Run → Reset All Data");
+
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.SetInt(FIRST_RUN_KEY, 1);
+            PlayerPrefs.Save();
+        }
+
+        if (!PlayerPrefs.HasKey("SavedBGM"))
+            PlayerPrefs.SetFloat("SavedBGM", 0.75f);
+
+        if (!PlayerPrefs.HasKey("SavedSFX"))
+            PlayerPrefs.SetFloat("SavedSFX", 0.75f);
+
         SetupSingleton();
         LoadRecords();
-
-
     }
 
     private void SetupSingleton()
@@ -79,7 +97,8 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"[GameManager] Scene Loaded: {scene.name}");
+        DebugRunState("SCENE LOADED");
+        DebugRunState($"SCENE LOADED: {scene.name}");
         hasSavedThisStage = false;
 
         hasCheckpoint = false;
@@ -96,8 +115,13 @@ public class GameManager : MonoBehaviour
 
         if (IsGameplayScene(scene.name))
         {
-            // 🔥 INI FIX UTAMA (PINDAH KE SINI)
-            if (isFirstStage)
+            if (scene.name.StartsWith("Stage_"))
+            {
+                string indexStr = scene.name.Replace("Stage_", "");
+                currentStageIndex = int.Parse(indexStr);
+            }
+
+            if (scene.name == "Stage_1")
             {
                 Debug.Log("[GameManager] NEW RUN → RESET TOTAL");
 
@@ -190,7 +214,9 @@ public class GameManager : MonoBehaviour
 
     public void StartRun()
     {
-        globalTimer = 0f;
+        DebugRunState("START RUN");
+        ConstellationManager.Instance?.ResetCollectedNodes();
+        activatedNodes.Clear();
         isRunActive = true;
     }
 
@@ -221,14 +247,21 @@ public class GameManager : MonoBehaviour
 
     public void SaveCurrentStageStats()
     {
+        DebugRunState("BEFORE SAVE");
         if (!isRunActive)
         {
-            Debug.LogWarning("[SAVE] Ignored - run not active");
+            Debug.LogWarning("[SAVE] Blocked — run not active");
             return;
         }
 
-        if (hasSavedThisStage) return;
+        if (hasSavedThisStage)
+        {
+            Debug.LogWarning("[SAVE] Already saved this stage");
+            return;
+        }
+
         hasSavedThisStage = true;
+
 
         // 🔥 SIMPAN SNAPSHOT (INI KUNCI)
         lastStageScore = currentScore;
@@ -237,11 +270,13 @@ public class GameManager : MonoBehaviour
 
         // 🔥 AKUMULASI
         grandTotalScore += currentScore;
+        bool isNewBest = TrySetBestScore(currentStageIndex, currentScore);
         grandTotalTime += globalTimer;
         grandTotalMinorNodes += minorNodesCollected;
         grandTotalMajorNodes += majorNodesCollected;
 
         Debug.Log($"[SAVE] Stage Score: {lastStageScore}");
+        DebugRunState("AFTER SAVE");
 
         // 🔥 BARU RESET
         ResetLevelStats();
@@ -286,15 +321,16 @@ public class GameManager : MonoBehaviour
 
     public void AbortRun()
     {
+        DebugRunState("BEFORE ABORT");
         Debug.Log("[GameManager] Abort Run");
 
         isRunActive = false;
+        isRunDiscarded = true; 
 
-        // 🔥 RESET DATA LEVEL
         ResetLevelStats();
-
-        // 🔥 RESET SAVE FLAG (PENTING BANGET)
         hasSavedThisStage = false;
+
+        DebugRunState("AFTER ABORT");
     }
 
     public void FinishGame()
@@ -302,6 +338,33 @@ public class GameManager : MonoBehaviour
         isRunActive = false;
         SaveRecords();
     }
+    // ========================
+    // BEST SCORE AND RUN STAGE 
+    // ========================
+    public bool TrySetBestScore(int stageIndex, int score)
+    {
+        int bestScore = GetBestScore(stageIndex);
+
+        if (score > bestScore)
+        {
+            SetBestScore(stageIndex, score);
+            return true;
+        }
+
+        return false;
+    }
+
+    public int GetBestScore(int stageIndex)
+    {
+        return PlayerPrefs.GetInt("BEST_SCORE_STAGE_" + stageIndex, 0);
+    }
+
+    public void SetBestScore(int stageIndex, int score)
+    {
+        PlayerPrefs.SetInt("BEST_SCORE_STAGE_" + stageIndex, score);
+        PlayerPrefs.Save();
+    }
+
 
     // =========================
     // RESET SYSTEM
@@ -454,5 +517,18 @@ public class GameManager : MonoBehaviour
 
         foreach (var p in platforms)
             p.ResetPlatform();
+    }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    public void DebugRunState(string context)
+    {
+        Debug.Log(
+            $"[DEBUG RUN] {context}\n" +
+            $"Score: {currentScore}\n" +
+            $"Time: {globalTimer}\n" +
+            $"Nodes: {minorNodesCollected + majorNodesCollected}\n" +
+            $"Grand Score: {grandTotalScore}\n" +
+            $"SavedThisStage: {hasSavedThisStage}"
+        );
     }
 }

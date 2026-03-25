@@ -17,4 +17,9 @@ MonoBehaviour:
   iconUnlocked: {fileID: 6796969805235333838, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   iconLocked: {fileID: -8618408639835801924, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   requiredStageKey: Stage_1
-  infographicPages: []
+  infographicPages:
+  - {fileID: 21300000, guid: e39e415145793c041aceea8e54800269, type: 3}
+  - {fileID: 21300000, guid: f0194bc85707e4844aa76c57a75c4052, type: 3}
+  - {fileID: 21300000, guid: f103094b5af559c4e8f5a54f8808cfaf, type: 3}
+  - {fileID: 21300000, guid: fa48a7eb63c59834880b1b37becbdb79, type: 3}
+  - {fileID: 21300000, guid: 039d891817856ed478e865b5585fb71a, type: 3}

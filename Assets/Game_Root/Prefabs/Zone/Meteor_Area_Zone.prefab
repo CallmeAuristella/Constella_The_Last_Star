@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meteorPrefab: {fileID: 6194057304968248440, guid: 6aecff31bb194a542b6c8613d6f0683d, type: 3}
-  dangerVisualPrefab: {fileID: 7792240504790453775, guid: be36592ea85bc3940992d9b196b6f382, type: 3}
+  dangerVisualPrefab: {fileID: 9152044843859079636, guid: c7deefa3110c8f6479d8dbfe147d2735, type: 3}
   spawnInterval: 1.5
   warningDuration: 0.5
   areaWidth: 24.09
@@ -53,7 +53,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundOffset: 0.05
+  groundOffset: 0.38
   sizeVariation: {x: 0.09210377, y: 0.09210377}
   warningSfx: {fileID: 8300000, guid: 7667a82524c07b04cab3060b9d140fc3, type: 3}
   launchSfx: {fileID: 8300000, guid: 3eb14f27e49754d4f8b03f694842322d, type: 3}

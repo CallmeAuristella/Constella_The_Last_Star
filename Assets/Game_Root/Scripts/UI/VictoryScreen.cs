@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class VictoryScreen : MonoBehaviour
 {
@@ -55,20 +56,25 @@ public class VictoryScreen : MonoBehaviour
 
     private void DisplayStats(int score, float time)
     {
-        if (totalScoreText) totalScoreText.text = $"Score: {score}";
+        // 🔥 SCORE
+        if (totalScoreText)
+            totalScoreText.text = $"Score: {score}";
 
+        // 🔥 TIME
         if (totalTimeText)
         {
             int m = Mathf.FloorToInt(time / 60);
             int s = Mathf.FloorToInt(time % 60);
-            totalTimeText.text = $"{m:00}:{s:00}";
+            totalTimeText.text = $"Time: {m:00}:{s:00}";
         }
 
+        // 🔥 MINOR NODES
         if (totalMinorText)
-            totalMinorText.text = GameManager.Instance.grandTotalMinorNodes.ToString();
+            totalMinorText.text = $"Stars (Minor): {GameManager.Instance.grandTotalMinorNodes}";
 
+        // 🔥 MAJOR NODES
         if (totalMajorText)
-            totalMajorText.text = GameManager.Instance.grandTotalMajorNodes.ToString();
+            totalMajorText.text = $"Stars (Major): {GameManager.Instance.grandTotalMajorNodes}";
     }
 
     private void DisplayDeaths()

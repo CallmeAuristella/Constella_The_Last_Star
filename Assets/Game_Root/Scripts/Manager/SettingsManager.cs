@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using System.Collections;
@@ -26,9 +26,13 @@ public class SettingsManager : MonoBehaviour
     Coroutine bgmRoutine;
     Coroutine sfxRoutine;
 
+
+    private void Awake()
+    {
+        LoadSavedVolumes(); // 🔥 pindahin ke Awake
+    }
     private void Start()
     {
-        LoadSavedVolumes();
         HookSliderEvents();
     }
 
@@ -41,17 +45,8 @@ public class SettingsManager : MonoBehaviour
             sfxSlider.onValueChanged.AddListener(SetSFXVolume);
     }
 
-    void LoadSavedVolumes()
-    {
-        float savedBGM = PlayerPrefs.GetFloat(SAVE_BGM, 0.75f);
-        float savedSFX = PlayerPrefs.GetFloat(SAVE_SFX, 0.75f);
-
-        ApplyVolumeImmediate(MUSIC_PARAM, savedBGM);
-        ApplyVolumeImmediate(SFX_PARAM, savedSFX);
-
-        bgmSlider.SetValueWithoutNotify(savedBGM);
-        sfxSlider.SetValueWithoutNotify(savedSFX);
-    }
+    
+    
 
     public void SetBGMVolume(float value)
     {
@@ -105,5 +100,25 @@ public class SettingsManager : MonoBehaviour
     {
         float dB = Mathf.Log10(linear) * 20f;
         mainMixer.SetFloat(parameter, dB);
+    }
+    void LoadSavedVolumes()
+    {
+        if (!PlayerPrefs.HasKey(SAVE_BGM))
+            PlayerPrefs.SetFloat(SAVE_BGM, 0.75f);
+
+        if (!PlayerPrefs.HasKey(SAVE_SFX))
+            PlayerPrefs.SetFloat(SAVE_SFX, 0.75f);
+
+        float savedBGM = PlayerPrefs.GetFloat(SAVE_BGM);
+        float savedSFX = PlayerPrefs.GetFloat(SAVE_SFX);
+
+        ApplyVolumeImmediate(MUSIC_PARAM, savedBGM);
+        ApplyVolumeImmediate(SFX_PARAM, savedSFX);
+
+        if (bgmSlider != null)
+            bgmSlider.SetValueWithoutNotify(savedBGM);
+
+        if (sfxSlider != null)
+            sfxSlider.SetValueWithoutNotify(savedSFX);
     }
 }

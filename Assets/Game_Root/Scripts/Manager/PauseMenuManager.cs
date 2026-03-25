@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
+    [SerializeField] private RunDiscardedUI runDiscardedUI;
     public GameObject pausePanel;
     public GameObject settingsPanel;
 
@@ -78,11 +79,27 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoToMainMenu()
     {
-        GameManager.Instance?.AbortRun();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AbortRun();
+            GameManager.Instance.DebugRunState("ABORT RUN");
+        }
 
+        // 🔥 HANDLE RUN DISCARDED UI
+        if (runDiscardedUI != null)
+        {
+            // 🔥 HIDE PAUSE UI DULU
+            pausePanel.SetActive(false);
+            if (settingsPanel) settingsPanel.SetActive(false);
+
+            // 🔥 SHOW DISCARDED
+            runDiscardedUI.ShowAndExit("MainMenu");
+            return;
+        }
+
+        // fallback (kalau UI belum ke-assign)
         Time.timeScale = 1f;
         AudioListener.pause = false;
-
         SceneManager.LoadScene("MainMenu");
     }
 }

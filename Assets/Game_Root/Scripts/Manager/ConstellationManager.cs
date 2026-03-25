@@ -8,8 +8,9 @@ public class ConstellationManager : MonoBehaviour
     [Header("Runtime Data")]
     public List<string> collectedNodes = new List<string>();
 
-    [Header("UI References (HUD + Summary)")]
-    public List<ConstellationNodeUI> uiNodes = new List<ConstellationNodeUI>();
+    [Header("UI References")]
+    public List<ConstellationNodeUI> hudNodes;
+    public List<ConstellationNodeUI> summaryNodes;
 
     private void Awake()
     {
@@ -38,7 +39,7 @@ public class ConstellationManager : MonoBehaviour
             collectedNodes.Add(id);
             Debug.Log("[Constellation] Collected: " + id);
 
-            UpdateUI(id);
+            UpdateHUD(id); // 🔥 hanya HUD real-time
         }
     }
 
@@ -51,37 +52,77 @@ public class ConstellationManager : MonoBehaviour
     {
         collectedNodes.Clear();
 
-        foreach (var node in uiNodes)
+        // reset HUD
+        foreach (var node in hudNodes)
+        {
+            if (node != null)
+                node.ResetUI();
+        }
+
+        // reset Summary
+        foreach (var node in summaryNodes)
         {
             if (node != null)
                 node.ResetUI();
         }
     }
 
+    public void ResetCollectedNodes()
+    {
+        collectedNodes.Clear();
+    }
+
     // ======================================================
-    // ⭐ UI SYSTEM
+    // ⭐ HUD SYSTEM (REALTIME)
     // ======================================================
 
-    private void UpdateUI(string id)
+    private void UpdateHUD(string id)
     {
-        var node = uiNodes.Find(n => n != null && n.nodeID == id);
+        var node = hudNodes.Find(n => n != null && n.nodeID == id);
 
         if (node != null)
         {
-            node.SetActiveInstant(); // ✅ FIX
+            node.SetActiveInstant();
         }
     }
 
-    public void SyncAllUI()
+    public void SyncHUD()
     {
-        foreach (var node in uiNodes)
+        foreach (var node in hudNodes)
+        {
+            if (node == null) continue;
+
+            // 🔥 SET MODE DULU
+            node.SetGameplayMode();
+            node.StopAllCoroutines();
+
+            // 🔥 BARU UPDATE VISUAL
+            if (collectedNodes.Contains(node.nodeID))
+                node.SetActiveInstant();
+            else
+                node.ResetUI();
+        }
+    }
+
+    // ======================================================
+    // ⭐ SUMMARY SYSTEM (ANIMATION)
+    // ======================================================
+
+    public void SyncSummaryInstant()
+    {
+        foreach (var node in summaryNodes)
         {
             if (node == null) continue;
 
             if (collectedNodes.Contains(node.nodeID))
-                node.SetActiveInstant(); // ✅ FIX
+                node.SetActiveInstant();
             else
                 node.ResetUI();
         }
+    }
+
+    public List<string> GetCollectedNodes()
+    {
+        return new List<string>(collectedNodes);
     }
 }

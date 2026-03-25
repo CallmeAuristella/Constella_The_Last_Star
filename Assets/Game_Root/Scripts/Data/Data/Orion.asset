@@ -17,4 +17,17 @@ MonoBehaviour:
   iconUnlocked: {fileID: -1273398435709607539, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   iconLocked: {fileID: -8618408639835801924, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   requiredStageKey: Stage_3
-  infographicPages: []
+  infographicPages:
+  - {fileID: 21300000, guid: 476ddee164edf294f933728ebc7fa763, type: 3}
+  - {fileID: 21300000, guid: 5968ddeecd4cc39488a9dcdf3de498c7, type: 3}
+  - {fileID: 21300000, guid: 6ff18c139b9749f4b8e58b239e17c15f, type: 3}
+  - {fileID: 21300000, guid: d349617a8caeee74a9d9a3bb3a4c0b49, type: 3}
+  - {fileID: 21300000, guid: e0faecaba8d09334f9f228c96d45f6cf, type: 3}
+  - {fileID: 21300000, guid: 642fd0109578a4240ad77afd2a7455f8, type: 3}
+  - {fileID: 21300000, guid: 49fd098a8c36b3a489e7a220353f0884, type: 3}
+  - {fileID: 21300000, guid: 02723680c0313aa4abc0672fd106da7e, type: 3}
+  - {fileID: 21300000, guid: ab931fcfc44a5804f9891ecad69d6227, type: 3}
+  - {fileID: 21300000, guid: 6d7078b684ff98e4a973d1ef5035f641, type: 3}
+  - {fileID: 21300000, guid: 1ffb8292579c38d488f583365c425bad, type: 3}
+  - {fileID: 21300000, guid: d504b60f7dcbc64429e49b4a0235fed2, type: 3}
+  - {fileID: 21300000, guid: 2608e7218ee1ac34eaa0e688433a9c8c, type: 3}
