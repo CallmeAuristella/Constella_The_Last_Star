@@ -43,6 +43,9 @@ public class StageSummaryController : MonoBehaviour
     public string nextSceneName = "Stage_2";
     public float fadeSpeed = 2f;
 
+    [Header("Score Breakdown UI")]
+    public Transform breakdownContainer;
+    public GameObject scoreRowPrefab;
     private bool isSummaryRunning = false;
 
     private void Start()
@@ -137,6 +140,7 @@ public class StageSummaryController : MonoBehaviour
         StartCoroutine(SummaryRoutine());
     }
 
+
     private void ResetStars()
     {
         foreach (var star in starRatingList)
@@ -203,6 +207,7 @@ public class StageSummaryController : MonoBehaviour
         }
 
         yield return new WaitForSecondsRealtime(0.25f);
+        PopulateScoreBreakdown();
 
         if (summaryAudioSource && congratulationClip)
         {
@@ -261,7 +266,34 @@ public class StageSummaryController : MonoBehaviour
             }
         }
     }
+    void PopulateScoreBreakdown()
+    {
+        // clear lama
+        foreach (Transform child in breakdownContainer)
+        {
+            Destroy(child.gameObject);
+        }
 
+        var eval = GameManager.Instance.lastRunEvaluation;
+
+        foreach (var entry in eval.breakdown)
+        {
+            GameObject row = Instantiate(scoreRowPrefab, breakdownContainer);
+
+            var rowUI = row.GetComponent<ScoreRowUI>();
+
+            bool isTotal = false;
+
+            rowUI.Setup(entry.label, entry.value, isTotal);
+        }
+
+        // TOTAL (optional tapi recommended)
+        GameObject totalRow = Instantiate(scoreRowPrefab, breakdownContainer);
+
+        var totalUI = totalRow.GetComponent<ScoreRowUI>();
+
+        totalUI.Setup("TOTAL", GameManager.Instance.lastRunEvaluation.finalScore, true);
+    }
     private void OnNextStageClicked()
     {
         if (GameManager.Instance != null)

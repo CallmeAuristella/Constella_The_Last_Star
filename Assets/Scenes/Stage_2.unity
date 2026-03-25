@@ -1478,6 +1478,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8314306204643550532, guid: 35cdc81dc90854a4aacaaa34e3f0e647, type: 3}
   m_PrefabInstance: {fileID: 1395563967}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &136594702 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7905235293615091453, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+  m_PrefabInstance: {fileID: 7541795618942775997}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &140046773
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21895,6 +21900,10 @@ PrefabInstance:
       value: Stage_3
       objectReference: {fileID: 0}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: scoreRowPrefab
+      value: 
+      objectReference: {fileID: 3513001302251145453, guid: 43350fce5bc1c6b4ebe65d09cc78ea2f, type: 3}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: nextStageButton
       value: 
       objectReference: {fileID: 1081372094}
@@ -21918,6 +21927,10 @@ PrefabInstance:
       propertyPath: totalNodesInLevel
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: breakdownContainer
+      value: 
+      objectReference: {fileID: 136594702}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: inactiveStarColor.a
       value: 0.19607843

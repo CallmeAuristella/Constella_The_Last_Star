@@ -20194,6 +20194,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1363006112}
   m_CullTransparentMesh: 1
+--- !u!224 &1363397090 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7905235293615091453, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+  m_PrefabInstance: {fileID: 7541795618942775997}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1367488930 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8165503856303681469, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
@@ -32521,6 +32526,10 @@ PrefabInstance:
       value: Stage_3
       objectReference: {fileID: 0}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: scoreRowPrefab
+      value: 
+      objectReference: {fileID: 3513001302251145453, guid: 43350fce5bc1c6b4ebe65d09cc78ea2f, type: 3}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: nextStageButton
       value: 
       objectReference: {fileID: 1081372094}
@@ -32544,6 +32553,10 @@ PrefabInstance:
       propertyPath: totalNodesInLevel
       value: 19
       objectReference: {fileID: 0}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: breakdownContainer
+      value: 
+      objectReference: {fileID: 1363397090}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: inactiveStarColor.a
       value: 0.19607843

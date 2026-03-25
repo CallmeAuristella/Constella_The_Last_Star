@@ -45,6 +45,14 @@ public class PlayerRespawn : MonoBehaviour
     public void DieAndRespawn()
     {
         if (!rb.simulated) return;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.playerDeathCount++;
+            GameManager.Instance.AddDeath();
+            Debug.Log("Death Count: " + GameManager.Instance.playerDeathCount);
+        }
+
         StartCoroutine(RespawnRoutine());
     }
 
