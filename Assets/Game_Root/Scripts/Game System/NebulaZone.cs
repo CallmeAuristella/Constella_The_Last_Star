@@ -3,16 +3,18 @@ using UnityEngine;
 public class NebulaZone : MonoBehaviour
 {
     [Header("Nebula Settings")]
-    public float nebulaGravity = 0.5f;   // Gravitasi rendah (melayang)
-    public float nebulaDrag = 2f;        // Gesekan udara (biar gak ngebut)
-    public float nebulaSpeed = 5f;       // Speed limit di dalam nebula
-    public float nebulaFallMult = 1f;    // Matikan fast falling (biar gak gedebuk)
+    public float nebulaGravity = 0.4f;   // Gravitasi rendah (melayang)
+    public float nebulaDrag = 3f;        // Gesekan udara (biar gak ngebut)
+    public float nebulaSpeed = 6f;       // Speed limit di dalam nebula
+    public float nebulaFallMult = 1.2f;    // Matikan fast falling (biar gak gedebuk)
+    
 
     // Simpan data asli
     private float defaultGravity;
     private float defaultDrag;
     private float defaultSpeed;
     private float defaultFallMult;
+    private float defaultApexMult;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

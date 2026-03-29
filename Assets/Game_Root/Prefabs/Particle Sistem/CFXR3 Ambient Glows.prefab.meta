@@ -10,6 +10,5 @@ AssetOrigin:
   productId: 109565
   packageName: Cartoon FX Remaster Free
   packageVersion: R 1.5.0
-  assetPath: Assets/JMO Assets/Cartoon FX Remaster/CFXR Prefabs/Misc/CFXR3 Ambient
-    Glows.prefab
+  assetPath: Assets/Game_Root/Prefabs/Particle Sistem/CFXR3 Ambient Glows.prefab
   uploadId: 836238

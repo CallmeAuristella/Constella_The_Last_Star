@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class ScoreCalculator
 {
@@ -7,170 +7,221 @@ public static class ScoreCalculator
         int baseScore,
         float time,
         int nodesCollected,
-        int totalNodesInStage,
+        int totalNodes,
         int deathCount
     )
     {
         RunEvaluation eval = new RunEvaluation();
 
-        // ===== BASE =====
-        eval.baseScore = baseScore;
         eval.completionTime = time;
-
-        // ===== TIME BONUS =====
-        CalculateTimeBonus(stageIndex, time, eval);
-
-        // ===== NODE BONUS =====
         eval.nodesCollected = nodesCollected;
-        eval.nodeScore = nodesCollected * 50;
 
-        eval.allNodesCollected = (nodesCollected >= totalNodesInStage);
-        eval.completionBonus = eval.allNodesCollected ? GetCompletionBonus(stageIndex) : 0;
+        int final = 0;
 
-        // ===== DEATH BONUS =====
-        eval.deathCount = deathCount;
-        eval.noDeathAchieved = (deathCount == 0);
-        eval.noDeathBonus = eval.noDeathAchieved ? GetNoDeathBonus(stageIndex) : 0;
+        // =====================
+        // BASE SCORE
+        // =====================
+        final += baseScore;
 
-        // ===== FINAL SCORE =====
-        eval.finalScore =
-            eval.baseScore +
-            eval.timeBonus +
-            eval.nodeScore +
-            eval.completionBonus +
-            eval.noDeathBonus;
-
-        // =========================
-        // BREAKDOWN (TARUH DI SINI)
-        // =========================
-
-        eval.breakdown.Clear();
-
-        eval.breakdown.Add(new ScoreEntry { label = "Base Score", value = eval.baseScore });
-
-        if (eval.timeBonus > 0)
+        eval.breakdown.Add(new BreakdownEntry
         {
-            eval.breakdown.Add(new ScoreEntry
+            label = "Base Score",
+            value = baseScore,
+            isBonus = false
+        });
+
+        // =====================
+        // TIME BONUS
+        // =====================
+        TimeTier tier = GetTimeTier(time);
+        int timeBonus = GetTimeBonus(stageIndex, tier);
+
+        if (timeBonus > 0)
+        {
+            final += timeBonus;
+
+            eval.breakdown.Add(new BreakdownEntry
             {
-                label = $"Time Bonus ({eval.timeTier})",
-                value = eval.timeBonus
+                label = $"Time Bonus ({tier})",
+                value = timeBonus,
+                isBonus = true
+            });
+
+            // 🔥 RUN BONUS (bukan achievement)
+            eval.runBonuses.Add(new RunBonusEntry
+            {
+                type = ConvertTierToBonus(tier),
+                value = timeBonus
             });
         }
 
-        if (eval.nodeScore > 0)
+        // =====================
+        // NODE BONUS
+        // =====================
+        int nodeBonus = GetNodeBonus(stageIndex, nodesCollected);
+
+        if (nodeBonus > 0)
         {
-            eval.breakdown.Add(new ScoreEntry
+            final += nodeBonus;
+
+            eval.breakdown.Add(new BreakdownEntry
             {
-                label = "Node Score",
-                value = eval.nodeScore
+                label = "Node Bonus",
+                value = nodeBonus,
+                isBonus = true
+            });
+
+            eval.runBonuses.Add(new RunBonusEntry
+            {
+                type = RunBonusType.NodeBonus,
+                value = nodeBonus
             });
         }
 
-        if (eval.completionBonus > 0)
+        // PERFECT NODE
+        bool perfect = nodesCollected >= totalNodes;
+
+        int perfectBonus = GetPerfectNodeBonus(stageIndex, perfect);
+
+        if (perfectBonus > 0)
         {
-            eval.breakdown.Add(new ScoreEntry
+            final += perfectBonus;
+
+            eval.breakdown.Add(new BreakdownEntry
             {
-                label = "Completion Bonus",
-                value = eval.completionBonus
+                label = "Perfect Nodes",
+                value = perfectBonus,
+                isBonus = true
             });
         }
 
-        if (eval.noDeathBonus > 0)
+        // =====================
+        // NO DEATH BONUS
+        // =====================
+        bool noDeath = deathCount == 0;
+
+        int noDeathBonus = GetNoDeathBonus(stageIndex, noDeath);
+
+        if (noDeathBonus > 0)
         {
-            eval.breakdown.Add(new ScoreEntry
+            final += noDeathBonus;
+
+            eval.breakdown.Add(new BreakdownEntry
             {
                 label = "No Death Bonus",
-                value = eval.noDeathBonus
+                value = noDeathBonus,
+                isBonus = true
+            });
+
+            eval.runBonuses.Add(new RunBonusEntry
+            {
+                type = RunBonusType.NoDeathBonus,
+                value = noDeathBonus
             });
         }
 
-        return eval;
+        eval.finalScore = final;
 
+        // =====================
+        // ACHIEVEMENTS (ONLY REAL ONES)
+        // =====================
+        if (noDeath)
+        {
+            if (!GameManager.Instance.unlockedAchievements.Contains(AchievementType.NoDeath_Run))
+            {
+                Debug.Log("ADD ACHIEVEMENT: NO DEATH");
+
+                GameManager.Instance.UnlockAchievement(AchievementType.NoDeath_Run);
+
+                eval.achievements.Add(new AchievementEntry
+                {
+                    type = AchievementType.NoDeath_Run,
+                    achieved = true
+                });
+            }
+        }
+        if (tier == TimeTier.Gold && noDeath)
+        {
+            if (!GameManager.Instance.unlockedAchievements.Contains(AchievementType.GodSpeed))
+            {
+                GameManager.Instance.UnlockAchievement(AchievementType.GodSpeed);
+
+                eval.achievements.Add(new AchievementEntry
+                {
+                    type = AchievementType.GodSpeed,
+                    achieved = true
+                });
+            }
+        }
+
+        // ⚠️ INI JANGAN DI SINI (GLOBAL)
+        // AllNodes_AllStages → harus dicek di GameManager / SaveSystem
+        // GodSpeed → optional global unlock
+
+        return eval;
     }
 
-    // =========================
+    // =====================
+    // HELPERS
+    // =====================
 
-    static void CalculateTimeBonus(int stageIndex, float time, RunEvaluation eval)
+    static TimeTier GetTimeTier(float time)
+    {
+        if (time <= 120f) return TimeTier.Gold;
+        if (time <= 240f) return TimeTier.Silver;
+        if (time <= 300f) return TimeTier.Bronze;
+
+        return TimeTier.None;
+    }
+
+    static RunBonusType ConvertTierToBonus(TimeTier tier)
+    {
+        switch (tier)
+        {
+            case TimeTier.Gold: return RunBonusType.FastGold;
+            case TimeTier.Silver: return RunBonusType.FastSilver;
+            case TimeTier.Bronze: return RunBonusType.FastBronze;
+        }
+
+        return RunBonusType.NodeBonus; // fallback (harusnya ga kepake)
+    }
+
+    static int GetTimeBonus(int stageIndex, TimeTier tier)
     {
         switch (stageIndex)
         {
             case 1:
-                if (time <= 120f)
-                {
-                    eval.timeTier = TimeTier.Gold;
-                    eval.timeBonus = 450;
-                }
-                else if (time <= 180f)
-                {
-                    eval.timeTier = TimeTier.Silver;
-                    eval.timeBonus = 300;
-                }
-                else if (time <= 240f)
-                {
-                    eval.timeTier = TimeTier.Bronze;
-                    eval.timeBonus = 150;
-                }
+                if (tier == TimeTier.Gold) return 450;
+                if (tier == TimeTier.Silver) return 300;
+                if (tier == TimeTier.Bronze) return 150;
                 break;
 
             case 2:
-                if (time <= 180f)
-                {
-                    eval.timeTier = TimeTier.Gold;
-                    eval.timeBonus = 800;
-                }
-                else if (time <= 240f)
-                {
-                    eval.timeTier = TimeTier.Silver;
-                    eval.timeBonus = 500;
-                }
-                else if (time <= 300f)
-                {
-                    eval.timeTier = TimeTier.Bronze;
-                    eval.timeBonus = 250;
-                }
-                break;
-
             case 3:
-                if (time <= 180f)
-                {
-                    eval.timeTier = TimeTier.Gold;
-                    eval.timeBonus = 900; // ambil upper bound biar rewarding
-                }
-                else if (time <= 240f)
-                {
-                    eval.timeTier = TimeTier.Silver;
-                    eval.timeBonus = 600;
-                }
-                else if (time <= 300f)
-                {
-                    eval.timeTier = TimeTier.Bronze;
-                    eval.timeBonus = 300;
-                }
+                if (tier == TimeTier.Gold) return 800;
+                if (tier == TimeTier.Silver) return 500;
+                if (tier == TimeTier.Bronze) return 300;
                 break;
-
-
         }
-    }
 
-    static int GetCompletionBonus(int stageIndex)
-    {
-        switch (stageIndex)
-        {
-            case 1: return 400;
-            case 2: return 600;
-            case 3: return 700;
-        }
         return 0;
     }
 
-    static int GetNoDeathBonus(int stageIndex)
+    static int GetNodeBonus(int stageIndex, int nodes)
     {
-        switch (stageIndex)
-        {
-            case 1: return 300;
-            case 2:return 600;
-            case 3: return 700;
-        }
-        return 0;
+        int perNode = (stageIndex == 1) ? 45 : 50;
+        return nodes * perNode;
+    }
+
+    static int GetPerfectNodeBonus(int stageIndex, bool perfect)
+    {
+        if (!perfect) return 0;
+        return (stageIndex == 1) ? 300 : 600;
+    }
+
+    static int GetNoDeathBonus(int stageIndex, bool noDeath)
+    {
+        if (!noDeath) return 0;
+        return (stageIndex == 1) ? 300 : 600;
     }
 }

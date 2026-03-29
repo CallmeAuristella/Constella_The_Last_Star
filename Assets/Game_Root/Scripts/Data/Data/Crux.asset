@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Crux
   iconUnlocked: {fileID: 6796969805235333838, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   iconLocked: {fileID: -8618408639835801924, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
-  requiredStageKey: Stage_1
+  requiredStageKey: 1
   infographicPages:
   - {fileID: 21300000, guid: e39e415145793c041aceea8e54800269, type: 3}
   - {fileID: 21300000, guid: f0194bc85707e4844aa76c57a75c4052, type: 3}

@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Orion
   iconUnlocked: {fileID: -1273398435709607539, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   iconLocked: {fileID: -8618408639835801924, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
-  requiredStageKey: Stage_3
+  requiredStageKey: 3
   infographicPages:
   - {fileID: 21300000, guid: 476ddee164edf294f933728ebc7fa763, type: 3}
   - {fileID: 21300000, guid: 5968ddeecd4cc39488a9dcdf3de498c7, type: 3}

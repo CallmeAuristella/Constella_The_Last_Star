@@ -46,11 +46,29 @@ public class StageSummaryController : MonoBehaviour
     [Header("Score Breakdown UI")]
     public Transform breakdownContainer;
     public GameObject scoreRowPrefab;
+    private List<ScoreRowUI> spawnedRows = new List<ScoreRowUI>();
+
+    [Header("Achievement & Bonus UI")]
+    public Transform achievementContainer;
+    public Transform runBonusContainer;
+    public GameObject achievementRowPrefab;
+    public GameObject runBonusRowPrefab;
+
     private bool isSummaryRunning = false;
+    private Coroutine playRoutine;
+
+
+    [SerializeField]
+    private List<AchievementType> orderedAchievements = new List<AchievementType>
+{
+    AchievementType.NoDeath_Run,
+    AchievementType.GodSpeed,
+    AchievementType.StarCollector,
+    AchievementType.SkillIssue
+};
 
     private void Start()
     {
-        // 🔥 AUTO DETECT STAGE INDEX (ANTI HUMAN ERROR)
         if (SceneManager.GetActiveScene().name.StartsWith("Stage_"))
         {
             string indexStr = SceneManager.GetActiveScene().name.Replace("Stage_", "");
@@ -67,7 +85,6 @@ public class StageSummaryController : MonoBehaviour
             uiCanvasGroup.blocksRaycasts = false;
         }
 
-        // 🔥 RESET LABEL STATE
         if (newBestLabel)
             newBestLabel.SetActive(false);
 
@@ -78,10 +95,16 @@ public class StageSummaryController : MonoBehaviour
         menuButton?.onClick.AddListener(OnMenuClicked);
     }
 
-    public void StartSummarySequence()
-    {
+    public void StartSummarySequence() {
         if (isSummaryRunning) return;
         isSummaryRunning = true;
+
+        // 🔥 WAJIB: SAVE RUN DI SINI
+        if (GameManager.Instance != null) {
+            GameManager.Instance.SaveCurrentStageStats();
+            currentStageIndex = GameManager.Instance.currentStageIndex;
+
+        }
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -93,142 +116,189 @@ public class StageSummaryController : MonoBehaviour
         ResetConstellationUI();
         ResetStars();
 
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.isRunActive = false;
+        if (GameManager.Instance != null) {
+            var gm = GameManager.Instance;
 
-            float time = GameManager.Instance.lastStageTime;
-            int score = GameManager.Instance.lastStageScore;
-            int collected = GameManager.Instance.lastStageNodes;
-            int bestScore = GameManager.Instance.GetBestScore(currentStageIndex);
+            float time = gm.lastStageTime;
+            int score = gm.lastStageScore;
+            int collected = gm.lastStageNodes;
+            int bestScore = gm.GetBestScore(currentStageIndex);
 
-            // 🔥 NEW BEST DETECTION (POST-SAVE SAFE)
             isNewBest = (score >= bestScore && score > 0);
 
-            // UI UPDATE
-            if (timeText)
-                timeText.text = FormatTime(time);
-
-            if (scoreText)
-                scoreText.text = $"Score: {score}";
-
-            if (nodeText)
-                nodeText.text = $"{collected} Stars Collected";
-
-            if (bestScoreText)
-                bestScoreText.text = $"Best: {bestScore}";
-
-            if (newBestLabel)
-                newBestLabel.SetActive(isNewBest);
+            timeText.text = FormatTime(time);
+            scoreText.text = $"Score: {score}";
+            nodeText.text = $"{collected} Stars Collected";
+            bestScoreText.text = $"Best: {bestScore}";
+            newBestLabel.SetActive(isNewBest);
 
             CalculateStarRating(collected);
         }
 
-        // 🔥 SAFE DEBUG (NULL CHECK)
-        if (ConstellationManager.Instance != null)
-        {
-            Debug.Log("CollectedNodes Count: " + ConstellationManager.Instance.GetCollectedNodes().Count);
-        }
-
-        if (GameManager.Instance != null)
-        {
-            Debug.Log("GameManager Nodes: " + GameManager.Instance.lastStageNodes);
-        }
-
         Time.timeScale = 0f;
-
         StartCoroutine(SummaryRoutine());
-    }
-
-
-    private void ResetStars()
-    {
-        foreach (var star in starRatingList)
-        {
-            if (star != null)
-                star.color = inactiveStarColor;
-        }
-    }
-
-    private string FormatTime(float time)
-    {
-        int m = Mathf.FloorToInt(time / 60);
-        int s = Mathf.FloorToInt(time % 60);
-        return $"{m:00}:{s:00}";
-    }
-
-    private void ResetConstellationUI()
-    {
-        if (ConstellationManager.Instance == null) return;
-
-        foreach (var node in ConstellationManager.Instance.summaryNodes)
-        {
-            node?.ResetUI();
-        }
-    }
-
-    private void CalculateStarRating(int collected)
-    {
-        if (totalNodesInLevel <= 0)
-        {
-            starsEarned = 1;
-            return;
-        }
-
-        float percentage = (float)collected / totalNodesInLevel;
-
-        if (percentage >= 0.9f)
-            starsEarned = 3;
-        else if (percentage >= 0.5f)
-            starsEarned = 2;
-        else
-            starsEarned = 1;
     }
 
     private IEnumerator SummaryRoutine()
     {
-        float timer = 0;
-
-        while (timer < 1f)
+        // FADE IN
+        float t = 0;
+        while (t < 1f)
         {
-            timer += Time.unscaledDeltaTime * fadeSpeed;
-
-            if (uiCanvasGroup)
-                uiCanvasGroup.alpha = Mathf.Lerp(0, 1, timer);
-
+            t += Time.unscaledDeltaTime * fadeSpeed;
+            uiCanvasGroup.alpha = Mathf.Lerp(0, 1, t);
             yield return null;
         }
 
-        if (uiCanvasGroup)
-        {
-            uiCanvasGroup.alpha = 1;
-            uiCanvasGroup.interactable = true;
-            uiCanvasGroup.blocksRaycasts = true;
-        }
+        uiCanvasGroup.alpha = 1;
+        uiCanvasGroup.interactable = true;
+        uiCanvasGroup.blocksRaycasts = true;
 
         yield return new WaitForSecondsRealtime(0.25f);
+
+        // =====================
+        // 1. SCORE BREAKDOWN
+        // =====================
         PopulateScoreBreakdown();
 
+        yield return new WaitUntil(() => playRoutine == null);
+
+        // =====================
+        // 2. BONUS + ACHIEVEMENT
+        // =====================
+        PopulateSummary(GameManager.Instance.lastRunEvaluation);
+
+        // =====================
+        // 3. AUDIO
+        // =====================
         if (summaryAudioSource && congratulationClip)
         {
             summaryAudioSource.PlayOneShot(congratulationClip);
             yield return new WaitForSecondsRealtime(congratulationClip.length);
         }
 
+        // =====================
+        // 4. CONSTELLATION + STAR
+        // =====================
         yield return StartCoroutine(PlayConstellationSequence());
         yield return new WaitForSecondsRealtime(0.2f);
         yield return StartCoroutine(PlayStarRatingSequence());
     }
 
-    IEnumerator PlayConstellationSequence()
+    void PopulateSummary(RunEvaluation eval)
+    {
+        if (eval == null) return;
+
+        foreach (Transform c in achievementContainer) Destroy(c.gameObject);
+        foreach (Transform c in runBonusContainer) Destroy(c.gameObject);
+
+        var gm = GameManager.Instance;
+
+        // =========================
+        // ACHIEVEMENT (FIXED GRID)
+        // =========================
+        foreach (var type in orderedAchievements)
+        {
+            var obj = Instantiate(achievementRowPrefab, achievementContainer);
+            var ui = obj.GetComponent<AchievementRowUI>();
+
+            bool unlocked = gm.unlockedAchievements.Contains(type);
+
+            ui.Setup(type);
+            ui.SetLocked(!unlocked);
+
+            // highlight kalau didapat di run ini (optional)
+            bool achievedThisRun = eval.achievements.Exists(a => a.type == type && a.achieved);
+
+            if (achievedThisRun)
+            {
+                ui.SetHighlight();
+            }
+        }
+
+        // =========================
+        // RUN BONUS
+        // =========================
+        foreach (var b in eval.runBonuses)
+        {
+            var obj = Instantiate(runBonusRowPrefab, runBonusContainer);
+            var ui = obj.GetComponent<RunBonusRowUI>();
+
+            ui.Setup(b.type, b.value);
+        }
+    }
+
+    void PopulateScoreBreakdown()
+    {
+        spawnedRows.Clear();
+
+        foreach (Transform child in breakdownContainer)
+            Destroy(child.gameObject);
+
+        var eval = GameManager.Instance.lastRunEvaluation;
+        if (eval == null) return;
+
+        foreach (var entry in eval.breakdown)
+        {
+            var row = Instantiate(scoreRowPrefab, breakdownContainer);
+            var ui = row.GetComponent<ScoreRowUI>();
+
+            ui.Setup(entry.label, entry.value, false, entry.isBonus);
+            ui.PrepareForAnimation();
+
+            spawnedRows.Add(ui);
+        }
+
+        var totalRow = Instantiate(scoreRowPrefab, breakdownContainer);
+        var totalUI = totalRow.GetComponent<ScoreRowUI>();
+
+        totalUI.Setup("TOTAL", eval.finalScore, true, false);
+        totalUI.PrepareForAnimation();
+
+        spawnedRows.Add(totalUI);
+
+        PlayBreakdownSequence();
+    }
+
+    public void PlayBreakdownSequence()
+    {
+        if (playRoutine != null)
+            StopCoroutine(playRoutine);
+
+        playRoutine = StartCoroutine(PlaySequence());
+    }
+
+    private IEnumerator PlaySequence()
+    {
+        yield return null;
+
+        for (int i = 0; i < spawnedRows.Count; i++)
+        {
+            var row = spawnedRows[i];
+            bool isLast = (i == spawnedRows.Count - 1);
+
+            if (isLast)
+            {
+                yield return new WaitForSecondsRealtime(0.5f);
+                row.PlayRevealAnimation(0.35f, true);
+            }
+            else
+            {
+                row.PlayRevealAnimation();
+            }
+
+            yield return new WaitForSecondsRealtime(0.25f);
+        }
+
+        playRoutine = null;
+    }
+
+    private IEnumerator PlayConstellationSequence()
     {
         if (ConstellationManager.Instance == null)
             yield break;
 
         var collected = ConstellationManager.Instance.GetCollectedNodes();
-
-        if (collected == null || collected.Count == 0)
-            yield break;
 
         foreach (var nodeUI in ConstellationManager.Instance.summaryNodes)
         {
@@ -255,7 +325,7 @@ public class StageSummaryController : MonoBehaviour
     {
         for (int i = 0; i < starRatingList.Length; i++)
         {
-            if (i < starsEarned && starRatingList[i] != null)
+            if (i < starsEarned)
             {
                 starRatingList[i].color = activeStarColor;
 
@@ -266,60 +336,49 @@ public class StageSummaryController : MonoBehaviour
             }
         }
     }
-    void PopulateScoreBreakdown()
+
+    private void ResetStars()
     {
-        // clear lama
-        foreach (Transform child in breakdownContainer)
-        {
-            Destroy(child.gameObject);
-        }
-
-        var eval = GameManager.Instance.lastRunEvaluation;
-
-        foreach (var entry in eval.breakdown)
-        {
-            GameObject row = Instantiate(scoreRowPrefab, breakdownContainer);
-
-            var rowUI = row.GetComponent<ScoreRowUI>();
-
-            bool isTotal = false;
-
-            rowUI.Setup(entry.label, entry.value, isTotal);
-        }
-
-        // TOTAL (optional tapi recommended)
-        GameObject totalRow = Instantiate(scoreRowPrefab, breakdownContainer);
-
-        var totalUI = totalRow.GetComponent<ScoreRowUI>();
-
-        totalUI.Setup("TOTAL", GameManager.Instance.lastRunEvaluation.finalScore, true);
+        foreach (var star in starRatingList)
+            star.color = inactiveStarColor;
     }
+
+    private void ResetConstellationUI()
+    {
+        if (ConstellationManager.Instance == null) return;
+
+        foreach (var node in ConstellationManager.Instance.summaryNodes)
+            node?.ResetUI();
+    }
+
+    private void CalculateStarRating(int collected)
+    {
+        float percentage = (float)collected / totalNodesInLevel;
+
+        if (percentage >= 0.9f) starsEarned = 3;
+        else if (percentage >= 0.5f) starsEarned = 2;
+        else starsEarned = 1;
+    }
+
+    private string FormatTime(float time)
+    {
+        int m = Mathf.FloorToInt(time / 60);
+        int s = Mathf.FloorToInt(time % 60);
+        return $"{m:00}:{s:00}";
+    }
+
     private void OnNextStageClicked()
     {
-        if (GameManager.Instance != null)
-        {
-            if (nextSceneName == "VictoryScreen" || nextSceneName == "GameOverScene")
-                GameManager.Instance.FinishGame();
-        }
-
         PrepareForSceneLoad(nextSceneName);
     }
 
     private void OnRetryClicked()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.ResetRunAccumulation();
-            GameManager.Instance.ResetLevelStats();
-            GameManager.Instance.StartNewStageRun();
-        }
-
         PrepareForSceneLoad(SceneManager.GetActiveScene().name);
     }
 
     private void OnMenuClicked()
     {
-        GameManager.Instance?.ResetLevelStats();
         PrepareForSceneLoad("MainMenu");
     }
 

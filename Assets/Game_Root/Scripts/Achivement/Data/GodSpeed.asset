@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995ce09d8625c0142a61d671e4bdd561, type: 3}
+  m_Name: GodSpeed
+  m_EditorClassIdentifier: 
+  type: 1
+  title: God Speed
+  description: '"Flawless run. Zero deaths. Built different."'
+  icon: {fileID: -7224620219103014764, guid: 56d3f31c2aeece44d8004d741a99de95, type: 3}

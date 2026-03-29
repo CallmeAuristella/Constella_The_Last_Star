@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Cygnus
   iconUnlocked: {fileID: -6004319888521915243, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
   iconLocked: {fileID: -8618408639835801924, guid: 27b101cb23d8d8b44b098595f20114db, type: 3}
-  requiredStageKey: Stage_2
+  requiredStageKey: 2
   infographicPages:
   - {fileID: 21300000, guid: ec2590fe083b4fe4e8178e820b22ee1b, type: 3}
   - {fileID: 21300000, guid: c56bb913c7ddd134d9d814da732ba022, type: 3}
@@ -25,6 +25,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 47066670e88b5cd42810b2466fb019fe, type: 3}
   - {fileID: 21300000, guid: 2ca22ae00a3cfe54fa6dad7829edac0d, type: 3}
   - {fileID: 21300000, guid: b0954493772c9414381e17c4018268a1, type: 3}
-  - {fileID: 21300000, guid: c3ca602e2230665448a37e5333227e11, type: 3}
-  - {fileID: 21300000, guid: 6f9d33bb7f977214892332b4a8e603b5, type: 3}
+  - {fileID: 8389134475083476877, guid: d98c32bea62c63145b93a2d257d29f52, type: 3}
+  - {fileID: -6270953770400647376, guid: e877b23c7df6128419ac5d19f383b904, type: 3}
   - {fileID: 21300000, guid: 1d7616eb556e1a34b8f9ef1c33eefdd7, type: 3}

@@ -10,6 +10,5 @@ AssetOrigin:
   productId: 109565
   packageName: Cartoon FX Remaster Free
   packageVersion: R 1.5.0
-  assetPath: Assets/JMO Assets/Cartoon FX Remaster/CFXR Prefabs/Impacts/CFXR Impact
-    Glowing HDR (Blue).prefab
+  assetPath: Assets/Game_Root/Prefabs/Particle Sistem/CFXR Impact Glowing HDR (Blue).prefab
   uploadId: 836238

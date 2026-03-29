@@ -88,6 +88,10 @@ public class PlayerMovementInput : MonoBehaviour
     public AudioClip jumpSfx;
     private AudioSource audioSource;
 
+    [HideInInspector] 
+    public float apexGravityMultiplier = 0.6f;
+    private float defaultApexMultiplier;
+
     private void Awake()
     {
        rb = GetComponent<Rigidbody2D>();
@@ -148,6 +152,8 @@ public class PlayerMovementInput : MonoBehaviour
 
         if (rb.linearVelocity.magnitude > 50f)
             rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 50f);
+        Debug.Log("Player Y Velocity: " + rb.linearVelocity.y);
+        Debug.Log("Platform Y Velocity: " + calculatedPlatformVelocity.y);
     }
 
     // --- COLLISION LOGIC (PARENTING) ---
@@ -196,10 +202,12 @@ public class PlayerMovementInput : MonoBehaviour
             float finalVelocityY = rb.linearVelocity.y;
 
             // Stabilisasi Velocity di atas platform bergerak
-            if ((isGrounded || groundedGraceCounter > 0f) && Time.time > lastJumpTime + 0.2f)
-            {
-                if (finalVelocityY > calculatedPlatformVelocity.y) finalVelocityY = calculatedPlatformVelocity.y;
-                if (calculatedPlatformVelocity.y <= 0.01f && finalVelocityY > -2f) finalVelocityY = -2f;
+            if ((isGrounded || groundedGraceCounter > 0f)
+                && Time.time > lastJumpTime + 0.2f
+                && rb.linearVelocity.y <= 0f) {
+                // Hanya cegah float, bukan ikut platform
+                if (rb.linearVelocity.y > -2f)
+                    finalVelocityY = -2f;
             }
 
             rb.linearVelocity = new Vector2(currentSpeed + movement, finalVelocityY);
@@ -294,47 +302,48 @@ public class PlayerMovementInput : MonoBehaviour
         }
     }
 
-    private void PerformJumpPhysics()
-    {
-        // Lepas parent sebelum lompat agar tidak ada tarikan physics dari platform
-        if (transform.parent != null)
-        {
-            transform.SetParent(null);
-            transform.rotation = Quaternion.identity;
-        }
+    private void PerformJumpPhysics() {
+        float finalJumpForce = isOnBouncyGround
+            ? (jumpForce * bouncyJumpMultiplier)
+            : jumpForce;
 
-        float platformBoostY = 0f;
-        if (isGrounded || coyoteTimeCounter > 0f)
-        {
-            platformBoostY = calculatedPlatformVelocity.y;
-            platformVelocityAtJump = platformBoostY;
-        }
-        // Audio
-        if (jumpSfx != null && audioSource != null)
-        {
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, finalJumpForce);
+
+        // 🔥 FIX PENTING
+        platformVelocityAtJump = rb.linearVelocity.y;
+
+        // audio & vfx tetap
+        if (jumpSfx != null && audioSource != null) {
             audioSource.PlayOneShot(jumpSfx);
         }
-        //
-        float finalJumpForce = isOnBouncyGround ? (jumpForce * bouncyJumpMultiplier) : jumpForce;
 
-        // Terapkan kecepatan platform + Jump Force (Anti Lompatan Pendek)
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, platformBoostY);
-        rb.AddForce(Vector2.up * finalJumpForce, ForceMode2D.Impulse);
+        if (jumpDust != null && feetPosition != null) {
+            Instantiate(jumpDust, feetPosition.position, Quaternion.identity);
+        }
 
         lastJumpTime = Time.time;
-        if (jumpDust != null && feetPosition != null) Instantiate(jumpDust, feetPosition.position, Quaternion.identity);
-
-
     }
 
     private void HandleGravityModifiers()
     {
-        if (isGrounded || groundedGraceCounter > 0f) return;
-        float relativeVelocityY = rb.linearVelocity.y - platformVelocityAtJump;
-        if (relativeVelocityY < 0)
+        float relativeVelocityY = rb.linearVelocity.y;
+
+        // 🔥 APEX HANG (zona dekat puncak)
+        bool isHoldingJump = jumpAction.action.IsPressed();
+
+        if (!isGrounded && Mathf.Abs(relativeVelocityY) < 0.5f) {
+            float apexMult = isHoldingJump ? apexGravityMultiplier : 1f;
+
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (apexMult - 1f) * Time.deltaTime;
+        }
+                // 🔻 FALLING
+                else if (relativeVelocityY < -0.1f) {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
-        else if (relativeVelocityY > 0 && !jumpAction.action.IsPressed())
+        }
+        // 🔺 LOW JUMP (release early)
+        else if (relativeVelocityY > 0 && !jumpAction.action.IsPressed()) {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1f) * Time.deltaTime;
+        }
     }
 
     private void HandleCoyoteTime() { if (!isGrounded) coyoteTimeCounter -= Time.deltaTime; }

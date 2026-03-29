@@ -31,9 +31,12 @@ public class VictoryScreen : MonoBehaviour
 
     private void Start()
     {
-        GlobalAudioManager.Instance?.ResetForMenu();
-
         if (GameManager.Instance == null) return;
+
+        // 🔥 WAJIB: commit data sebelum tampil UI
+        GameManager.Instance.SaveCurrentStageStats();
+
+        GlobalAudioManager.Instance?.ResetForMenu();
 
         int score = GameManager.Instance.grandTotalScore;
         float time = GameManager.Instance.grandTotalTime;
@@ -58,43 +61,60 @@ public class VictoryScreen : MonoBehaviour
     {
         // 🔥 SCORE
         if (totalScoreText)
-            totalScoreText.text = $"Score: {score}";
+            totalScoreText.text = $"Total Score: {score}";
 
         // 🔥 TIME
         if (totalTimeText)
         {
             int m = Mathf.FloorToInt(time / 60);
             int s = Mathf.FloorToInt(time % 60);
-            totalTimeText.text = $"Time: {m:00}:{s:00}";
+            totalTimeText.text = $" Total Time: {m:00}:{s:00}";
         }
 
         // 🔥 MINOR NODES
         if (totalMinorText)
-            totalMinorText.text = $"Stars (Minor): {GameManager.Instance.grandTotalMinorNodes}";
+            totalMinorText.text = $"Total Stars (Minor): {GameManager.Instance.grandTotalMinorNodes}";
 
         // 🔥 MAJOR NODES
         if (totalMajorText)
-            totalMajorText.text = $"Stars (Major): {GameManager.Instance.grandTotalMajorNodes}";
+            totalMajorText.text = $"Total Stars (Major): {GameManager.Instance.grandTotalMajorNodes}";
     }
 
     private void DisplayDeaths()
     {
         if (totalDeathText)
-            totalDeathText.text = "Deaths: " + GameManager.Instance.totalDeaths;
+            totalDeathText.text = "Total Deaths: " + GameManager.Instance.totalDeaths;
     }
 
     private void DisplayHighScore(int score)
     {
         int high = GameManager.Instance.highScore;
+        bool isNewRecord = score > high;
 
-        if (score > high)
+        if (isNewRecord)
         {
-            if (newRecordVisual) newRecordVisual.SetActive(true);
             high = score;
+
+            if (newRecordVisual)
+                newRecordVisual.SetActive(true);
+
+            if (highScoreLabel)
+                highScoreLabel.text = $"High Score: {high}  (NEW!)";
+        }
+        else
+        {
+            if (newRecordVisual)
+                newRecordVisual.SetActive(false);
+
+            if (highScoreLabel)
+                highScoreLabel.text = $"High Score: {high}";
         }
 
-        if (highScoreLabel)
-            highScoreLabel.text = $"High Score: {high}";
+        if (isNewRecord) {
+            GameManager.Instance.highScore = score;
+            PlayerPrefs.SetInt("HIGH_SCORE", score);
+            PlayerPrefs.Save();
+        }
     }
 
     private void ShowReward()

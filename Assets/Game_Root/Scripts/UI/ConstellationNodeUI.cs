@@ -16,7 +16,7 @@ public class ConstellationNodeUI : MonoBehaviour
 
     private bool lastState = false;
     private bool isInSummaryMode = false;
-    private bool isActivated = false;
+    
 
     private void Awake()
     {
@@ -72,7 +72,8 @@ public class ConstellationNodeUI : MonoBehaviour
         StopAllCoroutines();
 
         isInSummaryMode = true; 
-        isActivated = true;
+        
+
 
         gameObject.SetActive(true);
 
@@ -82,6 +83,7 @@ public class ConstellationNodeUI : MonoBehaviour
         transform.localScale = Vector3.zero;
 
         StartCoroutine(AnimatePop());
+
     }
 
     private IEnumerator AnimatePop()
@@ -109,7 +111,7 @@ public class ConstellationNodeUI : MonoBehaviour
         StopAllCoroutines();
 
         isInSummaryMode = true; // 🔥 TAMBAH INI
-        isActivated = false;
+        
 
         transform.localScale = Vector3.one * 0.5f;
 
