@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Epsilon Crucis
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -396,6 +396,10 @@ PrefabInstance:
     - target: {fileID: 2634649868781627972, guid: 37036324dc9a04c49bbee02cad294d08, type: 3}
       propertyPath: m_Name
       value: UI_Mimosa
+      objectReference: {fileID: 0}
+    - target: {fileID: 5915734676757316588, guid: 37036324dc9a04c49bbee02cad294d08, type: 3}
+      propertyPath: nodeID
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8522475623717225877, guid: 37036324dc9a04c49bbee02cad294d08, type: 3}
       propertyPath: m_Pivot.x
@@ -1571,7 +1575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: BL Crucis
+  nodeID: 1
   targetImage: {fileID: 228839266}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -4018,7 +4022,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Mimosa
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -4465,7 +4469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Mimosa
+  nodeID: 7
   targetImage: {fileID: 715913409}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -4523,7 +4527,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1312688599673937662, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
   m_PrefabInstance: {fileID: 7541795618942775997}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7541795618942776001}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -4537,6 +4541,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 550284326}
     m_Modifications:
+    - target: {fileID: 4014745848419808591, guid: b5f6b05b9a11ef743bfd54e5ed49cf3b, type: 3}
+      propertyPath: nodeID
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5754937516139674753, guid: b5f6b05b9a11ef743bfd54e5ed49cf3b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4689,7 +4697,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Gacrux
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -5001,7 +5009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: 35 Crucis
+  nodeID: 2
   targetImage: {fileID: 796059950}
   activeColor: {r: 0.96862745, g: 0.84313726, b: 0.21960784, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -5254,7 +5262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Acrux
+  nodeID: 4
   targetImage: {fileID: 810006124}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -6439,6 +6447,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
+      propertyPath: nodeID
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6889,7 +6901,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Delta Crucis
+  nodeID: 5
   targetImage: {fileID: 962662909}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -8212,7 +8224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Acrux
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -9465,8 +9477,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Epsilon Crucis
-  targetImage: {fileID: 0}
+  nodeID: 3
+  targetImage: {fileID: 1343960712}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!1001 &1344360767
@@ -9630,6 +9642,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_BL Crucis
       objectReference: {fileID: 0}
+    - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
+      propertyPath: nodeID
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9658,7 +9674,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: 35 Crucis
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -9951,6 +9967,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5606096241236384471, guid: 266f244507bf7a24080c35ed50a0573e, type: 3}
+      propertyPath: nodeID
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7811436019682640541, guid: 266f244507bf7a24080c35ed50a0573e, type: 3}
       propertyPath: m_Name
       value: UI_Gacrux
@@ -9999,7 +10019,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: BL Crucis
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -10341,7 +10361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: 35 Crucis
+  nodeID: 2
   targetImage: {fileID: 1390035932}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -10861,7 +10881,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc3e811510c9974c9ce49b175f892a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectedNodes: []
   hudNodes:
   - {fileID: 1742734154}
   - {fileID: 796059952}
@@ -10871,13 +10890,13 @@ MonoBehaviour:
   - {fileID: 1369058117}
   - {fileID: 1334468144}
   summaryNodes:
-  - {fileID: 7541795618942776002}
-  - {fileID: 715913410}
-  - {fileID: 962662910}
-  - {fileID: 810006125}
-  - {fileID: 1390035933}
   - {fileID: 228839267}
+  - {fileID: 1390035933}
   - {fileID: 1343960713}
+  - {fileID: 810006125}
+  - {fileID: 962662910}
+  - {fileID: 7541795618942776001}
+  - {fileID: 715913410}
 --- !u!4 &1460187189
 Transform:
   m_ObjectHideFlags: 0
@@ -11322,8 +11341,16 @@ PrefabInstance:
       value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: moveSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: fallMultiplier
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: groundCheckRadius
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: lowJumpMultiplier
@@ -11331,7 +11358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: bouncyJumpMultiplier
-      value: 2.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5103897621424490143, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: rolloffMode
@@ -11517,6 +11544,10 @@ PrefabInstance:
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].outWeight
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5652153049600085259, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.713
+      objectReference: {fileID: 0}
     - target: {fileID: 8842564819213576869, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -11640,7 +11671,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Delta Crucis
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -13483,7 +13514,6 @@ GameObject:
   - component: {fileID: 1891105463}
   - component: {fileID: 1891105462}
   - component: {fileID: 1891105464}
-  - component: {fileID: 1891105465}
   m_Layer: 5
   m_Name: UI_Epsilon Crucis
   m_TagString: Untagged
@@ -13560,25 +13590,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Epsilon Crucis
+  nodeID: 3
   targetImage: {fileID: 1891105462}
   activeColor: {r: 0.96862745, g: 0.84313726, b: 0.21960784, a: 1}
-  inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
---- !u!114 &1891105465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1891105460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeID: 
-  targetImage: {fileID: 0}
-  activeColor: {r: 1, g: 1, b: 1, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!4 &1916461212 stripped
 Transform:
@@ -16601,6 +16615,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BGM_Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 2571274668666839867, guid: 8d66118be616aa24aa3215fc11971067, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: cf92e1b70076f694ba50cea70b2ecc28, type: 3}
     - target: {fileID: 3613201451138862979, guid: 8d66118be616aa24aa3215fc11971067, type: 3}
       propertyPath: m_LocalPosition.x
       value: 840.31494
@@ -16935,6 +16953,10 @@ PrefabInstance:
       propertyPath: nextStageButton
       value: 
       objectReference: {fileID: 1081372094}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: nodeActivateClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 695de9727505335418602b5b076312eb, type: 3}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: activeStarColor.b
       value: 0
@@ -17459,6 +17481,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 245
       objectReference: {fileID: 0}
+    - target: {fileID: 7111250191938143760, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: nodeID
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7682319191449682127, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -17583,27 +17609,24 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 715913407}
+      insertIndex: 0
+      addedObject: {fileID: 228839264}
     - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
+      insertIndex: 1
+      addedObject: {fileID: 1390035930}
+    - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 1343960710}
+    - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 810006122}
+    - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      insertIndex: 4
       addedObject: {fileID: 962662907}
     - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 810006122}
-    - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1390035930}
-    - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 228839264}
-    - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1343960710}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5683544035296321860, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7541795618942776002}
+      addedObject: {fileID: 715913407}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
 --- !u!114 &7541795618942775998 stripped
 MonoBehaviour:
@@ -17638,27 +17661,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7541795618942776001 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5683544035296321860, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+--- !u!114 &7541795618942776001 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7111250191938143760, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
   m_PrefabInstance: {fileID: 7541795618942775997}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7541795618942776002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7541795618942776001}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Gacrux
-  targetImage: {fileID: 720351932}
-  activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
-  inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!1001 &7937769693047128633
 PrefabInstance:
   m_ObjectHideFlags: 0

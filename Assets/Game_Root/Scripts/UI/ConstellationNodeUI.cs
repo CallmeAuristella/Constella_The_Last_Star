@@ -5,7 +5,7 @@ using System.Collections;
 public class ConstellationNodeUI : MonoBehaviour
 {
     [Header("Identity")]
-    public string nodeID;
+    public int nodeID;
 
     [Header("Reference")]
     public Image targetImage;

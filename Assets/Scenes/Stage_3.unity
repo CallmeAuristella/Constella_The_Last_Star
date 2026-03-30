@@ -644,7 +644,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Mintaka
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -760,7 +760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Saiph
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1080,7 +1080,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Bellatrix
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -1473,7 +1473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Pi Orionis 3
+  nodeID: 11
   targetImage: {fileID: 107782251}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -2105,7 +2105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Nu Orionis
+  nodeID: 4
   targetImage: {fileID: 160239218}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -2635,7 +2635,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Rigel
+      value: 19
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2770,7 +2770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Pi Orionis 1
+  nodeID: 9
   targetImage: {fileID: 192469833}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -3604,7 +3604,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 2
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3763,7 +3763,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 3
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4585,7 +4585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 3
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -4745,7 +4745,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Nu Orionis
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5205,7 +5205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Alnitak
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6077,7 +6077,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Mu Orionis
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -7284,7 +7284,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 1
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -8299,7 +8299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Meissa
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -9793,7 +9793,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 4
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9838,7 +9838,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -10314,7 +10314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 5
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10637,7 +10637,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1312688599673937662, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
   m_PrefabInstance: {fileID: 7541795618942775997}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7541795618942776001}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -10837,7 +10837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Xi Orionis
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -11077,7 +11077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Xi Orionis
+  nodeID: 3
   targetImage: {fileID: 741505576}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -11182,7 +11182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Alnitak
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -11522,7 +11522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Saiph
+  nodeID: 18
   targetImage: {fileID: 769675340}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -11696,7 +11696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Pi Orionis 5
+  nodeID: 13
   targetImage: {fileID: 797074573}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -11841,7 +11841,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Chi Orionis
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -11865,7 +11865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8457762999719067395, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.9
+      value: -7.49
       objectReference: {fileID: 0}
     - target: {fileID: 8457762999719067395, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12909,7 +12909,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Pi Orionis 4
+  nodeID: 12
   targetImage: {fileID: 862608979}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -13127,7 +13127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Alnilam
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13865,7 +13865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Betelgeuse
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14232,7 +14232,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Bellatrix
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14310,7 +14310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Pi Orionis 2
+  nodeID: 10
   targetImage: {fileID: 937582343}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -14781,7 +14781,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Meissa
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14826,7 +14826,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 6
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -15103,7 +15103,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Mu Orionis
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16191,7 +16191,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Nu Orionis
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -17046,7 +17046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Mintaka
+  nodeID: 17
   targetImage: {fileID: 1115527803}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -17549,7 +17549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Betelgeuse
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -18285,7 +18285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Meissa
+  nodeID: 7
   targetImage: {fileID: 1215277969}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -18455,7 +18455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Alnitak
+  nodeID: 15
   targetImage: {fileID: 1226973207}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -20002,7 +20002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: 64 Orionis
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20164,7 +20164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Alnilam
+  nodeID: 16
   targetImage: {fileID: 1363006115}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -20424,7 +20424,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: 64 Orionis
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -21137,7 +21137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Alnilam
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -21258,7 +21258,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Mintaka
+      value: 17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21899,7 +21899,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc3e811510c9974c9ce49b175f892a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectedNodes: []
   hudNodes:
   - {fileID: 1742734154}
   - {fileID: 1791964038}
@@ -21923,8 +21922,8 @@ MonoBehaviour:
   summaryNodes:
   - {fileID: 1641887248}
   - {fileID: 7541795618942776002}
-  - {fileID: 741505575}
   - {fileID: 160239217}
+  - {fileID: 741505575}
   - {fileID: 1778486441}
   - {fileID: 192469832}
   - {fileID: 937582342}
@@ -22131,7 +22130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Xi Orionis
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22316,7 +22315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Rigel
+  nodeID: 19
   targetImage: {fileID: 1484267503}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -22735,7 +22734,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Saiph
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -23010,7 +23009,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 6
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23233,8 +23232,16 @@ PrefabInstance:
       value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: moveSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: fallMultiplier
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: groundCheckRadius
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: lowJumpMultiplier
@@ -23424,6 +23431,10 @@ PrefabInstance:
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].outWeight
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5652153049600085259, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.713
+      objectReference: {fileID: 0}
     - target: {fileID: 8842564819213576869, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -23603,7 +23614,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 5
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -24239,7 +24250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: 64 Orionis
+  nodeID: 1
   targetImage: {fileID: 1641887249}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -25472,7 +25483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Bellatrix
+  nodeID: 8
   targetImage: {fileID: 1718567780}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -26639,7 +26650,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Mu Orionis
+  nodeID: 5
   targetImage: {fileID: 1778486442}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -27006,7 +27017,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Chi Orionis
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -27151,7 +27162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Betelgeuse
+  nodeID: 6
   targetImage: {fileID: 1810711217}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -29555,7 +29566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 1
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -29934,7 +29945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Pi Orionis 6
+  nodeID: 14
   targetImage: {fileID: 2004408564}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -30581,7 +30592,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Rigel
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -31018,7 +31029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Pi Orionis 4
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -32623,6 +32634,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1081372094}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: nodeActivateClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 695de9727505335418602b5b076312eb, type: 3}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: activeStarColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -33110,6 +33125,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 245
       objectReference: {fileID: 0}
+    - target: {fileID: 7111250191938143760, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: nodeID
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7682319191449682127, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -33287,10 +33306,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1484267501}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5683544035296321860, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7541795618942776002}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
 --- !u!114 &7541795618942775998 stripped
 MonoBehaviour:
@@ -33325,27 +33341,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7541795618942776001 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5683544035296321860, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+--- !u!114 &7541795618942776002 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7111250191938143760, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
   m_PrefabInstance: {fileID: 7541795618942775997}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7541795618942776002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7541795618942776001}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: 'Chi Orionis '
-  targetImage: {fileID: 720351932}
-  activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
-  inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!1001 &7937769693047128633
 PrefabInstance:
   m_ObjectHideFlags: 0

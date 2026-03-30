@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class PlayerRespawn : MonoBehaviour
@@ -18,6 +18,7 @@ public class PlayerRespawn : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer[] allSprites;
     private Collider2D[] allColliders;
+    private bool isDead = false;
 
     private void Awake()
     {
@@ -42,13 +43,13 @@ public class PlayerRespawn : MonoBehaviour
         if (bgmObj != null) bgmSource = bgmObj.GetComponent<AudioSource>();
     }
 
-    public void DieAndRespawn()
-    {
+    public void DieAndRespawn() {
+        if (isDead) return; // 🔥 BLOCK DOUBLE CALL
         if (!rb.simulated) return;
 
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.playerDeathCount++;
+        isDead = true;
+
+        if (GameManager.Instance != null) {
             GameManager.Instance.AddDeath();
             Debug.Log("Death Count: " + GameManager.Instance.playerDeathCount);
         }
@@ -119,6 +120,7 @@ public class PlayerRespawn : MonoBehaviour
             Debug.Log("[Audio] BGM Resumed.");
         }
 
+        isDead = false;
         Debug.Log("[Respawn] Sinkronisasi BGM & Player Berhasil!");
     }
 

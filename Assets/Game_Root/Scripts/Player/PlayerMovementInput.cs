@@ -152,8 +152,7 @@ public class PlayerMovementInput : MonoBehaviour
 
         if (rb.linearVelocity.magnitude > 50f)
             rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 50f);
-        Debug.Log("Player Y Velocity: " + rb.linearVelocity.y);
-        Debug.Log("Platform Y Velocity: " + calculatedPlatformVelocity.y);
+        
     }
 
     // --- COLLISION LOGIC (PARENTING) ---

@@ -1,102 +1,80 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
-public class ConstellationManager : MonoBehaviour
-{
+public class ConstellationManager : MonoBehaviour {
     public static ConstellationManager Instance;
 
     [Header("Runtime Data")]
-    public List<string> collectedNodes = new List<string>();
+    private HashSet<int> collectedNodes = new HashSet<int>();
 
     [Header("UI References")]
     public List<ConstellationNodeUI> hudNodes;
     public List<ConstellationNodeUI> summaryNodes;
 
-    private void Awake()
-    {
-        // 🔥 SINGLETON PER SCENE
-        if (Instance == null)
-        {
+    private void Awake() {
+        if (Instance == null) {
             Instance = this;
-        }
-        else
-        {
+        } else {
             Destroy(gameObject);
             return;
         }
-
-        collectedNodes = new List<string>();
     }
 
-    // ======================================================
-    // ⭐ CORE SYSTEM
-    // ======================================================
+    // =========================
+    // CORE SYSTEM
+    // =========================
 
-    public void OnStarCollected(string id)
-    {
-        if (!collectedNodes.Contains(id))
-        {
-            collectedNodes.Add(id);
-            Debug.Log("[Constellation] Collected: " + id);
+    public void OnStarCollected(int nodeID) {
+        if (!collectedNodes.Contains(nodeID)) {
+            collectedNodes.Add(nodeID);
+            Debug.Log("[Constellation] Collected: " + nodeID);
 
-            UpdateHUD(id); // 🔥 hanya HUD real-time
+            UpdateHUD(nodeID);
         }
     }
 
-    public bool IsCollected(string id)
-    {
-        return collectedNodes.Contains(id);
+    public bool IsCollected(int nodeID) {
+        return collectedNodes.Contains(nodeID);
     }
 
-    public void ResetAll()
-    {
+    public void ResetAll() {
         collectedNodes.Clear();
 
-        // reset HUD
-        foreach (var node in hudNodes)
-        {
+        foreach (var node in hudNodes) {
             if (node != null)
                 node.ResetUI();
         }
 
-        // reset Summary
-        foreach (var node in summaryNodes)
-        {
+        foreach (var node in summaryNodes) {
             if (node != null)
                 node.ResetUI();
         }
     }
 
-    public void ResetCollectedNodes()
-    {
+    public void ResetCollectedNodes() {
         collectedNodes.Clear();
     }
 
-    // ======================================================
-    // ⭐ HUD SYSTEM (REALTIME)
-    // ======================================================
+    // =========================
+    // HUD SYSTEM
+    // =========================
 
-    private void UpdateHUD(string id)
-    {
-        var node = hudNodes.Find(n => n != null && n.nodeID == id);
+    private void UpdateHUD(int nodeID) {
+        var node = hudNodes.Find(n => n != null && n.nodeID == nodeID);
 
-        if (node != null)
-        {
+        if (node != null) {
             node.SetActiveInstant();
         }
     }
 
-    public void SyncHUD()
-    {
-        foreach (var node in hudNodes)
-        {
+    public void SyncHUD() {
+        foreach (var node in hudNodes) {
             if (node == null) continue;
 
-            // 🔥 SET MODE DULU
             node.SetGameplayMode();
             node.StopAllCoroutines();
 
-            // 🔥 BARU UPDATE VISUAL
             if (collectedNodes.Contains(node.nodeID))
                 node.SetActiveInstant();
             else
@@ -104,14 +82,12 @@ public class ConstellationManager : MonoBehaviour
         }
     }
 
-    // ======================================================
-    // ⭐ SUMMARY SYSTEM (ANIMATION)
-    // ======================================================
+    // =========================
+    // SUMMARY SYSTEM
+    // =========================
 
-    public void SyncSummaryInstant()
-    {
-        foreach (var node in summaryNodes)
-        {
+    public void SyncSummaryInstant() {
+        foreach (var node in summaryNodes) {
             if (node == null) continue;
 
             if (collectedNodes.Contains(node.nodeID))
@@ -121,8 +97,7 @@ public class ConstellationManager : MonoBehaviour
         }
     }
 
-    public List<string> GetCollectedNodes()
-    {
-        return new List<string>(collectedNodes);
+    public int GetCollectedCount() {
+        return collectedNodes.Count;
     }
 }

@@ -28,7 +28,7 @@ public class StageSummaryController : MonoBehaviour
     [Header("Visual Settings")]
     public Color activeStarColor = Color.white;
     public Color inactiveStarColor = new Color(1, 1, 1, 0.2f);
-    public float delayBetweenStars = 0.5f;
+    public float delayBetweenStars = 0.15f;
 
     [Header("Audio")]
     public AudioSource summaryAudioSource;
@@ -154,7 +154,7 @@ public class StageSummaryController : MonoBehaviour
         uiCanvasGroup.interactable = true;
         uiCanvasGroup.blocksRaycasts = true;
 
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(0.12f);
 
         // =====================
         // 1. SCORE BREAKDOWN
@@ -287,36 +287,28 @@ public class StageSummaryController : MonoBehaviour
                 row.PlayRevealAnimation();
             }
 
-            yield return new WaitForSecondsRealtime(0.25f);
+            yield return new WaitForSecondsRealtime(0.1f);
         }
 
         playRoutine = null;
     }
 
-    private IEnumerator PlayConstellationSequence()
-    {
+    private IEnumerator PlayConstellationSequence() {
         if (ConstellationManager.Instance == null)
             yield break;
 
-        var collected = ConstellationManager.Instance.GetCollectedNodes();
+        var manager = ConstellationManager.Instance;
 
-        foreach (var nodeUI in ConstellationManager.Instance.summaryNodes)
-        {
+        foreach (var nodeUI in manager.summaryNodes) {
             if (nodeUI == null) continue;
 
-            if (collected.Contains(nodeUI.nodeID))
-            {
+            if (manager.IsCollected(nodeUI.nodeID)) {
                 nodeUI.ActivateNodeAnimated();
 
                 if (summaryAudioSource && nodeActivateClip)
-                {
                     summaryAudioSource.PlayOneShot(nodeActivateClip);
-                    yield return new WaitForSecondsRealtime(nodeActivateClip.length);
-                }
-                else
-                {
-                    yield return new WaitForSecondsRealtime(0.2f);
-                }
+
+                yield return new WaitForSecondsRealtime(0.08f); // 🔥 SPEED UP
             }
         }
     }

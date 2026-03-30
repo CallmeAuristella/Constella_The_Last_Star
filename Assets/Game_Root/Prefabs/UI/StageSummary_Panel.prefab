@@ -2030,6 +2030,7 @@ GameObject:
   - component: {fileID: 8359501104402707352}
   - component: {fileID: 995079615835374047}
   - component: {fileID: 1312688599673937662}
+  - component: {fileID: 7111250191938143760}
   m_Layer: 5
   m_Name: Constelastion Visual
   m_TagString: Untagged
@@ -2094,6 +2095,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7111250191938143760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5683544035296321860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeID: Chi Orionis
+  targetImage: {fileID: 1312688599673937662}
+  activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
+  inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!1 &6203970624201622512
 GameObject:
   m_ObjectHideFlags: 0

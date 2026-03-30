@@ -8,7 +8,7 @@ public enum NodeType { Minor, Major }
 public class StarNode : MonoBehaviour
 {
     [Header("Identity")]
-    public string nodeID;
+    public int nodeID;
     public NodeType nodeType = NodeType.Minor;
 
     [Header("State")]
@@ -117,7 +117,7 @@ public class StarNode : MonoBehaviour
         UpdateVisuals();
 
         // 🔥 ONLY DATA FLOW (NO GAME PROGRESSION)
-        ConstellationManager.Instance?.OnStarCollected(nodeID);
+        ConstellationManager.Instance.OnStarCollected(nodeID);
         GameManager.Instance?.LogNodeCollection(nodeType);
 
         OnNodeActivated?.Invoke(this);

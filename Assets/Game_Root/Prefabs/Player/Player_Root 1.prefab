@@ -240,7 +240,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1.8
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveAction: {fileID: -1358547565607807623, guid: f68bd03ef3549e243a8a8cefdb58499d, type: 3}
   jumpAction: {fileID: 1755045906365740530, guid: f68bd03ef3549e243a8a8cefdb58499d, type: 3}
-  moveSpeed: 15
+  moveSpeed: 12
   jumpForce: 10
   bouncyJumpMultiplier: 2
   bouncyGroundTag: BouncyGround

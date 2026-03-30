@@ -357,7 +357,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Zeta Cygni
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Zeta Cygni
+  nodeID: 5
   targetImage: {fileID: 21065264}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -750,7 +750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Kappa Cygni
+  nodeID: 9
   targetImage: {fileID: 38701414}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -1050,7 +1050,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Kappa Cygni
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -1187,7 +1187,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Deneb
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -1831,7 +1831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Eta Cygni
+  nodeID: 2
   targetImage: {fileID: 186540121}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -4162,7 +4162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Delta Cygni
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4397,7 +4397,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Epsilon Cygni
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5314,7 +5314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Deneb
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5355,7 +5355,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Mu Cygni
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -6562,7 +6562,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1312688599673937662, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
   m_PrefabInstance: {fileID: 7541795618942775997}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7541795618942776001}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -7453,7 +7453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Zeta Cygni
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -8785,7 +8785,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977479326141536983, guid: d9913fa820375f946a5fae34f5d66868, type: 3}
       propertyPath: nodeID
-      value: Sadr
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10331,7 +10331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Delta Cygni
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -10599,7 +10599,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Sadr
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -11194,7 +11194,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Kappa Cygni
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11867,7 +11867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Epsilon Cygni
+  nodeID: 4
   targetImage: {fileID: 1310111707}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -12613,7 +12613,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Albireo
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12934,7 +12934,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Albireo
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -13384,7 +13384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Deneb
+  nodeID: 10
   targetImage: {fileID: 1399468551}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -13990,7 +13990,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc3e811510c9974c9ce49b175f892a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectedNodes: []
   hudNodes:
   - {fileID: 1742734154}
   - {fileID: 1729119951}
@@ -14003,7 +14002,7 @@ MonoBehaviour:
   - {fileID: 1213408480}
   - {fileID: 577279301}
   summaryNodes:
-  - {fileID: 7541795618942776002}
+  - {fileID: 7541795618942776001}
   - {fileID: 186540120}
   - {fileID: 1810711216}
   - {fileID: 1310111706}
@@ -14127,7 +14126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Iota Cygni
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15091,8 +15090,16 @@ PrefabInstance:
       value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: moveSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: fallMultiplier
-      value: 6
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: groundCheckRadius
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: lowJumpMultiplier
@@ -15100,7 +15107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4045598747936815872, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: bouncyJumpMultiplier
-      value: 2.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5103897621424490143, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: rolloffMode
@@ -15286,6 +15293,10 @@ PrefabInstance:
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[1].outWeight
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5652153049600085259, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.713
+      objectReference: {fileID: 0}
     - target: {fileID: 8842564819213576869, guid: f7b35dedcbc591344a4235b80514dfc3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15450,7 +15461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Eta Cygni
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -15735,7 +15746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: nodeID
-      value: Epsilon Cygni
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8578714979551548233, guid: 6017c4ac819361c4abc9bd84118f8bd6, type: 3}
       propertyPath: starName
@@ -16672,7 +16683,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Eta Cygni
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17183,7 +17194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Iota Cygni
+  nodeID: 8
   targetImage: {fileID: 1788125599}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -17412,7 +17423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Sadr
+  nodeID: 3
   targetImage: {fileID: 1810711217}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -18788,7 +18799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: nodeID
-      value: Iota Cygni
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5040418163556228167, guid: ba7c70f9aba8f0449aa15210e85fef98, type: 3}
       propertyPath: starName
@@ -19151,7 +19162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Delta Cygni
+  nodeID: 7
   targetImage: {fileID: 1976173193}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -19376,7 +19387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Mu Cygni
+  nodeID: 6
   targetImage: {fileID: 2008212524}
   activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
@@ -19887,7 +19898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6739439383773009430, guid: 35be2c16b5459c64298d2f4ff17fd6bf, type: 3}
       propertyPath: nodeID
-      value: Mu Cygni
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22025,6 +22036,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1081372094}
     - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: nodeActivateClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 695de9727505335418602b5b076312eb, type: 3}
+    - target: {fileID: 2006761101961483104, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: activeStarColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -22516,6 +22531,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 245
       objectReference: {fileID: 0}
+    - target: {fileID: 7111250191938143760, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+      propertyPath: nodeID
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7682319191449682127, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -22666,10 +22685,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3189728101720886883, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1399468549}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5683544035296321860, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7541795618942776002}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
 --- !u!114 &7541795618942775998 stripped
 MonoBehaviour:
@@ -22704,27 +22720,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7541795618942776001 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5683544035296321860, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
+--- !u!114 &7541795618942776001 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7111250191938143760, guid: 0fa84745729896b4ba12eb354173c126, type: 3}
   m_PrefabInstance: {fileID: 7541795618942775997}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7541795618942776002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7541795618942776001}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a798e1dd9b965bd47a3b44c60b037b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Albireo
-  targetImage: {fileID: 720351932}
-  activeColor: {r: 1, g: 0.78431374, b: 0, a: 1}
-  inactiveColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!1001 &7937769693047128633
 PrefabInstance:
   m_ObjectHideFlags: 0

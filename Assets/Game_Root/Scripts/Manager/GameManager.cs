@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
     public Dictionary<int, int> bestNodesPerStage = new Dictionary<int, int>();
     public HashSet<AchievementType> unlockedAchievements = new HashSet<AchievementType>();
     public HashSet<int> completedStages = new HashSet<int>();
-    const string GAME_VERSION = "1.1";
+    const string GAME_VERSION = "1.2";
     const string VERSION_KEY = "GAME_VERSION";
 
     // =========================
@@ -199,8 +199,7 @@ public class GameManager : MonoBehaviour
         );
 
         // 2. Update Best Nodes (STRICT)
-        int actualNodes = minorNodesCollected + majorNodesCollected;
-
+        int actualNodes = ConstellationManager.Instance.GetCollectedCount();
         UpdateBestNodes(currentStageIndex, actualNodes);
 
         // DEBUG
@@ -457,15 +456,11 @@ public class GameManager : MonoBehaviour
 
     bool AllStagesPerfect()
     {
-        for (int i = 1; i <= 3; i++)
-        {
+        for (int i = 1; i <= 3; i++) {
             int totalNodes = GetTotalNodesInStage(i);
+            int best = bestNodesPerStage.ContainsKey(i) ? bestNodesPerStage[i] : 0;
 
-            if (!bestNodesPerStage.ContainsKey(i))
-                return false;
-
-            if (bestNodesPerStage[i] < totalNodes)
-                return false;
+            Debug.Log($"[CHECK PERFECT] Stage {i}: {best}/{totalNodes}");
         }
 
         return true;
