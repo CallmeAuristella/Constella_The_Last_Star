@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class DetailPopupController : MonoBehaviour
 {
@@ -8,29 +9,37 @@ public class DetailPopupController : MonoBehaviour
     [SerializeField] private Button prevButton;
     [SerializeField] private Button nextButton;
 
+    [SerializeField] private GameObject firstSelectedButton;
+
+    private GameObject previousSelected;
+
     [Header("DEBUG")]
     [SerializeField] private bool debugUseDummyPages = false;
     [SerializeField] private Sprite[] debugPages;
 
+
+
     private ConstellationData currentData;
     private int currentPage = 0;
 
-    public void Show(ConstellationData data)
-    {
+    public void Show(ConstellationData data) {
+        previousSelected =
+            EventSystem.current.currentSelectedGameObject;
+        UISelectionVisual.ForceControllerMode();
+
         currentData = data;
         currentPage = 0;
-        // DEBUG MODE
-        if (debugUseDummyPages && debugPages != null && debugPages.Length > 0)
-        {
+
+        gameObject.SetActive(true);
+
+        if (debugUseDummyPages && debugPages != null && debugPages.Length > 0) {
             infographicDisplay.sprite = debugPages[currentPage];
-            prevButton.interactable = false;
-            nextButton.interactable = debugPages.Length > 1;
-            gameObject.SetActive(true);
-            return;
+        } else {
+            UpdatePage();
         }
 
-        UpdatePage();
-        gameObject.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
     }
 
     public void NextPage()
@@ -43,7 +52,7 @@ public class DetailPopupController : MonoBehaviour
                 infographicDisplay.sprite = debugPages[currentPage];
             }
 
-            prevButton.interactable = currentPage > 0;
+            
             nextButton.interactable = currentPage < debugPages.Length - 1;
             return;
         }
@@ -67,7 +76,7 @@ public class DetailPopupController : MonoBehaviour
                 infographicDisplay.sprite = debugPages[currentPage];
             }
 
-            prevButton.interactable = currentPage > 0;
+            
             nextButton.interactable = currentPage < debugPages.Length - 1;
             return;
         }
@@ -89,12 +98,17 @@ public class DetailPopupController : MonoBehaviour
         infographicDisplay.sprite = currentData.infographicPages[currentPage];
         infographicDisplay.preserveAspect = true;
 
-        prevButton.interactable = currentPage > 0;
+        
         nextButton.interactable = currentPage < currentData.infographicPages.Length - 1;
     }
 
-    public void Close()
-    {
+    public void Close() {
         gameObject.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        if (previousSelected != null) {
+            EventSystem.current.SetSelectedGameObject(previousSelected);
+        }
     }
 }

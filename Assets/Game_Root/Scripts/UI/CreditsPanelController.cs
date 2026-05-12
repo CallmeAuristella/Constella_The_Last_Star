@@ -1,8 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
+using UnityEngine.EventSystems;
 
 public class CreditsPanelController : MonoBehaviour {
+    [SerializeField] private Button closeButton;
+
     public Image displayImage;
     public Sprite[] pages;
 
@@ -10,11 +14,40 @@ public class CreditsPanelController : MonoBehaviour {
     public Button prevButton;
     public TMP_Text pageText;
 
+    private GameObject previousSelected;
+    [SerializeField] private GameObject fallbackSelected;
+
     int index = 0;
 
     void OnEnable() {
+        previousSelected =
+            EventSystem.current.currentSelectedGameObject;
+
         index = 0;
         UpdatePage();
+
+        StartCoroutine(FocusCloseNextFrame());
+    }
+    public void Close() {
+        gameObject.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        if (previousSelected != null) {
+            EventSystem.current.SetSelectedGameObject(previousSelected);
+        } else {
+            EventSystem.current.SetSelectedGameObject(fallbackSelected);
+        }
+    }
+
+    private IEnumerator FocusCloseNextFrame() {
+        yield return null;
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        EventSystem.current.SetSelectedGameObject(
+            closeButton.gameObject
+        );
     }
 
     public void Next() {
@@ -34,8 +67,6 @@ public class CreditsPanelController : MonoBehaviour {
     void UpdatePage() {
         displayImage.sprite = pages[index];
 
-        prevButton.interactable = index > 0;
-        nextButton.interactable = index < pages.Length - 1;
 
         if (pageText != null)
             pageText.text = (index + 1) + " / " + pages.Length;

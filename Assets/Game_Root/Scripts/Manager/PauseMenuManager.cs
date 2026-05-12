@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+
 
 public class PauseMenuManager : MonoBehaviour
 {
+
     [SerializeField] private RunDiscardedUI runDiscardedUI;
     public GameObject pausePanel;
     public GameObject settingsPanel;
@@ -13,17 +17,19 @@ public class PauseMenuManager : MonoBehaviour
 
     public bool isPaused = false;
 
+    [Header("Input")]
+    [SerializeField] private InputActionReference pauseAction;
+
+    [SerializeField] private GameObject pauseFirstButton;
+    [SerializeField] private GameObject settingsFirstButton;
+
+    private GameObject previousPauseSelection;
+
+    
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (isPaused && settingsPanel.activeSelf)
-                CloseSettings();
-            else if (isPaused)
-                Resume();
-            else
-                Pause();
-        }
+       
     }
 
     public void Resume()
@@ -37,13 +43,16 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        EventSystem.current.SetSelectedGameObject(null);
+
         GlobalAudioManager.Instance?.ResumeGameplayAudio();
     }
 
-    public void Pause()
-    {
+    public void Pause() {
         pausePanel.SetActive(true);
-        if (settingsPanel) settingsPanel.SetActive(false);
+
+        if (settingsPanel)
+            settingsPanel.SetActive(false);
 
         Time.timeScale = 0f;
         isPaused = true;
@@ -52,14 +61,43 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.visible = true;
 
         GlobalAudioManager.Instance?.StopAllGameplayAudio();
+
+        // 🔥 UI FOCUS
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(pauseFirstButton);
+    }
+    private void OnEnable() {
+        if (pauseAction != null) {
+            pauseAction.action.Enable();
+            pauseAction.action.performed += OnPausePressed;
+        }
     }
 
-    public void OpenSettings()
-    {
+    private void OnDisable() {
+        if (pauseAction != null) {
+            pauseAction.action.performed -= OnPausePressed;
+            pauseAction.action.Disable();
+        }
+    }
+    private void OnPausePressed(InputAction.CallbackContext context) {
+        if (isPaused && settingsPanel.activeSelf)
+            CloseSettings();
+        else if (isPaused)
+            Resume();
+        else
+            Pause();
+    }
+    public void OpenSettings() {
+        previousPauseSelection =
+            EventSystem.current.currentSelectedGameObject;
+
         pausePanel.SetActive(false);
         settingsPanel.SetActive(true);
 
         SyncSliders();
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(settingsFirstButton);
     }
 
     private void SyncSliders()
@@ -71,10 +109,17 @@ public class PauseMenuManager : MonoBehaviour
             sfxSlider.value = PlayerPrefs.GetFloat("SavedSFX", 0.75f);
     }
 
-    public void CloseSettings()
-    {
+    public void CloseSettings() {
         settingsPanel.SetActive(false);
         pausePanel.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        if (previousPauseSelection != null) {
+            EventSystem.current.SetSelectedGameObject(previousPauseSelection);
+        } else {
+            EventSystem.current.SetSelectedGameObject(pauseFirstButton);
+        }
     }
 
     public void GoToMainMenu()

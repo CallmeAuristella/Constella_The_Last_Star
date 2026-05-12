@@ -167,9 +167,9 @@ public static class ScoreCalculator
 
     static TimeTier GetTimeTier(float time)
     {
-        if (time <= 120f) return TimeTier.Gold;
-        if (time <= 240f) return TimeTier.Silver;
-        if (time <= 300f) return TimeTier.Bronze;
+        if (time <= 180f) return TimeTier.Gold;
+        if (time <= 360f) return TimeTier.Silver;
+        if (time <= 480f) return TimeTier.Bronze;
 
         return TimeTier.None;
     }

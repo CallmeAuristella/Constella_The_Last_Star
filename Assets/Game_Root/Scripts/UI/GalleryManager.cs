@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GalleryManager : MonoBehaviour {
     [Header("Data")]
@@ -13,10 +14,20 @@ public class GalleryManager : MonoBehaviour {
     [Header("Detail Popup Controller")]
     [SerializeField] private DetailPopupController detailPopup;
 
+    [SerializeField] private GameObject firstSelectedButton;
+
     private void Start() {
         RefreshGallery();
     }
+    public void FocusFirstItem() {
+        if (gridContainer.childCount <= 0)
+            return;
 
+        GameObject firstItem = gridContainer.GetChild(0).gameObject;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstItem);
+    }
     public void RefreshGallery() {
         // Bersihkan item lama
         foreach (Transform child in gridContainer) {

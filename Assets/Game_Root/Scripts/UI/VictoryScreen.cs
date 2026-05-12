@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using static UnityEngine.Rendering.DebugUI;
 
 public class VictoryScreen : MonoBehaviour
@@ -29,6 +30,9 @@ public class VictoryScreen : MonoBehaviour
     [SerializeField] private AudioClip victorySFX;
     [SerializeField] private AudioClip victoryBGM;
 
+    [Header("Navigation")]
+    [SerializeField] private GameObject firstSelectedButton;
+
     private void Start()
     {
         if (GameManager.Instance == null) return;
@@ -49,6 +53,9 @@ public class VictoryScreen : MonoBehaviour
 
         StartCoroutine(AudioRoutine());
         SetCursor(true);
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
     }
 
     private void SetCursor(bool visible)
@@ -145,6 +152,7 @@ public class VictoryScreen : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        EventSystem.current.SetSelectedGameObject(null);
         Time.timeScale = 1f;
         GlobalAudioManager.Instance?.ResetForMenu();
         SceneManager.LoadScene("MainMenu");

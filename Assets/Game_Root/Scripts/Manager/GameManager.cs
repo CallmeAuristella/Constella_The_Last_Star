@@ -71,13 +71,12 @@ public class GameManager : MonoBehaviour
     {
         HandleVersioningReset();
         SetupSingleton();
-        LoadRecords();
-        LoadGame();
 
         if (globalProgress == null)
-        {
-            globalProgress = new GlobalProgress();
-        }
+            globalProgress = new GlobalProgress(); // 🔥 PINDAH KE SINI
+
+        LoadRecords();
+        LoadGame();
     }
 
     private void Update()
@@ -126,6 +125,8 @@ public class GameManager : MonoBehaviour
 
     public void StartRun()
     {
+        Debug.Log($"[RUN START] Minor: {minorNodesCollected}, Major: {majorNodesCollected}");
+
         playerDeathCount = 0;
         isRunActive = true;
         isRunDiscarded = false;
@@ -141,6 +142,8 @@ public class GameManager : MonoBehaviour
     {
         if (type == NodeType.Minor) minorNodesCollected++;
         else if (type == NodeType.Major) majorNodesCollected++;
+
+        Debug.Log($"[NODE COLLECTED] Minor: {minorNodesCollected}, Major: {majorNodesCollected}");
     }
 
     public void AddDeath()
@@ -200,6 +203,8 @@ public class GameManager : MonoBehaviour
 
         // 2. Update Best Nodes (STRICT)
         int actualNodes = ConstellationManager.Instance.GetCollectedCount();
+        int counterNodes = minorNodesCollected + majorNodesCollected;
+        Debug.Log($"[COMPARE] Constellation: {actualNodes} | Counter: {counterNodes}");
         UpdateBestNodes(currentStageIndex, actualNodes);
 
         // DEBUG
@@ -331,16 +336,16 @@ public class GameManager : MonoBehaviour
 
         // LIST → DICTIONARY
         bestNodesPerStage.Clear();
-        foreach (var entry in data.bestNodesPerStage)
-        {
+        foreach (var entry in data.bestNodesPerStage) {
             bestNodesPerStage[entry.stageIndex] = entry.bestNodes;
         }
 
-        // LIST → HASHSET
+        // 🔥 FIX DI SINI
         unlockedAchievements.Clear();
-        if (data.bestNodesPerStage != null) {
-            foreach (var entry in data.bestNodesPerStage) {
-                bestNodesPerStage[entry.stageIndex] = entry.bestNodes;
+
+        if (data.unlockedAchievements != null) {
+            foreach (var ach in data.unlockedAchievements) {
+                unlockedAchievements.Add((AchievementType)ach);
             }
         }
         if (data.completedStages != null)
@@ -415,55 +420,55 @@ public class GameManager : MonoBehaviour
     // GLOBAL ACHIEVEMENT
     // =========================
 
-    public List<AchievementEntry> EvaluateGlobalAchievements(int currentStageIndex)
-    {
+    public List<AchievementEntry> EvaluateGlobalAchievements(int currentStageIndex) {
         List<AchievementEntry> unlocked = new List<AchievementEntry>();
 
-        if (currentStageIndex != 3)
-            return unlocked;
+        // =========================
+        // STAR COLLECTOR (PERFECT ALL STAGES)
+        // =========================
 
-        if (!globalProgress.starCollectorUnlocked && AllStagesPerfect())
-        {
+        bool allPerfect = true;
+
+        for (int i = 1; i <= 3; i++) {
+            int required = GetTotalNodesInStage(i);
+            int best = bestNodesPerStage.ContainsKey(i) ? bestNodesPerStage[i] : 0;
+
+            Debug.Log($"[CHECK] Stage {i}: {best}/{required}");
+
+            if (best < required) {
+                allPerfect = false;
+                break;
+            }
+        }
+
+        if (!globalProgress.starCollectorUnlocked && allPerfect) {
             globalProgress.starCollectorUnlocked = true;
 
-            unlockedAchievements.Add(AchievementType.StarCollector);
-            SaveGame();
+            UnlockAchievement(AchievementType.StarCollector);
 
-            unlocked.Add(new AchievementEntry
-            {
+            unlocked.Add(new AchievementEntry {
                 type = AchievementType.StarCollector,
                 achieved = true
             });
         }
 
+        // =========================
+        // SKILL ISSUE
+        // =========================
+
         if (!globalProgress.skillIssueUnlocked &&
-            globalProgress.totalDeaths >= 10)
-        {
+            globalProgress.totalDeaths >= 10) {
             globalProgress.skillIssueUnlocked = true;
 
-            unlockedAchievements.Add(AchievementType.SkillIssue);
-            SaveGame();
+            UnlockAchievement(AchievementType.SkillIssue);
 
-            unlocked.Add(new AchievementEntry
-            {
+            unlocked.Add(new AchievementEntry {
                 type = AchievementType.SkillIssue,
                 achieved = true
             });
         }
-        Debug.Log("[CHECK] AllStagesPerfect = " + AllStagesPerfect());
+
         return unlocked;
-    }
-
-    bool AllStagesPerfect()
-    {
-        for (int i = 1; i <= 3; i++) {
-            int totalNodes = GetTotalNodesInStage(i);
-            int best = bestNodesPerStage.ContainsKey(i) ? bestNodesPerStage[i] : 0;
-
-            Debug.Log($"[CHECK PERFECT] Stage {i}: {best}/{totalNodes}");
-        }
-
-        return true;
     }
 
     public void UpdateBestNodes(int stageIndex, int nodesCollected)
@@ -493,9 +498,9 @@ public class GameManager : MonoBehaviour
     {
         switch (stageIndex)
         {
-            case 1: return 10;
-            case 2: return 15;
-            case 3: return 18;
+            case 1: return 7;
+            case 2: return 10;
+            case 3: return 19;
             default: return 0;
         }
     }

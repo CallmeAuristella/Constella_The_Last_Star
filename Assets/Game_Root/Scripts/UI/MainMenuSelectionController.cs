@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class MainMenuSelectionController : MonoBehaviour
 {
@@ -46,27 +47,10 @@ public class MainMenuSelectionController : MonoBehaviour
 
     void Update()
     {
-        HandleKeyboardInput();
         UpdateVisual();
+        UpdateCurrentSelection();
     }
 
-    void HandleKeyboardInput()
-    {
-        if (Keyboard.current.downArrowKey.wasPressedThisFrame)
-        {
-            ChangeSelection(1);
-        }
-
-        if (Keyboard.current.upArrowKey.wasPressedThisFrame)
-        {
-            ChangeSelection(-1);
-        }
-
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
-        {
-            ConfirmSelection();
-        }
-    }
 
     void ChangeSelection(int direction)
     {
@@ -119,7 +103,23 @@ public class MainMenuSelectionController : MonoBehaviour
             Time.deltaTime * starPulseSpeed
         );
     }
+    void UpdateCurrentSelection() {
+        GameObject selected = EventSystem.current.currentSelectedGameObject;
 
+        if (selected == null)
+            return;
+
+        for (int i = 0; i < menuButtons.Length; i++) {
+            if (selected == menuButtons[i].gameObject) {
+                if (currentIndex != i) {
+                    currentIndex = i;
+                    TriggerStarPulse();
+                }
+
+                break;
+            }
+        }
+    }
     void UpdateSelectionImmediate()
     {
         for (int i = 0; i < menuItems.Length; i++)
@@ -138,13 +138,6 @@ public class MainMenuSelectionController : MonoBehaviour
         starIndicator.anchoredPosition = starTarget;
     }
 
-    void ConfirmSelection()
-    {
-        if (menuButtons[currentIndex] != null)
-        {
-            menuButtons[currentIndex].onClick.Invoke();
-        }
-    }
 
     void TriggerStarPulse()
     {

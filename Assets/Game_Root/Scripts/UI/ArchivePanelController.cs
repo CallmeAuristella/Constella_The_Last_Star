@@ -83,7 +83,12 @@ public class ArchivePanelController : MonoBehaviour {
     void OnItemClicked(AchievementData data) {
         if (detailPopup != null) {
             bool unlocked = CheckIfUnlocked(data);
-            detailPopup.Show(data, unlocked);
+
+            detailPopup.Show(
+                data,
+                unlocked,
+                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject
+            );
         }
     }
     bool CheckIfUnlocked(AchievementData data) {

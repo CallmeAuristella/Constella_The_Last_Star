@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -10,7 +11,10 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private UIPanelAnimator panelSettings;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
+    [SerializeField] private GalleryManager galleryManager;
 
+    [Header("First Selected")]
+    [SerializeField] private GameObject mainMenuFirstButton;
     private void Start()
     {
         ShowMain();
@@ -31,18 +35,32 @@ public class MainMenuManager : MonoBehaviour
         panelSettings?.Hide();
     }
 
-    public void ShowMain()
-    {
+    public void ShowMain() {
         HideAllPanels();
+
         panelMainMenu?.Show();
+
+        StartCoroutine(FocusMainNextFrame());
+    }
+    private System.Collections.IEnumerator FocusMainNextFrame() {
+        yield return null;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(mainMenuFirstButton);
     }
 
-    public void ShowArchive()
-    {
+    public void ShowArchive() {
         HideAllPanels();
-        panelArchive?.Show();
-    }
 
+        panelArchive?.Show();
+
+        StartCoroutine(FocusArchiveNextFrame());
+    }
+    private System.Collections.IEnumerator FocusArchiveNextFrame() {
+        yield return null;
+
+        galleryManager?.FocusFirstItem();
+    }
     public void ShowSettings()
     {
         HideAllPanels();

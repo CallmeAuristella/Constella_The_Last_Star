@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.EventSystems;
 public class StageSummaryController : MonoBehaviour
 {
     [Header("Stage Config")]
@@ -17,6 +17,9 @@ public class StageSummaryController : MonoBehaviour
     public TextMeshProUGUI nodeText;
     [SerializeField] private GameObject newBestLabel;
     [SerializeField] private TMP_Text bestScoreText;
+
+    [Header("Navigation")]
+    [SerializeField] private GameObject firstSelectedButton;
 
     private bool isNewBest = false;
 
@@ -183,6 +186,11 @@ public class StageSummaryController : MonoBehaviour
         yield return StartCoroutine(PlayConstellationSequence());
         yield return new WaitForSecondsRealtime(0.2f);
         yield return StartCoroutine(PlayStarRatingSequence());
+
+        yield return null;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
     }
 
     void PopulateSummary(RunEvaluation eval)
