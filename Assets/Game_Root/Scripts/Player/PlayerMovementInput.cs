@@ -54,6 +54,9 @@ public class PlayerMovementInput : MonoBehaviour
     public GameObject jumpDust;
     public GameObject landDust;
     public Transform feetPosition;
+    public TrailRenderer orbitTrail;
+    public TrailRenderer movementTrail;
+    public ParticleSystem orbitPulseFX;
 
     // --- Internal Variables ---
     private Rigidbody2D rb;
@@ -71,6 +74,8 @@ public class PlayerMovementInput : MonoBehaviour
     private bool clockwiseOrbit;
     private bool isMajorOrbit = false;
     private float totalOrbitAngle = 0f;
+    private float storedMomentum;
+    private int orbitCycleCount = 0;
 
     private Transform currentGroundTransform;
     private Rigidbody2D currentGroundRb;
@@ -87,6 +92,12 @@ public class PlayerMovementInput : MonoBehaviour
     // --- Audio Variables ---
     public AudioClip jumpSfx;
     private AudioSource audioSource;
+
+    [Header("DEBUG")]
+    public bool showMovementDebug = true;
+
+    private Vector2 previousVelocity;
+    private float currentAcceleration;
 
     [HideInInspector] 
     public float apexGravityMultiplier = 0.6f;
@@ -135,6 +146,15 @@ public class PlayerMovementInput : MonoBehaviour
 
     private void Update()
     {
+        float speed =
+Mathf.Abs(rb.linearVelocity.x);
+
+        if (!isOrbiting && speed > 2f) {
+            movementTrail.emitting = true;
+        } else {
+            movementTrail.emitting = false;
+        }
+
         if (isOrbiting) { HandleOrbitMovement(); return; }
 
         moveInput = moveAction.action.ReadValue<Vector2>();
@@ -146,33 +166,76 @@ public class PlayerMovementInput : MonoBehaviour
 
     private void FixedUpdate()
     {
+        float speed =
+Mathf.Abs(rb.linearVelocity.x);
+
+        if (!isOrbiting && speed > 6f) {
+            movementTrail.emitting = true;
+        } else {
+            movementTrail.emitting = false;
+        }
+
         if (isOrbiting) return;
         UpdatePlatformRadar();
         HandleMomentumMovement();
 
         if (rb.linearVelocity.magnitude > 50f)
             rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 50f);
-        
+
+        Vector2 velocityDelta = rb.linearVelocity - previousVelocity;
+        currentAcceleration = velocityDelta.magnitude / Time.fixedDeltaTime;
+
+        previousVelocity = rb.linearVelocity;
+
     }
+#if UNITY_EDITOR
+    private void OnGUI() {
+        if (!showMovementDebug) return;
+
+        GUIStyle style = new GUIStyle(GUI.skin.label);
+
+        style.fontSize = 18;
+        style.normal.textColor = Color.white;
+
+        float speed = rb.linearVelocity.magnitude;
+
+        string debugText =
+            $"Speed                : {speed:F2}\n" +
+            $"Horizontal Velocity  : {rb.linearVelocity.x:F2}\n" +
+            $"Vertical Velocity    : {rb.linearVelocity.y:F2}\n" +
+            $"Acceleration         : {currentAcceleration:F2}\n" +
+            $"Stored Momentum      : {storedMomentum:F2}\n" +
+            $"Grounded             : {isGrounded}\n" +
+            $"Slope                : {isOnSlope}\n" +
+            $"Orbit State          : {isOrbiting}\n" +
+            $"Orbit Speed          : {currentOrbitSpeed:F2}";
+
+        GUI.Box(new Rect(20, 140, 460, 300), "");
+
+        GUI.Label(
+            new Rect(35, 150, 440, 300),
+            debugText,
+            style
+                );
+    }
+#endif
 
     // --- COLLISION LOGIC (PARENTING) ---
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        // Deteksi platform bergerak agar player menempel dan tidak mantul
-        if (collision.gameObject.CompareTag("Platform") || collision.gameObject.GetComponent<Rigidbody2D>() != null)
-        {
-            transform.SetParent(collision.transform);
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.CompareTag("Platform")) {
+            if (collision.gameObject.activeInHierarchy) {
+                transform.SetParent(collision.transform);
+            }
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        // Lepas parent saat meninggalkan platform
-        if (transform.parent == collision.transform)
-        {
-            transform.SetParent(null);
-            transform.rotation = Quaternion.identity;
+    private void OnCollisionExit2D(Collision2D collision) {
+        if (transform.parent == collision.transform) {
+            if (gameObject.activeInHierarchy) {
+                transform.SetParent(null);
+                transform.rotation = Quaternion.identity;
+            }
         }
     }
 
@@ -349,21 +412,53 @@ public class PlayerMovementInput : MonoBehaviour
 
     // --- ORBIT SYSTEM ---
 
-    public void EnterOrbit(Transform centerNode, float radius, float speed, bool isMajor = false)
-    {
+    public void EnterOrbit(Transform centerNode, float radius, float speed, bool isMajor = false) {
+
         isOrbiting = true;
+
         currentOrbitCenter = centerNode;
         currentOrbitRadius = radius;
-        currentOrbitSpeed = speed;
+
+        storedMomentum = Mathf.Abs(rb.linearVelocity.x);
+
+        currentOrbitSpeed =
+Mathf.Clamp(
+    speed + (storedMomentum * 4f),
+    speed,
+    speed * 1.5f
+);
+        float momentumFactor =
+Mathf.InverseLerp(0f, moveSpeed, storedMomentum);
+
+        orbitTrail.time =
+        Mathf.Lerp(0.2f, 0.35f, momentumFactor);
+
+
         isMajorOrbit = isMajor;
         totalOrbitAngle = 0f;
+        orbitCycleCount = 0;
 
-        rb.linearVelocity = Vector2.zero;
+        rb.linearVelocity = rb.linearVelocity * 0.15f;
+
         rb.bodyType = RigidbodyType2D.Kinematic;
+
         clockwiseOrbit = transform.position.x < centerNode.position.x;
 
-        Vector3 direction = (transform.position - centerNode.position).normalized;
-        transform.position = centerNode.position + direction * radius;
+        Vector3 direction =
+        (transform.position - centerNode.position).normalized;
+
+        transform.position =
+        centerNode.position + direction * radius;
+
+        if (orbitTrail != null) {
+            orbitTrail.Clear();
+
+            orbitTrail.enabled = false;
+            orbitTrail.enabled = true;
+
+            orbitTrail.emitting = true;
+        }
+        Debug.Log(currentOrbitSpeed);
     }
 
     private void HandleOrbitMovement()
@@ -382,8 +477,21 @@ public class PlayerMovementInput : MonoBehaviour
         transform.RotateAround(currentOrbitCenter.position, Vector3.forward, rotationStep * direction);
         transform.rotation = Quaternion.identity;
         totalOrbitAngle += rotationStep;
+        int currentCycle =
+Mathf.FloorToInt(totalOrbitAngle / 360f);
 
+        if (currentCycle > orbitCycleCount) {
+            orbitCycleCount = currentCycle;
+
+            if (orbitPulseFX != null) {
+                orbitPulseFX.transform.position =
+                currentOrbitCenter.position;
+
+                orbitPulseFX.Play();
+            }
+        }
         if (!isMajorOrbit && jumpAction.action.WasPerformedThisFrame()) PerformExitOrbit();
+        
     }
 
     private void DropFromOrbit()
@@ -393,6 +501,10 @@ public class PlayerMovementInput : MonoBehaviour
         isMajorOrbit = false;
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.linearVelocity = Vector2.zero;
+
+        if (orbitTrail != null) {
+            orbitTrail.emitting = false;
+        }
     }
 
     private void PerformExitOrbit()
@@ -412,6 +524,11 @@ public class PlayerMovementInput : MonoBehaviour
         isMajorOrbit = false;
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.AddForce(launchDirection * launchForce, ForceMode2D.Impulse);
+
+        if (orbitTrail != null) {
+            orbitTrail.emitting = false;
+            orbitTrail.Clear();
+        }
     }
 
     // --- TELEPORT & WARP SYSTEM ---

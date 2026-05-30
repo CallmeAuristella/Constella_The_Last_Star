@@ -157,6 +157,14 @@ public static class ScoreCalculator
         // ⚠️ INI JANGAN DI SINI (GLOBAL)
         // AllNodes_AllStages → harus dicek di GameManager / SaveSystem
         // GodSpeed → optional global unlock
+        Debug.Log("===== ACH DEBUG =====");
+        Debug.Log($"DeathCount: {deathCount}");
+        Debug.Log($"Tier: {tier}");
+        Debug.Log($"NoDeath: {noDeath}");
+
+        foreach (var a in eval.achievements) {
+            Debug.Log($"Unlocked: {a.type}");
+        }
 
         return eval;
     }

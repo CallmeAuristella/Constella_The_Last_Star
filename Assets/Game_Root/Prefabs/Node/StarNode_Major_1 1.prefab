@@ -171,23 +171,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea7150a7dac7e5d4e9b45a2a16fa233e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeID: Major
+  nodeID: 0
   nodeType: 1
   isActivated: 0
   starName: Unknown Star
   showNameText: 1
   starNameTextUI: {fileID: 1064332463257902824}
-  orbitRadius: 2
-  orbitSpeed: 300
-  portalType: 0
-  nextSceneName: 
-  finishSequenceDelay: 1.5
-  summaryUI: {fileID: 0}
+  orbitRadius: 3
+  orbitSpeed: 220
   starSprite: {fileID: 2298059704457964066}
   activeColor: {r: 0.96862745, g: 0.84313726, b: 0.21960784, a: 1}
   inactiveColor: {r: 0.2679245, g: 0.2679245, b: 0.2679245, a: 1}
   activeAuraObject: {fileID: 1545806602296978, guid: 9e4577abe56a95f4a91d29a0473cd30c, type: 3}
-  OnNodeIgnited:
+  OnNodeActivated:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8142908253001208247
@@ -224,7 +220,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2.62}
+  m_AnchoredPosition: {x: 0, y: 3.8}
   m_SizeDelta: {x: 5, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &78160350066762128
@@ -250,7 +246,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 7367620660708798346, guid: 3b9d0bb8b0a5e574f8d122ae82aacefd, type: 2}
+  - {fileID: -2872045456243894767, guid: bf7bb281ee01ce6438a10f72a8d6be56, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -294,8 +290,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Sample text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3b9d0bb8b0a5e574f8d122ae82aacefd, type: 2}
-  m_sharedMaterial: {fileID: 7367620660708798346, guid: 3b9d0bb8b0a5e574f8d122ae82aacefd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: bf7bb281ee01ce6438a10f72a8d6be56, type: 2}
+  m_sharedMaterial: {fileID: -2872045456243894767, guid: bf7bb281ee01ce6438a10f72a8d6be56, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -67,6 +67,9 @@ TagManager:
   - name: Gameplay
     uniqueID: 694714369
     locked: 0
+  - name: Effects
+    uniqueID: 1873680655
+    locked: 0
   - name: Foreground
     uniqueID: 269759739
     locked: 0

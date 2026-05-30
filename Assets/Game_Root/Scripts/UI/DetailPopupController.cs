@@ -90,16 +90,30 @@ public class DetailPopupController : MonoBehaviour
         }
     }
 
-    private void UpdatePage()
-    {
+    private void UpdatePage() {
         if (currentData == null || currentData.infographicPages.Length == 0)
             return;
 
         infographicDisplay.sprite = currentData.infographicPages[currentPage];
         infographicDisplay.preserveAspect = true;
 
-        
-        nextButton.interactable = currentPage < currentData.infographicPages.Length - 1;
+        bool isLastPage = currentPage >= currentData.infographicPages.Length - 1;
+        bool isFirstPage = currentPage <= 0;
+
+        nextButton.interactable = !isLastPage;
+        prevButton.interactable = !isFirstPage;
+
+        GameObject currentSelected = EventSystem.current.currentSelectedGameObject;
+
+        // Kalau next button lagi selected lalu jadi disabled
+        if (currentSelected == nextButton.gameObject && !nextButton.interactable) {
+            EventSystem.current.SetSelectedGameObject(prevButton.gameObject);
+        }
+
+        // Kalau prev button lagi selected lalu jadi disabled
+        if (currentSelected == prevButton.gameObject && !prevButton.interactable) {
+            EventSystem.current.SetSelectedGameObject(nextButton.gameObject);
+        }
     }
 
     public void Close() {

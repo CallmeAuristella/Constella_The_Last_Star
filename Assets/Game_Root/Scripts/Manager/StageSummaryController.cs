@@ -16,7 +16,7 @@ public class StageSummaryController : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI nodeText;
     [SerializeField] private GameObject newBestLabel;
-    [SerializeField] private TMP_Text bestScoreText;
+    //[SerializeField] private TMP_Text bestScoreText;
 
     [Header("Navigation")]
     [SerializeField] private GameObject firstSelectedButton;
@@ -129,10 +129,10 @@ public class StageSummaryController : MonoBehaviour
 
             isNewBest = (score >= bestScore && score > 0);
 
-            timeText.text = FormatTime(time);
-            scoreText.text = $"Score: {score}";
+            timeText.text = $"TIME: {FormatTime(time)}";
+            scoreText.text = $"FINAL SCORE: {gm.lastRunEvaluation.finalScore}";
             nodeText.text = $"{collected} Stars Collected";
-            bestScoreText.text = $"Best: {bestScore}";
+            //bestScoreText.text = $"Best: {bestScore}";
             newBestLabel.SetActive(isNewBest);
 
             CalculateStarRating(collected);
@@ -236,8 +236,7 @@ public class StageSummaryController : MonoBehaviour
         }
     }
 
-    void PopulateScoreBreakdown()
-    {
+    void PopulateScoreBreakdown() {
         spawnedRows.Clear();
 
         foreach (Transform child in breakdownContainer)
@@ -246,8 +245,7 @@ public class StageSummaryController : MonoBehaviour
         var eval = GameManager.Instance.lastRunEvaluation;
         if (eval == null) return;
 
-        foreach (var entry in eval.breakdown)
-        {
+        foreach (var entry in eval.breakdown) {
             var row = Instantiate(scoreRowPrefab, breakdownContainer);
             var ui = row.GetComponent<ScoreRowUI>();
 
@@ -256,14 +254,6 @@ public class StageSummaryController : MonoBehaviour
 
             spawnedRows.Add(ui);
         }
-
-        var totalRow = Instantiate(scoreRowPrefab, breakdownContainer);
-        var totalUI = totalRow.GetComponent<ScoreRowUI>();
-
-        totalUI.Setup("TOTAL", eval.finalScore, true, false);
-        totalUI.PrepareForAnimation();
-
-        spawnedRows.Add(totalUI);
 
         PlayBreakdownSequence();
     }
